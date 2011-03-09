@@ -23,7 +23,15 @@ void Camera::setProjectionAndView(float aspectRatio) {
 			basis.a2, basis.b2, basis.c2);
 }	
 
-void Camera::handleEvent(sf::Event &event) {
+void Camera::pull(aiVector3D planePosition, aiVector3D increment){
+	time = 0;
+	startVal = pos;
+	pos+=increment;
+	change = increment;
+	//easeToNewPosition();
+}
+
+void Camera::handleEvent(sf::Event &event, const sf::Input &input) {
 	switch (event.Type) {
 		case Event::MouseButtonPressed:
 			if (event.MouseButton.Button == Mouse::Left) {

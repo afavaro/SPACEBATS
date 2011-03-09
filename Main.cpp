@@ -6,6 +6,7 @@
 #include "InputListener.h"
 #include "Framebuffer.h"
 #include "MotionBlur.h"
+#include "Ship.h"
 
 #include <cmath>
 
@@ -26,9 +27,6 @@ sf::Clock clck;
 // exits.
 Assimp::Importer importer;
 
-//TODO: put this somewhere else
-Model spaceship;
-
 Shader *phongShader, *normalShader, *toonShader, *blurShader;
 
 Camera camera(
@@ -37,6 +35,13 @@ Camera camera(
 						  1.0, 0.0, 0.0,
 						  0.0, 1.0, 0.0,
 						  0.0, 0.0, -1.0));
+
+Ship spaceship(
+			   aiVector3D(0.0, 0.0, 0.0),
+			   aiMatrix3x3(1.0, 0.0, 0.0,
+						   0.0, 1.0, 0.0,
+						   0.0, 0.0,-1.0),
+			   &camera);
 
 vector<InputListener*> inputListeners;
 
@@ -59,6 +64,7 @@ int main(int argc, char** argv) {
 	glClear(GL_ACCUM_BUFFER_BIT);
 
 	inputListeners.push_back(&camera);
+	inputListeners.push_back(&spaceship);
 	
 	normalsBuffer = new Framebuffer(window.GetWidth(), window.GetHeight());
 	
@@ -113,10 +119,10 @@ void loadAssets() {
 	toonShader = new Shader("shaders/toon");
 	blurShader = new Shader("shaders/blur");
 	
-	spaceship.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
+	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
 	aiMatrix4x4 rot;
 	aiMatrix4x4::RotationX(-M_PI / 2.0, rot);
-	spaceship.setTransformation(rot);
+	spaceship.model.setTransformation(rot);
 }
 
 
@@ -144,7 +150,7 @@ void handleInput() {
 				break;
 			default: 
 				for (unsigned i = 0; i < inputListeners.size(); i++)
-					inputListeners[i]->handleEvent(evt);
+					inputListeners[i]->handleEvent(evt, window.GetInput());
 				break;
         }
     }
@@ -175,8 +181,8 @@ void renderFrame() {
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	spaceship.useShader(normalShader);
-	spaceship.render(NORMALS_PASS, normalsBuffer);
+	spaceship.model.useShader(normalShader);
+	spaceship.model.render(NORMALS_PASS, normalsBuffer);
 	
 	normalsBuffer->unbind();
 	
@@ -186,20 +192,20 @@ void renderFrame() {
 	
 	setupLights();
 	
-	spaceship.useShader(toonShader);
-	spaceship.render(FINAL_PASS, normalsBuffer);
+	spaceship.model.useShader(toonShader);
+	spaceship.model.render(FINAL_PASS, normalsBuffer);
 	motionBlur->unbind();
 	
 	int frames = frameCounter < NUM_MOTION_BLUR_FRAMES ? frameCounter : NUM_MOTION_BLUR_FRAMES;
-	cout << frames << " frames" << endl;
+	//cout << frames << " frames" << endl;
 	float val = 1.0 / frames;
-	cout << "val per" << val << endl;
+	//cout << "val per" << val << endl;
 
 	glClearColor(1.0, 0.0, 0.0, 1.0);		
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	setupLights();
 	
-	spaceship.useShader(toonShader);
-	spaceship.render(FINAL_PASS, normalsBuffer);
+	spaceship.model.useShader(toonShader);
+	spaceship.model.render(FINAL_PASS, normalsBuffer);
 }
