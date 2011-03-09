@@ -35,16 +35,16 @@ Framebuffer* MotionBlur::getFrame(int frame){
 }
 
 void MotionBlur::bind(){
-	printf("Binding framebuffer at index %d\n", cur);
+	//printf("Binding framebuffer at index %d\n", cur);
 	getFrame(cur)->bind();
 }
 
 void MotionBlur::unbind(){
 	getFrame(cur)->unbind();
-	printf("Unbinding framebuffer at index %d\n", cur);
+	//printf("Unbinding framebuffer at index %d\n", cur);
 
 	counter++;
 	cur = counter % numFrames;
-	printf("Cur is now %d\n", cur);
+	//printf("Cur is now %d\n", cur);
 
 }
