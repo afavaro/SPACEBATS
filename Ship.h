@@ -56,7 +56,6 @@ private:
 	aiQuaternion maxRollRight;
 	aiQuaternion maxPitchUp;
 	aiQuaternion maxPitchDown;
-	GLfloat g_duration;
 };
 
 #endif
