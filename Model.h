@@ -22,14 +22,16 @@ class Model {
 
 		void render(RenderPass pass, Framebuffer *normalsBuffer);
 
-	private:
 		static sf::Image white;
 
+	private:
 		aiMatrix4x4 transformation;
 		const aiScene *scene;
 
 		Shader *shader;
 		sf::Image *diffuse, *specular;
+
+		void setMeshData(aiMesh *mesh, Shader *shader, RenderPass pass);
 
 		unsigned *indexBuffer;
 };
