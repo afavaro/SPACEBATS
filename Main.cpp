@@ -122,7 +122,7 @@ void loadAssets() {
 
 	background.LoadFromFile("models/Space-Background.jpg");
 //	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
-	mars.loadFromFile("models/mars", "mars.3ds", marsImporter);
+	mars.loadFromFile("models", "mars.3ds", marsImporter);
 //	aiMatrix4x4 rot;
 //	aiMatrix4x4::RotationX(-M_PI / 2.0, rot);
 //	spaceship.setTransformation(rot);
@@ -274,6 +274,6 @@ void renderFrame() {
 	renderObjects();	
 	
 	
-	spaceship.model.useShader(toonShader);
+	spaceship.model.useShader(phongShader);
 	spaceship.model.render(FINAL_PASS, normalsBuffer);
 }
