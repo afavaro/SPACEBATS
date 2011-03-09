@@ -114,9 +114,6 @@ void initOpenGL() {
     glViewport(0, 0, window.GetWidth(), window.GetHeight());
 }
 
-
-
-
 void loadAssets() {
 	phongShader = new Shader("shaders/phong");
 	normalShader = new Shader("shaders/normal");
@@ -130,11 +127,9 @@ void loadAssets() {
 //	aiMatrix4x4::RotationX(-M_PI / 2.0, rot);
 //	spaceship.setTransformation(rot);
 	
-	//spaceship.model.loadFromFile("models/mars", "mars.3ds", importer);
+
 	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
-	aiMatrix4x4 rot;
-	aiMatrix4x4::RotationX(-M_PI / 2.0, rot);
-	spaceship.model.setTransformation(rot);
+
 }
 
 
@@ -235,7 +230,7 @@ void renderObjects(RenderPass pass) {
 
 void renderFrame() {
 	frameCounter++;
-	
+	spaceship.easeToNewPosition();
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	
 	//Render normals
@@ -259,9 +254,9 @@ void renderFrame() {
 	spaceship.model.render(FINAL_PASS, normalsBuffer);
 	motionBlur->unbind();
 	
-	int frames = frameCounter < NUM_MOTION_BLUR_FRAMES ? frameCounter : NUM_MOTION_BLUR_FRAMES;
+	//int frames = frameCounter < NUM_MOTION_BLUR_FRAMES ? frameCounter : NUM_MOTION_BLUR_FRAMES;
 	//cout << frames << " frames" << endl;
-	float val = 1.0 / frames;
+	//float val = 1.0 / frames;
 	//cout << "val per" << val << endl;
 	*/
 	//int frames = frameCounter < NUM_MOTION_BLUR_FRAMES ? frameCounter : NUM_MOTION_BLUR_FRAMES;

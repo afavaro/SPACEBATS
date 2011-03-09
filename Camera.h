@@ -13,9 +13,13 @@ public:
 	~Camera();
 
 	void setProjectionAndView(float aspectRatio);
+	GLfloat quadEaseIn(GLfloat timePassed, GLfloat power);
+	GLfloat quadEaseOut(GLfloat timePassed, GLfloat power);
+	GLfloat quadEaseInOut(GLfloat timePassed, GLfloat power);
+	void easeToNewPosition();
 	void pull(aiVector3D planePosition, aiVector3D newPosition);
 	void handleEvent(sf::Event &event, const sf::Input &input);
-
+	
 private:
 	aiVector3D pos;
 	aiMatrix3x3 basis;
