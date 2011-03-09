@@ -1,6 +1,6 @@
 attribute vec3 positionIn;
 
-varying vec3 position;
+varying vec4 clipPosition;
 
 void main() {
 
@@ -11,5 +11,5 @@ void main() {
 	// Transform again to get the clip-space position.  The gl_Position
 	// variable tells OpenGL where the vertex should go.
 	gl_Position = gl_ProjectionMatrix * eyeTemp;
-	position = gl_Position;
+	clipPosition = gl_Position;
 }

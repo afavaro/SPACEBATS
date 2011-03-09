@@ -8,7 +8,7 @@
  */
 
 #include "Framebuffer.h"
-
+#include "Shader.h"
 
 class MotionBlur{
 	
@@ -17,7 +17,7 @@ public:
 	~MotionBlur();
 	
 	Framebuffer* getFrame(int frame);
-	
+	void render(Shader* shader);
 	
 	void bind();
 	void unbind();
@@ -27,5 +27,6 @@ private:
 	int cur;
 	int counter;
 	int numFrames;
+	int width, height;
 
 };
