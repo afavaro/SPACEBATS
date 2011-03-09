@@ -220,10 +220,10 @@ void renderFrame() {
 	
 	spaceship.useShader(toonShader);
 	spaceship.render(FINAL_PASS, normalsBuffer);
-	glDrawBuffer(GL_FRONT);
-	glAccum(GL_RETURN, val);
-	glDrawBuffer(GL_BACK);
+	//glDrawBuffer(GL_FRONT);
+	//glAccum(GL_RETURN, val);
+	//glDrawBuffer(GL_BACK);
 	
 	
-	glAccum(GL_RETURN, 1.f);
+	//glAccum(GL_RETURN, 1.f);
 }

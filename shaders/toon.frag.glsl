@@ -20,29 +20,29 @@ varying vec4 clipPosition;
 vec4 gradient(vec2 p, vec4 pcolor) {
 	vec4 grad = vec4(0, 0, 0, 0);
 
-	vec2 a = p + vec2(-pixelSize.x, pixelSize.y);
-	grad += abs(texture2D(normalMap, a) - pcolor);
+	vec2 q = p + vec2(-pixelSize.x, pixelSize.y);
+	grad += abs(texture2D(normalMap, q) - pcolor);
 
-	vec2 b = p + vec2(0, pixelSize.y);
-	grad += 2.0 * abs(texture2D(normalMap, b) - pcolor);
+	q = p + vec2(0, pixelSize.y);
+	grad += 2.0 * abs(texture2D(normalMap, q) - pcolor);
 
-	vec2 c = p + pixelSize;
-	grad += abs(texture2D(normalMap, c) - pcolor);
+	q = p + pixelSize;
+	grad += abs(texture2D(normalMap, q) - pcolor);
 
-	vec2 d = p - vec2(pixelSize.x, 0);
-	grad += 2.0 * abs(texture2D(normalMap, d) - pcolor);
+	q = p - vec2(pixelSize.x, 0);
+	grad += 2.0 * abs(texture2D(normalMap, q) - pcolor);
 
-	vec2 e = p + vec2(pixelSize.x, 0);
-	grad += 2.0 * abs(texture2D(normalMap, e) - pcolor);
+	q = p + vec2(pixelSize.x, 0);
+	grad += 2.0 * abs(texture2D(normalMap, q) - pcolor);
 
-	vec2 f = p - pixelSize;
-	grad += abs(texture2D(normalMap, f) - pcolor);
+	q = p - pixelSize;
+	grad += abs(texture2D(normalMap, q) - pcolor);
 
-	vec2 g = p - vec2(0, pixelSize.y);
-	grad += 2.0 * abs(texture2D(normalMap, g) - pcolor);
+	q = p - vec2(0, pixelSize.y);
+	grad += 2.0 * abs(texture2D(normalMap, q) - pcolor);
 
-	vec2 h = p + vec2(pixelSize.x, -pixelSize.y);
-	grad += abs(texture2D(normalMap, h) - pcolor);
+	q = p + vec2(pixelSize.x, -pixelSize.y);
+	grad += abs(texture2D(normalMap, q) - pcolor);
 
 	return grad / 8.0;
 }
