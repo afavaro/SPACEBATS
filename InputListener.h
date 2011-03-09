@@ -5,7 +5,7 @@
 
 class InputListener {
 	public:
-		virtual void handleEvent(sf::Event &event) = 0;
+		virtual void handleEvent(sf::Event &event, const sf::Input &input) = 0;
 };
 
 #endif

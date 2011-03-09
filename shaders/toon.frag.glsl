@@ -62,7 +62,7 @@ float outline(vec2 p) {
 		}
 	}
 
-	float dn = length((gmax.xyz - gmin.xyz) / 0.1);
+	float dn = length((gmax.xyz - gmin.xyz) / 0.2);
 	float dz = (gmax.w - gmin.w) / 0.005;
 	return max(min(dn * dn, 1.0), min(dz * dz, 1.0));
 }
