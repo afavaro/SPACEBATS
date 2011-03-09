@@ -24,10 +24,10 @@ sf::Clock clck;
 // This creates an asset importer using the Open Asset Import library.
 // It automatically manages resources for you, and frees them when the program
 // exits.
-Assimp::Importer importer;
+Assimp::Importer importer, marsImporter;
 
 //TODO: put this somewhere else
-Model spaceship;
+Model spaceship, mars;
 
 Shader *phongShader, *normalShader, *toonShader, *blurShader;
 
@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
     loadAssets();
 	motionBlur = new MotionBlur(NUM_MOTION_BLUR_FRAMES, window.GetWidth(), window.GetHeight());
 	glClear(GL_ACCUM_BUFFER_BIT);
-
+	
 	inputListeners.push_back(&camera);
 	
 	normalsBuffer = new Framebuffer(window.GetWidth(), window.GetHeight());
@@ -114,6 +114,7 @@ void loadAssets() {
 	blurShader = new Shader("shaders/blur");
 	
 	spaceship.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
+	mars.loadFromFile("models/mars", "mars.3ds", marsImporter);
 	aiMatrix4x4 rot;
 	aiMatrix4x4::RotationX(-M_PI / 2.0, rot);
 	spaceship.setTransformation(rot);
@@ -190,14 +191,37 @@ void renderFrame() {
 	spaceship.render(FINAL_PASS, normalsBuffer);
 	motionBlur->unbind();
 	
-	int frames = frameCounter < NUM_MOTION_BLUR_FRAMES ? frameCounter : NUM_MOTION_BLUR_FRAMES;
+	//int frames = frameCounter < NUM_MOTION_BLUR_FRAMES ? frameCounter : NUM_MOTION_BLUR_FRAMES;
 	//float val = 1.0 / frames;
-
+	
 	glClearColor(1.0, 0.0, 0.0, 1.0);		
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	setupLights();
-	
 	spaceship.useShader(toonShader);
 	spaceship.render(FINAL_PASS, normalsBuffer);
+
+//	motionBlur->render(blurShader);
+	
+//	for(int i = 0; i < 10; i++){
+//		glPushMatrix();
+//		glScalef(0.5, 0.5, 0.5);
+//		glTranslatef(10, 0, -100* i);
+//		glTranslatef(0, 0, frameCounter / 5.0);
+//		mars.useShader(toonShader);
+//		mars.render(FINAL_PASS, normalsBuffer);
+//		glPopMatrix();
+//	}
+//	
+//	for(int i = 0; i < 10; i++){
+//		glPushMatrix();
+//		glScalef(0.5, 0.5, 0.5);
+//		glTranslatef(-10, -10, -100* i);
+//		glTranslatef(0, 0, frameCounter / 5.0);
+//		mars.useShader(toonShader);
+//		mars.render(FINAL_PASS, normalsBuffer);
+//		glPopMatrix();
+//	}
+	
+	
 }

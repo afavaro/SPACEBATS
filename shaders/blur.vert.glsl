@@ -1,6 +1,6 @@
 attribute vec3 positionIn;
 
-varying vec3 clipPosition;
+varying vec4 clipPosition;
 
 void main() {
 
