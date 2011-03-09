@@ -144,7 +144,7 @@ void handleInput() {
 
 void setupLights()
 {
-	GLfloat pos[] = { -4.0, 0.0, 1.0, 0.0 };
+	GLfloat pos[] = { 0.0, 1.0, 0.0, 0.0 };
 	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat ambient[] = { 0.3, 0.3, 0.3, 1.0 };
