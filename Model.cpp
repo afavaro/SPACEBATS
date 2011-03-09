@@ -12,7 +12,7 @@ Image Model::white(1, 1, sf::Color(255, 255, 255));
 Model::Model() {
 	scene = NULL;
 	shader = NULL;
-	diffuse = specular = &white;
+	diffuse = specular = NULL;
 	indexBuffer = NULL;
 	transformation = aiMatrix4x4(
 			1.0, 0.0, 0.0, 0.0,
@@ -22,8 +22,8 @@ Model::Model() {
 }
 
 Model::~Model() {
-	if (diffuse != &white) delete diffuse;
-	if (specular != &white) delete specular;
+	delete diffuse;
+	delete specular;
 	delete[] indexBuffer;
 }
 
@@ -124,12 +124,14 @@ static void setTextures(Image *diffuse, Image *specular, Shader *shader, Framebu
 	GLint diff = glGetUniformLocation(shader->programID(), "diffuseMap");
 	glUniform1i(diff, 0);
 	glActiveTexture(GL_TEXTURE0);
-	diffuse->Bind();
+	if (diffuse) diffuse->Bind();
+	else Model::white.Bind();
 
 	GLint spec = glGetUniformLocation(shader->programID(), "specularMap");
 	glUniform1i(spec, 1);
 	glActiveTexture(GL_TEXTURE1);
-	specular->Bind();
+	if (specular) specular->Bind();
+	else Model::white.Bind();
 
 	GLint norm = glGetUniformLocation(shader->programID(), "normalMap");
 	glUniform1i(norm, 2);
@@ -142,7 +144,7 @@ static void setTextures(Image *diffuse, Image *specular, Shader *shader, Framebu
 	glBindTexture(GL_TEXTURE_2D, normalsBuffer->depthTextureId());
 }
 
-static void setMeshData(aiMesh *mesh, Shader *shader, RenderPass pass)
+void Model::setMeshData(aiMesh *mesh, Shader *shader, RenderPass pass)
 {
 	GLint pos = glGetAttribLocation(shader->programID(), "positionIn");
 	glEnableVertexAttribArray(pos);
@@ -153,9 +155,11 @@ static void setMeshData(aiMesh *mesh, Shader *shader, RenderPass pass)
 	glVertexAttribPointer(normal, 3, GL_FLOAT, 0, sizeof(aiVector3D), mesh->mNormals);
 
 	if (pass == FINAL_PASS) {
-		GLint texcoord = glGetAttribLocation(shader->programID(), "texcoordIn");
-		glEnableVertexAttribArray(texcoord);
-		glVertexAttribPointer(texcoord, 2, GL_FLOAT, 0, sizeof(aiVector3D), mesh->mTextureCoords[0]);
+		if (diffuse) {
+			GLint texcoord = glGetAttribLocation(shader->programID(), "texcoordIn");
+			glEnableVertexAttribArray(texcoord);
+			glVertexAttribPointer(texcoord, 2, GL_FLOAT, 0, sizeof(aiVector3D), mesh->mTextureCoords[0]);
+		}
 	}
 }
 

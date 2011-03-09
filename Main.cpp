@@ -31,6 +31,8 @@ Model spaceship;
 
 Shader *phongShader, *normalShader, *toonShader, *blurShader;
 
+sf::Image background;
+
 Camera camera(
 			  aiVector3D(0.0, 0.0, 50.0),
 			  aiMatrix3x3(
@@ -50,6 +52,7 @@ void initOpenGL();
 void loadAssets();
 void handleInput();
 void renderFrame();
+void renderBackground();
 
 int main(int argc, char** argv) {
 	
@@ -112,11 +115,14 @@ void loadAssets() {
 	normalShader = new Shader("shaders/normal");
 	toonShader = new Shader("shaders/toon");
 	blurShader = new Shader("shaders/blur");
+
+	background.LoadFromFile("models/Space-Background.jpg");
 	
-	spaceship.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
-	aiMatrix4x4 rot;
-	aiMatrix4x4::RotationX(-M_PI / 2.0, rot);
-	spaceship.setTransformation(rot);
+	//spaceship.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
+	//aiMatrix4x4 rot;
+	//aiMatrix4x4::RotationX(-M_PI / 2.0, rot);
+	//spaceship.setTransformation(rot);
+	spaceship.loadFromFile("models/mars", "mars.3ds", importer);
 }
 
 
@@ -164,6 +170,30 @@ void setupLights()
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
 }
 
+void renderBackground()
+{
+	glUseProgram(0);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(-1.0, 1.0, -1.0, 1.0);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	background.Bind();
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0, 0.0);
+	glVertex3f(-1.0, -1.0, 1.0);
+	glTexCoord2f(1.0, 0.0);
+	glVertex3f(1.0, -1.0, 1.0);
+	glTexCoord2f(1.0, 1.0);
+	glVertex3f(1.0, 1.0, 1.0);
+	glTexCoord2f(0.0, 1.0);
+	glVertex3f(-1.0, 1.0, 1.0);
+	glEnd();
+}
 
 void renderFrame() {
 	frameCounter++;
@@ -191,9 +221,9 @@ void renderFrame() {
 	motionBlur->unbind();
 	
 	int frames = frameCounter < NUM_MOTION_BLUR_FRAMES ? frameCounter : NUM_MOTION_BLUR_FRAMES;
-	cout << frames << " frames" << endl;
+	//cout << frames << " frames" << endl;
 	float val = 1.0 / frames;
-	cout << "val per" << val << endl;
+	//cout << "val per" << val << endl;
 
 	glClearColor(1.0, 0.0, 0.0, 1.0);		
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
