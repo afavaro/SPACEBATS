@@ -210,14 +210,14 @@ void renderBackground()
 	glFlush();
 }
 
-void renderObjects(){
+void renderObjects(RenderPass pass) {
 	for(int i = 0; i < 10; i++){
 		glPushMatrix();
 		glScalef(0.5, 0.5, 0.5);
 		glTranslatef(10, 0, -100* i);
 		glTranslatef(0, 0, frameCounter / 5.0);
-		mars.useShader(toonShader);
-		mars.render(FINAL_PASS, normalsBuffer);
+		mars.useShader(pass == FINAL_PASS? toonShader : normalShader);
+		mars.render(pass, normalsBuffer);
 		glPopMatrix();
 	}
 	
@@ -226,8 +226,8 @@ void renderObjects(){
 		glScalef(0.5, 0.5, 0.5);
 		glTranslatef(-10, -10, -100* i);
 		glTranslatef(0, 0, frameCounter / 5.0);
-		mars.useShader(toonShader);
-		mars.render(FINAL_PASS, normalsBuffer);
+		mars.useShader(pass == FINAL_PASS? toonShader : normalShader);
+		mars.render(pass, normalsBuffer);
 		glPopMatrix();
 	}
 	
@@ -244,6 +244,8 @@ void renderFrame() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	spaceship.model.useShader(normalShader);
 	spaceship.model.render(NORMALS_PASS, normalsBuffer);
+
+	renderObjects(NORMALS_PASS);
 
 	normalsBuffer->unbind();
 	
@@ -276,7 +278,7 @@ void renderFrame() {
 	setupLights();
 //	motionBlur->render(blurShader);
 	
-	renderObjects();	
+	renderObjects(FINAL_PASS);	
 	
 	
 	spaceship.model.useShader(toonShader);
