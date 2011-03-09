@@ -124,11 +124,11 @@ void loadAssets() {
 
 	background.LoadFromFile("models/Space-Background.jpg");
 	
-	//spaceship.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
-	//aiMatrix4x4 rot;
-	//aiMatrix4x4::RotationX(-M_PI / 2.0, rot);
-	//spaceship.setTransformation(rot);
-	spaceship.model.loadFromFile("models/mars", "mars.3ds", importer);
+	//spaceship.model.loadFromFile("models/mars", "mars.3ds", importer);
+	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
+	aiMatrix4x4 rot;
+	aiMatrix4x4::RotationX(-M_PI / 2.0, rot);
+	spaceship.model.setTransformation(rot);
 }
 
 
@@ -187,18 +187,21 @@ void renderBackground()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+	glActiveTexture(GL_TEXTURE0);
 	background.Bind();
 
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0, 0.0);
-	glVertex3f(-1.0, -1.0, 1.0);
+	glVertex2f(-1.0, -1.0);
 	glTexCoord2f(1.0, 0.0);
-	glVertex3f(1.0, -1.0, 1.0);
+	glVertex2f(1.0, -1.0);
 	glTexCoord2f(1.0, 1.0);
-	glVertex3f(1.0, 1.0, 1.0);
+	glVertex2f(1.0, 1.0);
 	glTexCoord2f(0.0, 1.0);
-	glVertex3f(-1.0, 1.0, 1.0);
+	glVertex2f(-1.0, 1.0);
 	glEnd();
+
+	glFlush();
 }
 
 void renderFrame() {
@@ -208,7 +211,6 @@ void renderFrame() {
 	
 	normalsBuffer->bind();
 	
-	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	spaceship.model.useShader(normalShader);
@@ -216,6 +218,7 @@ void renderFrame() {
 	
 	normalsBuffer->unbind();
 	
+	/*
 	motionBlur->bind();
 	glClearColor(0.0, 1.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -230,9 +233,15 @@ void renderFrame() {
 	//cout << frames << " frames" << endl;
 	float val = 1.0 / frames;
 	//cout << "val per" << val << endl;
+	*/
 
-	glClearColor(1.0, 0.0, 0.0, 1.0);		
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	renderBackground();
+
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	
 	setupLights();
 	

@@ -122,25 +122,25 @@ static void setMaterial(aiMaterial *mat, Shader *shader)
 static void setTextures(Image *diffuse, Image *specular, Shader *shader, Framebuffer *normalsBuffer)
 {
 	GLint diff = glGetUniformLocation(shader->programID(), "diffuseMap");
-	glUniform1i(diff, 0);
-	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(diff, 1);
+	glActiveTexture(GL_TEXTURE1);
 	if (diffuse) diffuse->Bind();
 	else Model::white.Bind();
 
 	GLint spec = glGetUniformLocation(shader->programID(), "specularMap");
-	glUniform1i(spec, 1);
-	glActiveTexture(GL_TEXTURE1);
+	glUniform1i(spec, 2);
+	glActiveTexture(GL_TEXTURE2);
 	if (specular) specular->Bind();
 	else Model::white.Bind();
 
 	GLint norm = glGetUniformLocation(shader->programID(), "normalMap");
-	glUniform1i(norm, 2);
-	glActiveTexture(GL_TEXTURE2);
+	glUniform1i(norm, 3);
+	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, normalsBuffer->colorTextureId());
 
 	GLint depth = glGetUniformLocation(shader->programID(), "depthMap");
-	glUniform1i(depth, 3);
-	glActiveTexture(GL_TEXTURE3);
+	glUniform1i(depth, 4);
+	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, normalsBuffer->depthTextureId());
 }
 
