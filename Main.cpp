@@ -10,6 +10,8 @@
 
 #include <cmath>
 
+#define TIMESTEP 0.01
+
 using namespace std;
 
 // Note: See the SMFL documentation for info on setting up fullscreen mode
@@ -21,6 +23,8 @@ sf::RenderWindow window(sf::VideoMode(800, 600), "sPaCEbaTS", sf::Style::Close, 
 // This is a clock you can use to control animation.  For more info, see:
 // http://www.sfml-dev.org/tutorials/1.6/window-time.php
 sf::Clock clck;
+
+GLfloat accum = 0.0;
 
 // This creates an asset importer using the Open Asset Import library.
 // It automatically manages resources for you, and frees them when the program
@@ -73,9 +77,16 @@ int main(int argc, char** argv) {
 	normalsBuffer = new Framebuffer(window.GetWidth(), window.GetHeight());
 	
     // Put your game loop here (i.e., render with OpenGL, update animation)
-    while (window.IsOpened()) {
-		
+    while (window.IsOpened()) {	
         handleInput();
+
+				accum += clck.GetElapsedTime();
+				clck.Reset();
+				while (accum > TIMESTEP) {
+					spaceship.update(TIMESTEP);
+					accum -= TIMESTEP;
+				}
+
         renderFrame();
         window.Display();
     }
@@ -205,14 +216,14 @@ void renderBackground()
 	glFlush();
 }
 
-void renderObjects(){
+void renderObjects(RenderPass pass) {
 	for(int i = 0; i < 10; i++){
 		glPushMatrix();
 		glScalef(0.5, 0.5, 0.5);
 		glTranslatef(10, 0, -100* i);
 		glTranslatef(0, 0, frameCounter / 5.0);
-		mars.useShader(toonShader);
-		mars.render(FINAL_PASS, normalsBuffer);
+		mars.useShader(pass == FINAL_PASS? toonShader : normalShader);
+		mars.render(pass, normalsBuffer);
 		glPopMatrix();
 	}
 	
@@ -221,8 +232,8 @@ void renderObjects(){
 		glScalef(0.5, 0.5, 0.5);
 		glTranslatef(-10, -10, -100* i);
 		glTranslatef(0, 0, frameCounter / 5.0);
-		mars.useShader(toonShader);
-		mars.render(FINAL_PASS, normalsBuffer);
+		mars.useShader(pass == FINAL_PASS? toonShader : normalShader);
+		mars.render(pass, normalsBuffer);
 		glPopMatrix();
 	}
 	
@@ -230,7 +241,6 @@ void renderObjects(){
 
 void renderFrame() {
 	frameCounter++;
-	spaceship.easeToNewPosition();
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	
 	//Render normals
@@ -239,6 +249,7 @@ void renderFrame() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	spaceship.model.useShader(normalShader);
 	spaceship.model.render(NORMALS_PASS, normalsBuffer);
+
 
 	normalsBuffer->unbind();
 	
@@ -271,7 +282,6 @@ void renderFrame() {
 	setupLights();
 //	motionBlur->render(blurShader);
 	
-	renderObjects();	
 	
 	
 	spaceship.model.useShader(phongShader);
