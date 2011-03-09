@@ -25,11 +25,12 @@ sf::Clock clck;
 // This creates an asset importer using the Open Asset Import library.
 // It automatically manages resources for you, and frees them when the program
 // exits.
-Assimp::Importer importer;
-
+Assimp::Importer importer, marsImporter;
 Shader *phongShader, *normalShader, *toonShader, *blurShader;
 
 sf::Image background;
+
+Model mars;
 
 Camera camera(
 			  aiVector3D(0.0, 0.0, 50.0),
@@ -65,7 +66,7 @@ int main(int argc, char** argv) {
     loadAssets();
 	motionBlur = new MotionBlur(NUM_MOTION_BLUR_FRAMES, window.GetWidth(), window.GetHeight());
 	glClear(GL_ACCUM_BUFFER_BIT);
-
+	
 	inputListeners.push_back(&camera);
 	inputListeners.push_back(&spaceship);
 	
@@ -123,6 +124,11 @@ void loadAssets() {
 	blurShader = new Shader("shaders/blur");
 
 	background.LoadFromFile("models/Space-Background.jpg");
+//	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
+	mars.loadFromFile("models/mars", "mars.3ds", marsImporter);
+//	aiMatrix4x4 rot;
+//	aiMatrix4x4::RotationX(-M_PI / 2.0, rot);
+//	spaceship.setTransformation(rot);
 	
 	//spaceship.model.loadFromFile("models/mars", "mars.3ds", importer);
 	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
@@ -204,27 +210,49 @@ void renderBackground()
 	glFlush();
 }
 
+void renderObjects(){
+	for(int i = 0; i < 10; i++){
+		glPushMatrix();
+		glScalef(0.5, 0.5, 0.5);
+		glTranslatef(10, 0, -100* i);
+		glTranslatef(0, 0, frameCounter / 5.0);
+		mars.useShader(toonShader);
+		mars.render(FINAL_PASS, normalsBuffer);
+		glPopMatrix();
+	}
+	
+	for(int i = 0; i < 10; i++){
+		glPushMatrix();
+		glScalef(0.5, 0.5, 0.5);
+		glTranslatef(-10, -10, -100* i);
+		glTranslatef(0, 0, frameCounter / 5.0);
+		mars.useShader(toonShader);
+		mars.render(FINAL_PASS, normalsBuffer);
+		glPopMatrix();
+	}
+	
+}
+
 void renderFrame() {
 	frameCounter++;
 	
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	
+	//Render normals
 	normalsBuffer->bind();
-	
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
 	spaceship.model.useShader(normalShader);
 	spaceship.model.render(NORMALS_PASS, normalsBuffer);
-	
+
 	normalsBuffer->unbind();
 	
 	/*
+	//Render this frame to motion blur
 	motionBlur->bind();
 	glClearColor(0.0, 1.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
 	setupLights();
-	
 	spaceship.model.useShader(toonShader);
 	spaceship.model.render(FINAL_PASS, normalsBuffer);
 	motionBlur->unbind();
@@ -234,6 +262,8 @@ void renderFrame() {
 	float val = 1.0 / frames;
 	//cout << "val per" << val << endl;
 	*/
+	//int frames = frameCounter < NUM_MOTION_BLUR_FRAMES ? frameCounter : NUM_MOTION_BLUR_FRAMES;
+	//float val = 1.0 / frames;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -242,8 +272,12 @@ void renderFrame() {
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
-	
+
 	setupLights();
+//	motionBlur->render(blurShader);
+	
+	renderObjects();	
+	
 	
 	spaceship.model.useShader(toonShader);
 	spaceship.model.render(FINAL_PASS, normalsBuffer);
