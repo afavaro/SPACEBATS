@@ -9,6 +9,8 @@
 
 #include "MotionBlur.h"
 
+#include <cstdio>
+
 
 MotionBlur::MotionBlur(int numFrames, int width, int height){
 	buffers = new Framebuffer*[numFrames];
