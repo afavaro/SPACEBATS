@@ -90,6 +90,8 @@ void Ship::handleEvent(sf::Event &event, const sf::Input &input) {
 					this->cam->pull(pos, aiVector3D(1.0,0,0));
 					//}
 					break;
+				default:
+					break;
 			}
 			break;
 		case sf::Event::KeyReleased: 
@@ -102,6 +104,8 @@ void Ship::handleEvent(sf::Event &event, const sf::Input &input) {
 				case sf::Key::Right:
 					cout << "RIGHT RELEASED!" << endl;
 					roll(30.0);
+					break;
+				default:
 					break;
 			}
 		default:

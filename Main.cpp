@@ -128,7 +128,7 @@ void loadAssets() {
 	//aiMatrix4x4 rot;
 	//aiMatrix4x4::RotationX(-M_PI / 2.0, rot);
 	//spaceship.setTransformation(rot);
-	spaceship.loadFromFile("models/mars", "mars.3ds", importer);
+	spaceship.model.loadFromFile("models/mars", "mars.3ds", importer);
 }
 
 
