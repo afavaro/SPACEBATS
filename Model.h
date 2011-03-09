@@ -7,7 +7,7 @@
 
 enum RenderPass {
 	NORMALS_PASS,
-	FINAL_PASS
+	FINAL_PASS,
 };
 
 class Model {

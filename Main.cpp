@@ -15,7 +15,7 @@ using namespace std;
 // and using rendering settings
 // http://www.sfml-dev.org/tutorials/1.6/window-window.php
 sf::WindowSettings settings(24, 8, 2);
-sf::Window window(sf::VideoMode(800, 600), "CS248 Rules!", sf::Style::Close, settings);
+sf::RenderWindow window(sf::VideoMode(800, 600), "sPaCEbaTS", sf::Style::Close, settings);
 
 // This is a clock you can use to control animation.  For more info, see:
 // http://www.sfml-dev.org/tutorials/1.6/window-time.php
@@ -29,7 +29,7 @@ Assimp::Importer importer;
 //TODO: put this somewhere else
 Model spaceship;
 
-Shader *phongShader, *normalShader, *toonShader;
+Shader *phongShader, *normalShader, *toonShader, *blurShader;
 
 Camera camera(
 			  aiVector3D(0.0, 0.0, 50.0),
@@ -42,7 +42,7 @@ vector<InputListener*> inputListeners;
 
 Framebuffer *normalsBuffer = NULL;
 
-
+static int frameCounter = 0;
 const int NUM_MOTION_BLUR_FRAMES = 4;
 MotionBlur* motionBlur;
 
@@ -56,11 +56,8 @@ int main(int argc, char** argv) {
     initOpenGL();
     loadAssets();
 	motionBlur = new MotionBlur(NUM_MOTION_BLUR_FRAMES, window.GetWidth(), window.GetHeight());
-	
-//	for(int i = 0; i < 5; i++){
-//		Framebuffer* test = motionBlur->getFrame(i);
-//		cout << "test color tex id " << test->colorTextureId() << endl;
-//	}
+	glClear(GL_ACCUM_BUFFER_BIT);
+
 	inputListeners.push_back(&camera);
 	
 	normalsBuffer = new Framebuffer(window.GetWidth(), window.GetHeight());
@@ -76,6 +73,7 @@ int main(int argc, char** argv) {
 	delete phongShader;
 	delete normalShader;
 	delete toonShader;
+	delete blurShader;
 	
 	delete normalsBuffer;
 	
@@ -113,6 +111,7 @@ void loadAssets() {
 	phongShader = new Shader("shaders/phong");
 	normalShader = new Shader("shaders/normal");
 	toonShader = new Shader("shaders/toon");
+	blurShader = new Shader("shaders/blur");
 	
 	spaceship.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
 	aiMatrix4x4 rot;
@@ -167,6 +166,8 @@ void setupLights()
 
 
 void renderFrame() {
+	frameCounter++;
+	
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	
 	normalsBuffer->bind();
@@ -189,12 +190,40 @@ void renderFrame() {
 	spaceship.render(FINAL_PASS, normalsBuffer);
 	motionBlur->unbind();
 	
-	glClearColor(0.0, 1.0, 0.0, 1.0);
+	glClearColor(1.0, 0.0, 0.0, 1.0);
+	//glClear(GL_ACCUM_BUFFER_BIT);
+
+	
+	int frames = frameCounter < NUM_MOTION_BLUR_FRAMES ? frameCounter : NUM_MOTION_BLUR_FRAMES;
+	cout << frames << " frames" << endl;
+	float val = 1.0 / frames;
+	cout << "val per" << val << endl;
+	
+	//if(frameCounter >= 10) return;
+//	sf::Image output;
+//	output.CopyScreen(window);
+//	char buf[50];
+//	sprintf(buf, "output%d.jpg", frameCounter);
+//	output.SaveToFile(buf);
+
+	/// for every frame ... add it to the accumulation buffer
+	/// and show the accumulation buffer
+	//glAccum(GL_ACCUM, val);
+	
+	
+	/// then put the accumulation buffer on screen
+	
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	setupLights();
 	
 	spaceship.useShader(toonShader);
 	spaceship.render(FINAL_PASS, normalsBuffer);
+	glDrawBuffer(GL_FRONT);
+	glAccum(GL_RETURN, val);
+	glDrawBuffer(GL_BACK);
 	
+	
+	glAccum(GL_RETURN, 1.f);
 }

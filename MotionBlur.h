@@ -25,6 +25,7 @@ public:
 private:
 	Framebuffer **buffers;
 	int cur;
+	int counter;
 	int numFrames;
 
 };
