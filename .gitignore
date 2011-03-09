@@ -1,3 +1,5 @@
 linux/*
 models/*
 *.swp
+xcode/*
+*DS_Store
