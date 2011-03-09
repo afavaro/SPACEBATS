@@ -6,20 +6,37 @@
  *  Copyright 2011 Stanford University. All rights reserved.
  *
  */
-
+//assrow-> glcolv
 #include "Ship.h"
 #include <iostream>
+#include <math.h>
 using namespace std;
+
+void MakeMatrixFromQuat(aiMatrix3x3& inp){
+	aiMatrix4x4 temptrans(inp.a1,inp.a2,inp.a3,0,
+						  inp.b1,inp.b2,inp.b3,0,
+						  inp.c1,inp.c2,inp.c3,0,
+						  0,	0,	    0,	   1);
+}
 
 Ship::Ship(aiVector3D pos, aiMatrix3x3 basis, Camera* c) {
 	this->pos = pos;
 	this->basis = basis;
 	this->cam = c;
 	this->rot = 0.0;
-	shipQuat = aiQuaternion(aiVector3D(1,0,0), 0);
+	shipQuat = aiQuaternion(aiVector3D(0,1,0), -M_PI/2);
 	duration = 30;
 	rotationDebt = 0;
 	time = duration;
+
+	MakeMatrixFromQuat(basis);
+	aiMatrix4x4 translation;
+	aiMatrix4x4::Translation(pos, translation);
+	aiMatrix4x4 rot;
+	aiMatrix4x4::RotationX(-M_PI / 2.0, rot);
+	transformation = translation * aiMatrix4x4(shipQuat.GetMatrix()) * rot;
+	model.setTransformation(transformation);
+
 }
 
 Ship::~Ship() {}

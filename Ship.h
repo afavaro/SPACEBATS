@@ -32,9 +32,11 @@ public:
 	void roll(GLfloat rotation);
 	
 	Model model;
+	
 	GLfloat rot;
 	aiVector3D pos;
 	aiMatrix3x3 basis;
+	aiMatrix4x4 transformation;
 	aiQuaternion shipQuat;
 	
 	GLfloat time, duration, change, startVal;
