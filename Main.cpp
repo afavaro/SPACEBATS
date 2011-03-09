@@ -244,14 +244,14 @@ void renderFrame() {
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	
 	//Render normals
-	normalsBuffer->bind();
+//	normalsBuffer->bind();
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	spaceship.model.useShader(normalShader);
 	spaceship.model.render(NORMALS_PASS, normalsBuffer);
 
 
-	normalsBuffer->unbind();
+//	normalsBuffer->unbind();
 	
 	/*
 	//Render this frame to motion blur
@@ -271,11 +271,11 @@ void renderFrame() {
 	//int frames = frameCounter < NUM_MOTION_BLUR_FRAMES ? frameCounter : NUM_MOTION_BLUR_FRAMES;
 	//float val = 1.0 / frames;
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	renderBackground();
+//	renderBackground();
 
-	glClear(GL_DEPTH_BUFFER_BIT);
+//	glClear(GL_DEPTH_BUFFER_BIT);
 
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 
@@ -284,6 +284,6 @@ void renderFrame() {
 	
 	
 	
-	spaceship.model.useShader(phongShader);
-	spaceship.model.render(FINAL_PASS, normalsBuffer);
+//	spaceship.model.useShader(phongShader);
+//	spaceship.model.render(FINAL_PASS, normalsBuffer);
 }
