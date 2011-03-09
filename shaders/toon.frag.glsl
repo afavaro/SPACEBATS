@@ -51,61 +51,16 @@ float outline(vec2 p) {
 	vec4 gmax = gradient(p, texture2D(normalMap, p));
 	vec4 gmin = gmax;
 
-	vec2 q = p + vec2(-pixelSize.x, pixelSize.y);
-	vec4 g = gradient(q, texture2D(normalMap, q));
-	gmax.x = max(gmax.x, g.x); gmin.x = min(gmin.x, g.x);
-	gmax.y = max(gmax.y, g.y); gmin.y = min(gmin.y, g.y);
-	gmax.z = max(gmax.z, g.z); gmin.z = min(gmin.z, g.z);
-	gmax.w = max(gmax.w, g.w); gmin.w = min(gmin.w, g.w);
-
-	q = p + vec2(0, pixelSize.y);
-	g = gradient(q, texture2D(normalMap, q));
-	gmax.x = max(gmax.x, g.x); gmin.x = min(gmin.x, g.x);
-	gmax.y = max(gmax.y, g.y); gmin.y = min(gmin.y, g.y);
-	gmax.z = max(gmax.z, g.z); gmin.z = min(gmin.z, g.z);
-	gmax.w = max(gmax.w, g.w); gmin.w = min(gmin.w, g.w);
-
-	q = p + pixelSize;
-	g = gradient(q, texture2D(normalMap, q));
-	gmax.x = max(gmax.x, g.x); gmin.x = min(gmin.x, g.x);
-	gmax.y = max(gmax.y, g.y); gmin.y = min(gmin.y, g.y);
-	gmax.z = max(gmax.z, g.z); gmin.z = min(gmin.z, g.z);
-	gmax.w = max(gmax.w, g.w); gmin.w = min(gmin.w, g.w);
-
-	q = p - vec2(pixelSize.x, 0);
-	g = gradient(q, texture2D(normalMap, q));
-	gmax.x = max(gmax.x, g.x); gmin.x = min(gmin.x, g.x);
-	gmax.y = max(gmax.y, g.y); gmin.y = min(gmin.y, g.y);
-	gmax.z = max(gmax.z, g.z); gmin.z = min(gmin.z, g.z);
-	gmax.w = max(gmax.w, g.w); gmin.w = min(gmin.w, g.w);
-
-	q = p + vec2(pixelSize.x, 0);
-	g = gradient(q, texture2D(normalMap, q));
-	gmax.x = max(gmax.x, g.x); gmin.x = min(gmin.x, g.x);
-	gmax.y = max(gmax.y, g.y); gmin.y = min(gmin.y, g.y);
-	gmax.z = max(gmax.z, g.z); gmin.z = min(gmin.z, g.z);
-	gmax.w = max(gmax.w, g.w); gmin.w = min(gmin.w, g.w);
-
-	q = p - pixelSize;
-	g = gradient(q, texture2D(normalMap, q));
-	gmax.x = max(gmax.x, g.x); gmin.x = min(gmin.x, g.x);
-	gmax.y = max(gmax.y, g.y); gmin.y = min(gmin.y, g.y);
-	gmax.z = max(gmax.z, g.z); gmin.z = min(gmin.z, g.z);
-	gmax.w = max(gmax.w, g.w); gmin.w = min(gmin.w, g.w);
-
-	q = p - vec2(0, pixelSize.y);
-	g = gradient(q, texture2D(normalMap, q));
-	gmax.x = max(gmax.x, g.x); gmin.x = min(gmin.x, g.x);
-	gmax.y = max(gmax.y, g.y); gmin.y = min(gmin.y, g.y);
-	gmax.z = max(gmax.z, g.z); gmin.z = min(gmin.z, g.z);
-	gmax.w = max(gmax.w, g.w); gmin.w = min(gmin.w, g.w);
-
-	q = p + vec2(pixelSize.x, -pixelSize.y);
-	g = gradient(q, texture2D(normalMap, q));
-	gmax.x = max(gmax.x, g.x); gmin.x = min(gmin.x, g.x);
-	gmax.y = max(gmax.y, g.y); gmin.y = min(gmin.y, g.y);
-	gmax.z = max(gmax.z, g.z); gmin.z = min(gmin.z, g.z);
-	gmax.w = max(gmax.w, g.w); gmin.w = min(gmin.w, g.w);
+	for (int i = -1; i <= 1; i++) {
+		for (int j = -1; j <= 1; j++) {
+			vec2 q = p + vec2(i * pixelSize.x, j * pixelSize.y);
+			vec4 g = gradient(q, texture2D(normalMap, q));
+			gmax.x = max(gmax.x, g.x); gmin.x = min(gmin.x, g.x);
+			gmax.y = max(gmax.y, g.y); gmin.y = min(gmin.y, g.y);
+			gmax.z = max(gmax.z, g.z); gmin.z = min(gmin.z, g.z);
+			gmax.w = max(gmax.w, g.w); gmin.w = min(gmin.w, g.w);
+		}
+	}
 
 	float dn = length((gmax.xyz - gmin.xyz) / 0.1);
 	float dz = (gmax.w - gmin.w) / 0.005;
