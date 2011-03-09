@@ -191,16 +191,14 @@ void renderFrame() {
 	motionBlur->unbind();
 	
 	int frames = frameCounter < NUM_MOTION_BLUR_FRAMES ? frameCounter : NUM_MOTION_BLUR_FRAMES;
-	cout << frames << " frames" << endl;
-	float val = 1.0 / frames;
-	cout << "val per" << val << endl;
+	//float val = 1.0 / frames;
 
 	glClearColor(1.0, 0.0, 0.0, 1.0);		
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	setupLights();
 	
-	spaceship.useShader(toonShader);
-	spaceship.render(FINAL_PASS, normalsBuffer);
+//	spaceship.useShader(blurShader);
+//	spaceship.render(BLUR_PASS, normalsBuffer);
 
 }
