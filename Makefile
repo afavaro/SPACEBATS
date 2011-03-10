@@ -8,7 +8,7 @@ LIBS = -Llinux/lib64 -Llinux/lib \
 	-lassimp \
     -lGLU \
     -lGLEW
-OBJS = Main.o Shader.o Model.o Camera.o Framebuffer.o MotionBlur.o Ship.o Body.o
+OBJS = Main.o Shader.o Model.o Camera.o Framebuffer.o MotionBlur.o Ship.o Body.o BodyEmitter.o
 
 main: $(OBJS)
 	g++ -g -Wall -o $@ $^ $(LIBS)

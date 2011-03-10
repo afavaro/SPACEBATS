@@ -1,0 +1,17 @@
+
+#include "BodyEmitter.h"
+
+BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
+	this->world = world;
+}
+
+BodyEmitter::~BodyEmitter() {}
+
+void BodyEmitter::emitBodies(float tstep) {
+	//TODO: randomly emit bodies
+}
+
+void BodyEmitter::drawBodies() {
+	for(unsigned i = 0; i < bodies.size(); i++)
+		bodies[i].draw();
+}
