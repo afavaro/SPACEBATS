@@ -18,7 +18,7 @@ using namespace std;
 // and using rendering settings
 // http://www.sfml-dev.org/tutorials/1.6/window-window.php
 sf::WindowSettings settings(24, 8, 2);
-sf::RenderWindow window(sf::VideoMode(800, 600), "sPaCEbaTS", sf::Style::Close, settings);
+sf::RenderWindow window(sf::VideoMode(1000, 650), "sPaCEbaTS", sf::Style::Close, settings);
 
 // This is a clock you can use to control animation.  For more info, see:
 // http://www.sfml-dev.org/tutorials/1.6/window-time.php
@@ -79,14 +79,12 @@ int main(int argc, char** argv) {
     // Put your game loop here (i.e., render with OpenGL, update animation)
     while (window.IsOpened()) {	
         handleInput();
-
-				accum += clck.GetElapsedTime();
-				clck.Reset();
-				while (accum > TIMESTEP) {
-					spaceship.update(TIMESTEP);
-					accum -= TIMESTEP;
-				}
-
+		accum += clck.GetElapsedTime();
+		clck.Reset();
+		while (accum > TIMESTEP) {
+			spaceship.update(TIMESTEP);
+			accum -= TIMESTEP;
+		}
         renderFrame();
         window.Display();
     }
@@ -131,9 +129,9 @@ void loadAssets() {
 	toonShader = new Shader("shaders/toon");
 	blurShader = new Shader("shaders/blur");
 
-	background.LoadFromFile("models/Space-Background.jpg");
+//	background.LoadFromFile("models/Space-Background.jpg");
 //	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
-	mars.loadFromFile("models", "mars.3ds", marsImporter);
+//	mars.loadFromFile("models", "mars.3ds", marsImporter);
 //	aiMatrix4x4 rot;
 //	aiMatrix4x4::RotationX(-M_PI / 2.0, rot);
 //	spaceship.setTransformation(rot);
@@ -250,7 +248,6 @@ void renderFrame() {
 	spaceship.model.useShader(normalShader);
 	spaceship.model.render(NORMALS_PASS, normalsBuffer);
 
-
 	normalsBuffer->unbind();
 	
 	/*
@@ -281,8 +278,6 @@ void renderFrame() {
 
 	setupLights();
 //	motionBlur->render(blurShader);
-	
-	
 	
 	spaceship.model.useShader(toonShader);
 	spaceship.model.render(FINAL_PASS, normalsBuffer);

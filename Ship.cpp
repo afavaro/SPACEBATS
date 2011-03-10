@@ -118,7 +118,7 @@ void Ship::handleEvent(sf::Event &event, const sf::Input &input) {
 				case sf::Key::S:
 				case sf::Key::W:
 				case sf::Key::D:
-					acceleration = velocity = aiVector3D(0, 0, 0);
+					acceleration = aiVector3D(-4, -4, 0);
 					setRotation(aiQuaternion(1, 0, 0, 0));
 					break;
 				default:

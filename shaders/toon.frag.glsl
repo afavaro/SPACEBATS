@@ -1,4 +1,3 @@
-
 uniform sampler2D diffuseMap;
 uniform sampler2D specularMap;
 
@@ -51,8 +50,8 @@ float outline(vec2 p) {
 	vec4 gmax = gradient(p, texture2D(normalMap, p));
 	vec4 gmin = gmax;
 
-	for (int i = -1; i <= 1; i++) {
-		for (int j = -1; j <= 1; j++) {
+	for (float i = -1.0; i <= 1.0; i++) {
+		for (float j = -1.0; j <= 1.0; j++) {
 			vec2 q = p + vec2(i * pixelSize.x, j * pixelSize.y);
 			vec4 g = gradient(q, texture2D(normalMap, q));
 			gmax.x = max(gmax.x, g.x); gmin.x = min(gmin.x, g.x);
@@ -74,7 +73,7 @@ void main() {
 	vec3 V = normalize(-eyePosition);
 
 	float Rd;
-	if (dot(L, N) > 0) Rd = 1.0;
+	if (dot(L, N) > 0.0) Rd = 1.0;
 	else Rd = 0.0;
 	vec3 Td = texture2D(diffuseMap, texcoord).rgb;
 
@@ -88,8 +87,7 @@ void main() {
 	vec3 Ts = texture2D(specularMap, texcoord).rgb;
 	vec3 specular = Rs * Ks * Ts * gl_LightSource[0].specular.rgb;
 
-	clipPosition /= clipPosition.w;	
-	vec2 normcoord = 0.5 * clipPosition.xy + vec2(0.5, 0.5);
+	vec2 normcoord = 0.5 * (clipPosition.xy / clipPosition.w) + vec2(0.5, 0.5);
 	float border = 1.0 - outline(normcoord);
 
 	gl_FragColor = border * vec4(diffuse + ambient, 1);
