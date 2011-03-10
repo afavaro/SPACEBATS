@@ -1,5 +1,6 @@
-CXXFLAGS = -g -Wall -Ilinux/include -I/usr/class/cs248/include
+CXXFLAGS = -g -Wall -Ilinux/include -I/usr/class/cs248/include -I/usr/local/include/bullet
 LIBS = -Llinux/lib64 -Llinux/lib \
+	-lBulletDynamics -lBulletCollision -lLinearMath \
 	-lsfml-network \
 	-lsfml-window \
 	-lsfml-graphics \

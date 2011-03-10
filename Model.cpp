@@ -14,11 +14,7 @@ Model::Model() {
 	shader = NULL;
 	diffuse = specular = NULL;
 	indexBuffer = NULL;
-	transformation = aiMatrix4x4(
-			1.0, 0.0, 0.0, 0.0,
-			0.0, 1.0, 0.0, 0.0,
-			0.0, 0.0, 1.0, 0.0,
-			0.0, 0.0, 0.0, 1.0 );
+	transformation = btTransform::getIdentity();
 }
 
 Model::~Model() {
@@ -90,7 +86,7 @@ void Model::useShader(Shader *shader) {
 	this->shader = shader;
 }
 
-void Model::setTransformation(aiMatrix4x4 &t) {
+void Model::setTransformation(btTransform &t) {
 	transformation = t;
 }
 
@@ -163,13 +159,10 @@ void Model::render(RenderPass pass, Framebuffer *normalsBuffer) {
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	GLfloat mat[] = {
-		transformation.a1, transformation.b1, transformation.c1, transformation.d1,
-		transformation.a2, transformation.b2, transformation.c2, transformation.d2,
-		transformation.a3, transformation.b3, transformation.c3, transformation.d3,
-		transformation.a4, transformation.b4, transformation.c4, transformation.d4
-	};
-	glMultMatrixf(mat);
+
+	GLfloat glmat[16];
+	transformation.getOpenGLMatrix(glmat);
+	glMultMatrixf(glmat);
 
 	aiMesh *mesh = scene->mMeshes[0];
 

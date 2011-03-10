@@ -5,6 +5,8 @@
 #include "Shader.h"
 #include "Framebuffer.h"
 
+#include "btBulletDynamicsCommon.h"
+
 enum RenderPass {
 	NORMALS_PASS,
 	FINAL_PASS,
@@ -18,14 +20,14 @@ class Model {
 		void loadFromFile(const std::string &dir, const std::string &filename, Assimp::Importer &importer);
 		void useShader(Shader *shader);
 
-		void setTransformation(aiMatrix4x4 &t);
+		void setTransformation(btTransform &t);
 
 		void render(RenderPass pass, Framebuffer *normalsBuffer);
 
 		static sf::Image white;
 
 	private:
-		aiMatrix4x4 transformation;
+		btTransform transformation;
 		const aiScene *scene;
 
 		Shader *shader;

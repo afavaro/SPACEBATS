@@ -18,25 +18,20 @@
 
 using namespace std;
 
-Ship::Ship(aiVector3D pos, aiMatrix3x3 basis, Camera* c) {
-	aiQuaternion adjust(aiVector3D(1, 0, 0), -M_PI / 2.0);
-	neutral = aiQuaternion(aiVector3D(0, 1, 0), -M_PI / 2.0) * adjust;
-	maxRollLeft = aiQuaternion(aiVector3D(0, 0, -1), -ROLL_ROTATION);
-	maxRollRight = aiQuaternion(aiVector3D(0, 0, -1), ROLL_ROTATION);
-	maxPitchUp = aiQuaternion(aiVector3D(1, 0, 0), PITCH_ROTATION);
-	maxPitchDown = aiQuaternion(aiVector3D(1, 0, 0), -PITCH_ROTATION);
+Ship::Ship(btVector3 pos, Camera* c) {
+	btQuaternion adjust(btVector3(1, 0, 0), -M_PI / 2.0);
+	neutral = btQuaternion(btVector3(0, 1, 0), -M_PI / 2.0) * adjust;
+	maxRollLeft = btQuaternion(btVector3(0, 0, -1), -ROLL_ROTATION);
+	maxRollRight = btQuaternion(btVector3(0, 0, -1), ROLL_ROTATION);
+	maxPitchUp = btQuaternion(btVector3(1, 0, 0), PITCH_ROTATION);
+	maxPitchDown = btQuaternion(btVector3(1, 0, 0), -PITCH_ROTATION);
 
 	this->pos = pos;
-	acceleration = velocity = aiVector3D(0, 0, 0);
+	acceleration = velocity = btVector3(0, 0, 0);
 	this->cam = c;
 	quat = neutral;
 	curRot = NULL;
 	isStopping = false;
-
-	aiMatrix4x4 translation;
-	aiMatrix4x4::Translation(pos, translation);
-	aiMatrix4x4 transformation = translation * aiMatrix4x4(quat.GetMatrix());
-	model.setTransformation(transformation);
 }
 
 Ship::~Ship() {}
@@ -50,8 +45,7 @@ void Ship::updateRotation(float tstep) {
 		}
 		else {
 			float t = curRot->time / curRot->duration;
-			aiQuaternion::Interpolate(quat,
-					curRot->start, curRot->end, EASE(t));
+			quat = curRot->start.slerp(curRot->end, EASE(t));
 		}
 	}
 }
@@ -61,29 +55,29 @@ void Ship::updatePosition(float tstep) {
 	pos += velocity * tstep;
 	velocity += acceleration * tstep;
 
-	if (pos.x > BOUNDARY_X) {
-		pos.x = BOUNDARY_X - DELTA;
-		if (velocity.x > 0) velocity.x = 0;
-		if (acceleration.x > 0) acceleration.x = 0;
+	if (pos.x() > BOUNDARY_X) {
+		pos.setX(BOUNDARY_X - DELTA);
+		if (velocity.x() > 0) velocity.setX(0);
+		if (acceleration.x() > 0) acceleration.setX(0);
 	}
-	if (pos.x < -BOUNDARY_X) {
-		pos.x = -BOUNDARY_X + DELTA;
-		if (velocity.x < 0) velocity.x = 0;
-		if (acceleration.x < 0) acceleration.x = 0;
+	if (pos.x() < -BOUNDARY_X) {
+		pos.setX(-BOUNDARY_X + DELTA);
+		if (velocity.x() < 0) velocity.setX(0);
+		if (acceleration.x() < 0) acceleration.setX(0);
 	}
-	if (pos.y > BOUNDARY_Y) {
-		pos.y = BOUNDARY_Y - DELTA;
-		if (velocity.y > 0) velocity.y = 0;
-		if (acceleration.y > 0) acceleration.y = 0;
+	if (pos.y() > BOUNDARY_Y) {
+		pos.setY(BOUNDARY_Y - DELTA);
+		if (velocity.y() > 0) velocity.setY(0);
+		if (acceleration.y() > 0) acceleration.setY(0);
 	}
-	if (pos.y < -BOUNDARY_Y) {
-		pos.y = -BOUNDARY_Y + DELTA;
-		if (velocity.y < 0) velocity.y = 0;
-		if (acceleration.y < 0) acceleration.y = 0;
+	if (pos.y() < -BOUNDARY_Y) {
+		pos.setY(-BOUNDARY_Y + DELTA);
+		if (velocity.y() < 0) velocity.setY(0);
+		if (acceleration.y() < 0) acceleration.setY(0);
 	}
 
-	if (isStopping && velocity.Length() < 1) {
-		velocity = acceleration = aiVector3D(0, 0, 0);
+	if (isStopping && velocity.length() < 1) {
+		velocity = acceleration = btVector3(0, 0, 0);
 		isStopping = false;
 	}
 }
@@ -92,13 +86,11 @@ void Ship::update(float tstep) {
 	updateRotation(tstep);
 	updatePosition(tstep);
 
-	aiMatrix4x4 translation;
-	aiMatrix4x4::Translation(pos, translation);
-	aiMatrix4x4 transformation = translation * aiMatrix4x4(quat.GetMatrix());
-	model.setTransformation(transformation);
+	btTransform transform(quat, pos);
+	model.setTransformation(transform);
 }
 
-void Ship::setRotation(aiQuaternion rot) {
+void Ship::setRotation(btQuaternion rot) {
 	delete curRot;
 	curRot = new Rotation();
 	curRot->start = quat;
@@ -117,25 +109,25 @@ void Ship::handleEvent(sf::Event &event, const sf::Input &input) {
 					if ((curRot == NULL && quat != maxRollLeft) || curRot->end == neutral)
 						setRotation(maxRollLeft);
 					isStopping = false;
-					acceleration = aiVector3D(-THRUST, 0, 0);
+					acceleration = btVector3(-THRUST, 0, 0);
 					break;
 				case sf::Key::D:
 					if ((curRot == NULL && quat != maxRollRight) || curRot->end == neutral)
 						setRotation(maxRollRight);
 					isStopping = false;
-					acceleration = aiVector3D(THRUST, 0, 0);
+					acceleration = btVector3(THRUST, 0, 0);
 					break;
 				case sf::Key::W:
 					if ((curRot == NULL && quat != maxPitchUp) || curRot->end == neutral)
 						setRotation(maxPitchUp);
 					isStopping = false;
-					acceleration = aiVector3D(0, THRUST, 0);
+					acceleration = btVector3(0, THRUST, 0);
 					break;
 				case sf::Key::S:
 					if ((curRot == NULL && quat != maxPitchDown) || curRot->end == neutral)
 						setRotation(maxPitchDown);
 					isStopping = false;
-					acceleration = aiVector3D(0, -THRUST, 0);
+					acceleration = btVector3(0, -THRUST, 0);
 					break;
 				default:
 					break;
@@ -147,11 +139,11 @@ void Ship::handleEvent(sf::Event &event, const sf::Input &input) {
 				case sf::Key::S:
 				case sf::Key::W:
 				case sf::Key::D:
-					if (velocity.Length() > 0) {
+					if (velocity.length() > 0) {
 						isStopping = true;
-						acceleration = -DRAG * aiVector3D(velocity).Normalize();
+						acceleration = -DRAG * velocity.normalized();
 					}
-					setRotation(aiQuaternion(1, 0, 0, 0));
+					setRotation(btQuaternion(0, 0, 0, 1));
 					break;
 				default:
 					break;

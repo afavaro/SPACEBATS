@@ -8,6 +8,8 @@
 #include "MotionBlur.h"
 #include "Ship.h"
 
+#include <btBulletDynamicsCommon.h>
+
 #include <cmath>
 
 #define TIMESTEP 0.01
@@ -37,18 +39,13 @@ sf::Image background;
 Model mars;
 
 Camera camera(
-			  aiVector3D(0.0, 0.0, 50.0),
-			  aiMatrix3x3(
+			  btVector3(0.0, 0.0, 50.0),
+			  btMatrix3x3(
 						  1.0, 0.0, 0.0,
 						  0.0, 1.0, 0.0,
 						  0.0, 0.0, -1.0));
 
-Ship spaceship(
-			   aiVector3D(0.0, 0.0, 0.0),
-			   aiMatrix3x3(1.0, 0.0, 0.0,
-						   0.0, 1.0, 0.0,
-						   0.0, 0.0,-1.0),
-			   &camera);
+Ship spaceship(btVector3(0.0, 0.0, 0.0), &camera);
 
 vector<InputListener*> inputListeners;
 
@@ -79,12 +76,14 @@ int main(int argc, char** argv) {
     // Put your game loop here (i.e., render with OpenGL, update animation)
     while (window.IsOpened()) {	
         handleInput();
-		accum += clck.GetElapsedTime();
-		clck.Reset();
-		while (accum > TIMESTEP) {
-			spaceship.update(TIMESTEP);
-			accum -= TIMESTEP;
-		}
+
+				accum += clck.GetElapsedTime();
+				clck.Reset();
+				while (accum > TIMESTEP) {
+					spaceship.update(TIMESTEP);
+					accum -= TIMESTEP;
+				}
+
         renderFrame();
         window.Display();
     }

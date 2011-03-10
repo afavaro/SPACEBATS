@@ -3,32 +3,13 @@
 
 using namespace sf;
 
-Camera::Camera(aiVector3D pos, aiMatrix3x3 basis) {
+Camera::Camera(btVector3 pos, btMatrix3x3 basis) {
 	this->pos = pos;
 	this->basis = basis;
 	mousePressed = false;
 }
 
 Camera::~Camera() {}
-
-GLfloat Camera::quadEaseIn(GLfloat timePassed, GLfloat power){
-	return pow(timePassed, power);
-}
-
-GLfloat Camera::quadEaseOut(GLfloat timePassed, GLfloat power){
-	return 1- quadEaseIn(1.0 - timePassed, power);
-}
-
-GLfloat Camera::quadEaseInOut(GLfloat timePassed, GLfloat power){
-	if(timePassed < 0.5) return quadEaseIn(2.0*timePassed, power)/2.0;
-	return quadEaseOut(2.0*(timePassed-0.5),power)/2.0 + 0.5;
-}
-
-void Camera::easeToNewPosition(){
-	if(time == duration) return;
-	pos = change*quadEaseInOut(time/duration, 2.0) + startVal;
-	time++;
-}
 
 void Camera::setProjectionAndView(float aspectRatio) {
 	glMatrixMode(GL_PROJECTION);
@@ -37,19 +18,10 @@ void Camera::setProjectionAndView(float aspectRatio) {
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(pos.x, pos.y, pos.z,
-			pos.x + basis.a3, pos.y + basis.b3, pos.z + basis.c3,
-			basis.a2, basis.b2, basis.c2);
-	easeToNewPosition();
+	gluLookAt(pos.x(), pos.y(), pos.z(),
+			pos.x() + basis[0].z(), pos.y() + basis[1].z(), pos.z() + basis[2].z(),
+			basis[0].y(), basis[1].y(), basis[2].y());
 }	
-
-void Camera::pull(aiVector3D planePosition, aiVector3D increment){
-	time = 0;
-	startVal = pos;
-	pos+=increment;
-	change = increment;
-	easeToNewPosition();
-}
 
 void Camera::handleEvent(sf::Event &event, const sf::Input &input) {
 	switch (event.Type) {
@@ -68,10 +40,11 @@ void Camera::handleEvent(sf::Event &event, const sf::Input &input) {
 			if (mousePressed) {
 				float tx = 0.01 * (event.MouseMove.X - mouseX);
 
-				aiMatrix3x3 posMatX, basisMatX;				
-				aiMatrix3x3::Rotation(tx, aiVector3D(basis.a2, basis.b2, basis.c2), basisMatX);
-				aiMatrix3x3::Rotation(-tx, aiVector3D(basis.a2, basis.b2, basis.c2), posMatX);
-				pos *= posMatX;
+				btMatrix3x3 posMatX, basisMatX;				
+				posMatX.setEulerYPR(tx, 0.0, 0.0);
+				basisMatX.setEulerYPR(-tx, 0.0, 0.0);
+
+				pos = posMatX * pos;
 				basis *= basisMatX;
 
 				mouseX = event.MouseMove.X;

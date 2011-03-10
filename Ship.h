@@ -14,17 +14,19 @@
 #include "Model.h"
 #include "Camera.h"
 
+#include "btBulletDynamicsCommon.h"
+
 #include <cmath>
 
 struct Rotation {
-	aiQuaternion start;
-	aiQuaternion end;
+	btQuaternion start;
+	btQuaternion end;
 	GLfloat time, duration;
 };
 
 class Ship : public InputListener {
 public:
-	Ship(aiVector3D pos, aiMatrix3x3 basis, Camera* c);
+	Ship(btVector3 pos, Camera* c);
 	~Ship();
 	
 	void handleEvent(sf::Event &event, const sf::Input &input);
@@ -32,10 +34,10 @@ public:
 	
 	Rotation *curRot;
 	Model model;
-	aiVector3D pos;
-	aiVector3D velocity;
-	aiVector3D acceleration;
-	aiQuaternion quat;
+	btVector3 pos;
+	btVector3 velocity;
+	btVector3 acceleration;
+	btQuaternion quat;
 	bool isStopping;
 	
 	Camera* cam;	
@@ -44,13 +46,13 @@ private:
 	void updatePosition(float tstep);
 	void updateRotation(float tstep);
 
-	void setRotation(aiQuaternion end);
+	void setRotation(btQuaternion end);
 
-	aiQuaternion neutral;
-	aiQuaternion maxRollLeft;
-	aiQuaternion maxRollRight;
-	aiQuaternion maxPitchUp;
-	aiQuaternion maxPitchDown;
+	btQuaternion neutral;
+	btQuaternion maxRollLeft;
+	btQuaternion maxRollRight;
+	btQuaternion maxPitchUp;
+	btQuaternion maxPitchDown;
 };
 
 #endif
