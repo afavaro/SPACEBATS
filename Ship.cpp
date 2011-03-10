@@ -4,13 +4,17 @@
 #include <math.h>
 
 #define DURATION 0.2
-#define THRUST 100.0
-#define DRAG 100.0
+#define THRUST 150.0
+#define DRAG 200.0
 
 #define EASE(t) ((t) * (t) * (3.0 - 2.0 * (t)))
 
 #define PITCH_ROTATION	M_PI/15.0
 #define ROLL_ROTATION	M_PI/6.0
+
+#define BOUNDARY_X 25.0
+#define BOUNDARY_Y 22.0
+#define DELTA 0.01
 
 using namespace std;
 
@@ -27,6 +31,7 @@ Ship::Ship(aiVector3D pos, aiMatrix3x3 basis, Camera* c) {
 	this->cam = c;
 	quat = neutral;
 	curRot = NULL;
+	isStopping = false;
 
 	aiMatrix4x4 translation;
 	aiMatrix4x4::Translation(pos, translation);
@@ -51,12 +56,34 @@ void Ship::updateRotation(float tstep) {
 	}
 }
 
+
 void Ship::updatePosition(float tstep) {
 	pos += velocity * tstep;
 	velocity += acceleration * tstep;
+
+	if (pos.x > BOUNDARY_X) {
+		pos.x = BOUNDARY_X - DELTA;
+		if (velocity.x > 0) velocity.x = 0;
+		if (acceleration.x > 0) acceleration.x = 0;
+	}
+	if (pos.x < -BOUNDARY_X) {
+		pos.x = -BOUNDARY_X + DELTA;
+		if (velocity.x < 0) velocity.x = 0;
+		if (acceleration.x < 0) acceleration.x = 0;
+	}
+	if (pos.y > BOUNDARY_Y) {
+		pos.y = BOUNDARY_Y - DELTA;
+		if (velocity.y > 0) velocity.y = 0;
+		if (acceleration.y > 0) acceleration.y = 0;
+	}
+	if (pos.y < -BOUNDARY_Y) {
+		pos.y = -BOUNDARY_Y + DELTA;
+		if (velocity.y < 0) velocity.y = 0;
+		if (acceleration.y < 0) acceleration.y = 0;
+	}
+
 	if (isStopping && velocity.Length() < 1) {
-		velocity = aiVector3D(0, 0, 0);
-		acceleration = aiVector3D(0, 0, 0);
+		velocity = acceleration = aiVector3D(0, 0, 0);
 		isStopping = false;
 	}
 }
@@ -85,28 +112,28 @@ void Ship::handleEvent(sf::Event &event, const sf::Input &input) {
 		case sf::Event::KeyPressed: 
 			switch(event.Key.Code){
 				case sf::Key::A:
-					isStopping = false;
-					acceleration = aiVector3D(-THRUST, 0, 0);
 					if ((curRot == NULL && quat != maxRollLeft) || curRot->end == neutral)
 						setRotation(maxRollLeft);
+					isStopping = false;
+					acceleration = aiVector3D(-THRUST, 0, 0);
 					break;
 				case sf::Key::D:
-					isStopping = false;
-					acceleration = aiVector3D(THRUST, 0, 0);
 					if ((curRot == NULL && quat != maxRollRight) || curRot->end == neutral)
 						setRotation(maxRollRight);
+					isStopping = false;
+					acceleration = aiVector3D(THRUST, 0, 0);
 					break;
 				case sf::Key::W:
-					isStopping = false;
-					acceleration = aiVector3D(0, THRUST, 0);
 					if ((curRot == NULL && quat != maxPitchUp) || curRot->end == neutral)
 						setRotation(maxPitchUp);
+					isStopping = false;
+					acceleration = aiVector3D(0, THRUST, 0);
 					break;
 				case sf::Key::S:
-					isStopping = false;
-					acceleration = aiVector3D(0, -THRUST, 0);
 					if ((curRot == NULL && quat != maxPitchDown) || curRot->end == neutral)
 						setRotation(maxPitchDown);
+					isStopping = false;
+					acceleration = aiVector3D(0, -THRUST, 0);
 					break;
 				default:
 					break;
@@ -118,8 +145,10 @@ void Ship::handleEvent(sf::Event &event, const sf::Input &input) {
 				case sf::Key::S:
 				case sf::Key::W:
 				case sf::Key::D:
-					isStopping = true;
-					acceleration = -DRAG * aiVector3D(velocity).Normalize();
+					if (velocity.Length() > 0) {
+						isStopping = true;
+						acceleration = -DRAG * aiVector3D(velocity).Normalize();
+					}
 					setRotation(aiQuaternion(1, 0, 0, 0));
 					break;
 				default:

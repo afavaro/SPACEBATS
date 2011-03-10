@@ -122,6 +122,7 @@ void initOpenGL() {
     glClearDepth(1.0f);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glEnable(GL_DEPTH_TEST);
+		glEnable(GL_TEXTURE_2D);
     glViewport(0, 0, window.GetWidth(), window.GetHeight());
 }
 
@@ -212,8 +213,6 @@ void renderBackground()
 	glTexCoord2f(0.0, 1.0);
 	glVertex2f(-1.0, 1.0);
 	glEnd();
-
-	glFlush();
 }
 
 void renderObjects(RenderPass pass) {
@@ -273,16 +272,14 @@ void renderFrame() {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-//	renderBackground();
+	renderBackground();
 
-//	glClear(GL_DEPTH_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
 
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 
 	setupLights();
-//	motionBlur->render(blurShader);
-	
-	
+//	motionBlur->render(blurShader);	
 	
 	spaceship.model.useShader(toonShader);
 	spaceship.model.render(FINAL_PASS, normalsBuffer);

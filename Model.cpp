@@ -137,11 +137,6 @@ static void setTextures(Image *diffuse, Image *specular, Shader *shader, Framebu
 	glUniform1i(norm, 3);
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, normalsBuffer->colorTextureId());
-
-	GLint depth = glGetUniformLocation(shader->programID(), "depthMap");
-	glUniform1i(depth, 4);
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, normalsBuffer->depthTextureId());
 }
 
 void Model::setMeshData(aiMesh *mesh, Shader *shader, RenderPass pass)
