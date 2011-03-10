@@ -28,13 +28,10 @@ public:
 	~Ship();
 	
 	void handleEvent(sf::Event &event, const sf::Input &input);
-
 	void update(float tstep);
-
+	
 	Rotation *curRot;
-	
 	Model model;
-	
 	aiVector3D pos;
 	aiVector3D velocity;
 	aiVector3D acceleration;

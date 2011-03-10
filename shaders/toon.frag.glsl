@@ -1,4 +1,3 @@
-
 uniform sampler2D diffuseMap;
 uniform sampler2D specularMap;
 

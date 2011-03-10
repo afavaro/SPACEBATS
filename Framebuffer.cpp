@@ -39,6 +39,7 @@ Framebuffer::Framebuffer(unsigned width, unsigned height) {
 	}
 
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
@@ -67,10 +68,12 @@ GLuint Framebuffer::getHeight() {
 void Framebuffer::bind() {
 	glPushAttrib(GL_VIEWPORT_BIT);
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, frameBufferId);
+
 	glViewport(0, 0, width, height);
 }
 
 void Framebuffer::unbind() {
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+
 	glPopAttrib();
 }

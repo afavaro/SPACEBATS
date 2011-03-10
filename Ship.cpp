@@ -107,6 +107,8 @@ void Ship::setRotation(aiQuaternion rot) {
 	curRot->duration = DURATION;
 }
 
+
+
 void Ship::handleEvent(sf::Event &event, const sf::Input &input) {
 	switch (event.Type) {
 		case sf::Event::KeyPressed: 
