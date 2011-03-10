@@ -16,6 +16,8 @@
 #define BOUNDARY_Y 22.0
 #define DELTA 0.01
 
+#define STOP_THRESHOLD 2
+
 using namespace std;
 
 Ship::Ship(btVector3 pos, Camera* c) {
@@ -76,7 +78,7 @@ void Ship::updatePosition(float tstep) {
 		if (acceleration.y() < 0) acceleration.setY(0);
 	}
 
-	if (isStopping && velocity.length() < 1) {
+	if (isStopping && velocity.length() < STOP_THRESHOLD) {
 		velocity = acceleration = btVector3(0, 0, 0);
 		isStopping = false;
 	}
