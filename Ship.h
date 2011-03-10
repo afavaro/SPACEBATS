@@ -16,7 +16,7 @@
 
 #include <cmath>
 
-struct Animation {
+struct Rotation {
 	aiQuaternion start;
 	aiQuaternion end;
 	GLfloat time, duration;
@@ -27,30 +27,27 @@ public:
 	Ship(aiVector3D pos, aiMatrix3x3 basis, Camera* c);
 	~Ship();
 	
-	void setProjectionAndView(float aspectRatio); 
 	void handleEvent(sf::Event &event, const sf::Input &input);
-	
-	GLfloat quadEaseIn(GLfloat timePassed, GLfloat power);
-	
-	GLfloat quadEaseOut(GLfloat timePassed, GLfloat power);
-	
-	GLfloat quadEaseInOut(GLfloat timePassed, GLfloat power);
-	
-	void easeToNewPosition();
-	void roll(GLfloat rotation);
 
 	void update(float tstep);
 
-	Animation *anim;
+	Rotation *curRot;
 	
 	Model model;
 	
 	aiVector3D pos;
+	aiVector3D velocity;
+	aiVector3D acceleration;
 	aiQuaternion quat;
 	
 	Camera* cam;	
 
 private:
+	void updatePosition(float tstep);
+	void updateRotation(float tstep);
+
+	void setRotation(aiQuaternion end);
+
 	aiQuaternion neutral;
 	aiQuaternion maxRollLeft;
 	aiQuaternion maxRollRight;
