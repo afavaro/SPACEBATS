@@ -16,15 +16,18 @@
 
 #define EASE(t) ((t) * (t) * (3.0 - 2.0 * (t)))
 
+#define PITCH_ROTATION	M_PI/15.0
+#define ROLL_ROTATION	M_PI/6.0
+
 using namespace std;
 
 Ship::Ship(aiVector3D pos, aiMatrix3x3 basis, Camera* c) {
 	aiQuaternion adjust(aiVector3D(1, 0, 0), -M_PI / 2.0);
 	neutral = aiQuaternion(aiVector3D(0, 1, 0), -M_PI / 2.0) * adjust;
-	maxRollLeft = aiQuaternion(aiVector3D(0, 0, -1), -M_PI / 6.0);
-	maxRollRight = aiQuaternion(aiVector3D(0, 0, -1), M_PI / 6.0);
-	maxPitchUp = aiQuaternion(aiVector3D(1, 0, 0), M_PI / 6.0);
-	maxPitchDown = aiQuaternion(aiVector3D(1, 0, 0), -M_PI / 6.0);
+	maxRollLeft = aiQuaternion(aiVector3D(0, 0, -1), -ROLL_ROTATION);
+	maxRollRight = aiQuaternion(aiVector3D(0, 0, -1), ROLL_ROTATION);
+	maxPitchUp = aiQuaternion(aiVector3D(1, 0, 0), PITCH_ROTATION);
+	maxPitchDown = aiQuaternion(aiVector3D(1, 0, 0), -PITCH_ROTATION);
 
 	this->pos = pos;
 	acceleration = velocity = aiVector3D(0, 0, 0);
