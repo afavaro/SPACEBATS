@@ -7,10 +7,17 @@
 
 #include "btBulletDynamicsCommon.h"
 
+enum BodyType {
+	MARS,
+	NUM_BODY_TYPES
+};
+
 class BodyEmitter {
 	public:
 		BodyEmitter(btDiscreteDynamicsWorld *world);
 		~BodyEmitter();
+
+		void loadModels();
 
 		void emitBodies(float tstep);
 		void drawBodies(RenderPass pass);
@@ -18,6 +25,9 @@ class BodyEmitter {
 	private:
 		btDiscreteDynamicsWorld *world;
 		std::vector<Body> bodies;
+
+		Model models[NUM_BODY_TYPES];
+		Assimp::Importer importers[NUM_BODY_TYPES];
 };
 
 #endif

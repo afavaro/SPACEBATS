@@ -7,12 +7,13 @@
 #include "Framebuffer.h"
 #include "MotionBlur.h"
 #include "Ship.h"
+#include "BodyEmitter.h"
 
 #include <btBulletDynamicsCommon.h>
 
 #include <cmath>
 
-#define TIMESTEP 0.01
+#define TIMESTEP (1.0 / 60.0)
 
 using namespace std;
 
@@ -31,7 +32,7 @@ GLfloat accum = 0.0;
 // This creates an asset importer using the Open Asset Import library.
 // It automatically manages resources for you, and frees them when the program
 // exits.
-Assimp::Importer importer, marsImporter;
+Assimp::Importer importer;
 Shader *phongShader, *blurShader;
 
 sf::Image background;
@@ -46,6 +47,9 @@ Camera camera(
 						  0.0, 0.0, -1.0));
 
 Ship spaceship(btVector3(0.0, 0.0, 0.0), &camera);
+BodyEmitter *bodyEmitter;
+
+btDiscreteDynamicsWorld *world;
 
 vector<InputListener*> inputListeners;
 
@@ -62,37 +66,52 @@ void renderFrame();
 void renderBackground();
 
 int main(int argc, char** argv) {
-	
-    initOpenGL();
-    loadAssets();
+
+	initOpenGL();
+
+	btBroadphaseInterface *broadphase = new btDbvtBroadphase();
+	btDefaultCollisionConfiguration *collisionConfig = new btDefaultCollisionConfiguration();
+	btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfig);
+	btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
+	world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfig);
+
+	loadAssets();
+
 	motionBlur = new MotionBlur(NUM_MOTION_BLUR_FRAMES, window.GetWidth(), window.GetHeight());
 	glClear(GL_ACCUM_BUFFER_BIT);
-	
+
 	inputListeners.push_back(&camera);
 	inputListeners.push_back(&spaceship);
-	
-	
-    // Put your game loop here (i.e., render with OpenGL, update animation)
-    while (window.IsOpened()) {	
-        handleInput();
 
-				accum += clck.GetElapsedTime();
-				clck.Reset();
-				while (accum > TIMESTEP) {
-					spaceship.update(TIMESTEP);
-					accum -= TIMESTEP;
-				}
 
-        renderFrame();
-        window.Display();
-    }
-	
+	// Put your game loop here (i.e., render with OpenGL, update animation)
+	while (window.IsOpened()) {	
+		handleInput();
+
+		accum += clck.GetElapsedTime();
+		clck.Reset();
+		while (accum > TIMESTEP) {
+			spaceship.update(TIMESTEP);
+			world->stepSimulation(TIMESTEP);
+			accum -= TIMESTEP;
+		}
+
+		renderFrame();
+		window.Display();
+	}
+
 	delete phongShader;
 	delete blurShader;
-	
+
 	delete normalsBuffer;
-	
-    return 0;
+
+	delete world;
+	delete solver;
+	delete dispatcher;
+	delete collisionConfig;
+	delete broadphase;
+
+	return 0;
 }
 
 
@@ -124,6 +143,9 @@ void loadAssets() {
 	phongShader = new Shader("shaders/phong");
 	blurShader = new Shader("shaders/blur");
 
+	bodyEmitter = new BodyEmitter(world);
+	bodyEmitter->loadModels();
+
 	Model::loadShaders();
 	normalsBuffer = new Framebuffer(window.GetWidth(), window.GetHeight());
 	Model::setNormalsBuffer(normalsBuffer);
@@ -133,11 +155,9 @@ void loadAssets() {
 //	mars.loadFromFile("models", "mars.3ds", marsImporter);
 //	aiMatrix4x4 rot;
 //	aiMatrix4x4::RotationX(-M_PI / 2.0, rot);
-//	spaceship.setTransformation(rot);
-	
+//	spaceship.setTransformation(rot);	
 
 	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
-
 }
 
 
