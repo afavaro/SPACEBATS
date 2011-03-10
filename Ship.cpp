@@ -1,18 +1,11 @@
-/*
- *  Ship.cpp
- *  CS248-Assn4
- *
- *  Created by D! on 3/8/11.
- *  Copyright 2011 Stanford University. All rights reserved.
- *
- */
-//assrow-> glcolv
+
 #include "Ship.h"
 #include <iostream>
 #include <math.h>
 
 #define DURATION 0.2
 #define THRUST 100.0
+#define DRAG 100.0
 
 #define EASE(t) ((t) * (t) * (3.0 - 2.0 * (t)))
 
@@ -61,6 +54,11 @@ void Ship::updateRotation(float tstep) {
 void Ship::updatePosition(float tstep) {
 	pos += velocity * tstep;
 	velocity += acceleration * tstep;
+	if (isStopping && velocity.Length() < 1) {
+		velocity = aiVector3D(0, 0, 0);
+		acceleration = aiVector3D(0, 0, 0);
+		isStopping = false;
+	}
 }
 
 void Ship::update(float tstep) {
@@ -87,21 +85,25 @@ void Ship::handleEvent(sf::Event &event, const sf::Input &input) {
 		case sf::Event::KeyPressed: 
 			switch(event.Key.Code){
 				case sf::Key::A:
+					isStopping = false;
 					acceleration = aiVector3D(-THRUST, 0, 0);
 					if ((curRot == NULL && quat != maxRollLeft) || curRot->end == neutral)
 						setRotation(maxRollLeft);
 					break;
 				case sf::Key::D:
+					isStopping = false;
 					acceleration = aiVector3D(THRUST, 0, 0);
 					if ((curRot == NULL && quat != maxRollRight) || curRot->end == neutral)
 						setRotation(maxRollRight);
 					break;
 				case sf::Key::W:
+					isStopping = false;
 					acceleration = aiVector3D(0, THRUST, 0);
 					if ((curRot == NULL && quat != maxPitchUp) || curRot->end == neutral)
 						setRotation(maxPitchUp);
 					break;
 				case sf::Key::S:
+					isStopping = false;
 					acceleration = aiVector3D(0, -THRUST, 0);
 					if ((curRot == NULL && quat != maxPitchDown) || curRot->end == neutral)
 						setRotation(maxPitchDown);
@@ -116,7 +118,8 @@ void Ship::handleEvent(sf::Event &event, const sf::Input &input) {
 				case sf::Key::S:
 				case sf::Key::W:
 				case sf::Key::D:
-					acceleration = velocity = aiVector3D(0, 0, 0);
+					isStopping = true;
+					acceleration = -DRAG * aiVector3D(velocity).Normalize();
 					setRotation(aiQuaternion(1, 0, 0, 0));
 					break;
 				default:

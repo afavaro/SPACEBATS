@@ -39,6 +39,7 @@ public:
 	aiVector3D velocity;
 	aiVector3D acceleration;
 	aiQuaternion quat;
+	bool isStopping;
 	
 	Camera* cam;	
 
