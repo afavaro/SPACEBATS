@@ -11,7 +11,7 @@ void BodyEmitter::emitBodies(float tstep) {
 	//TODO: randomly emit bodies
 }
 
-void BodyEmitter::drawBodies() {
+void BodyEmitter::drawBodies(RenderPass pass) {
 	for(unsigned i = 0; i < bodies.size(); i++)
-		bodies[i].draw();
+		bodies[i].draw(pass);
 }

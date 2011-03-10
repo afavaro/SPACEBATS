@@ -4,6 +4,7 @@
 
 #include "Framework.h"
 #include "Model.h"
+#include "Framebuffer.h"
 
 #include <btBulletDynamicsCommon.h>
 
@@ -12,7 +13,7 @@ class Body {
 		Body(Model *model, btRigidBody::btRigidBodyConstructionInfo &btInfo);
 		~Body();
 
-		void draw();
+		void draw(RenderPass pass);
 
 	private:
 		btRigidBody *rigidBody;

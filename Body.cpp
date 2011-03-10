@@ -10,8 +10,9 @@ Body::~Body() {
 	delete rigidBody;
 }
 
-void Body::draw() {
+void Body::draw(RenderPass pass) {
 	btTransform transform;
 	rigidBody->getMotionState()->getWorldTransform(transform);
 	model->setTransformation(transform);
+	model->render(pass);
 }

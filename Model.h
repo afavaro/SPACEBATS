@@ -22,15 +22,20 @@ class Model {
 
 		void setTransformation(btTransform &t);
 
-		void render(RenderPass pass, Framebuffer *normalsBuffer);
+		void render(RenderPass pass);
 
 		static sf::Image white;
+
+		static Shader *normalShader, *toonShader;
+		static void loadShaders();
+
+		static Framebuffer *normalsBuffer;
+		static void setNormalsBuffer(Framebuffer *fb);
 
 	private:
 		btTransform transformation;
 		const aiScene *scene;
 
-		Shader *shader;
 		sf::Image *diffuse, *specular;
 
 		void setMeshData(aiMesh *mesh, Shader *shader, RenderPass pass);

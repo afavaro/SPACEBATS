@@ -3,6 +3,7 @@
 
 #include "Framework.h"
 #include "Body.h"
+#include "Model.h"
 
 #include "btBulletDynamicsCommon.h"
 
@@ -12,7 +13,7 @@ class BodyEmitter {
 		~BodyEmitter();
 
 		void emitBodies(float tstep);
-		void drawBodies();
+		void drawBodies(RenderPass pass);
 
 	private:
 		btDiscreteDynamicsWorld *world;

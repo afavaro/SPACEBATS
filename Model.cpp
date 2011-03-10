@@ -9,9 +9,11 @@ using namespace sf;
 
 Image Model::white(1, 1, sf::Color(255, 255, 255));
 
+Shader *Model::toonShader, *Model::normalShader;
+Framebuffer *Model::normalsBuffer;
+
 Model::Model() {
 	scene = NULL;
-	shader = NULL;
 	diffuse = specular = NULL;
 	indexBuffer = NULL;
 	transformation = btTransform::getIdentity();
@@ -21,6 +23,15 @@ Model::~Model() {
 	delete diffuse;
 	delete specular;
 	delete[] indexBuffer;
+}
+
+void Model::loadShaders() {
+	normalShader = new Shader("shaders/normal");
+	toonShader = new Shader("shaders/toon");
+}
+
+void Model::setNormalsBuffer(Framebuffer *fb) {
+	normalsBuffer = fb;
 }
 
 void Model::loadFromFile(const string &dir, const string &filename, Assimp::Importer &importer) {
@@ -80,10 +91,6 @@ void Model::loadFromFile(const string &dir, const string &filename, Assimp::Impo
 		glGenerateMipmapEXT(GL_TEXTURE_2D);
 	} else
 		cout << "No specular texture in " << dir << endl;
-}
-
-void Model::useShader(Shader *shader) {
-	this->shader = shader;
 }
 
 void Model::setTransformation(btTransform &t) {
@@ -154,7 +161,14 @@ void Model::setMeshData(aiMesh *mesh, Shader *shader, RenderPass pass)
 	}
 }
 
-void Model::render(RenderPass pass, Framebuffer *normalsBuffer) {
+void Model::render(RenderPass pass) {
+	Shader *shader;
+	if (pass == NORMALS_PASS) {
+		shader = normalShader;
+		normalsBuffer->bind();
+	} else
+		shader = toonShader;
+
 	glUseProgram(shader->programID());
 
 	glMatrixMode(GL_MODELVIEW);
@@ -182,4 +196,6 @@ void Model::render(RenderPass pass, Framebuffer *normalsBuffer) {
 	glDrawElements(GL_TRIANGLES, 3 * mesh->mNumFaces, GL_UNSIGNED_INT, &indexBuffer[0]);
 
 	glPopMatrix();
+
+	if (pass == NORMALS_PASS) normalsBuffer->unbind();
 }

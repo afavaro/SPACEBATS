@@ -32,7 +32,7 @@ GLfloat accum = 0.0;
 // It automatically manages resources for you, and frees them when the program
 // exits.
 Assimp::Importer importer, marsImporter;
-Shader *phongShader, *normalShader, *toonShader, *blurShader;
+Shader *phongShader, *blurShader;
 
 sf::Image background;
 
@@ -71,7 +71,6 @@ int main(int argc, char** argv) {
 	inputListeners.push_back(&camera);
 	inputListeners.push_back(&spaceship);
 	
-	normalsBuffer = new Framebuffer(window.GetWidth(), window.GetHeight());
 	
     // Put your game loop here (i.e., render with OpenGL, update animation)
     while (window.IsOpened()) {	
@@ -89,8 +88,6 @@ int main(int argc, char** argv) {
     }
 	
 	delete phongShader;
-	delete normalShader;
-	delete toonShader;
 	delete blurShader;
 	
 	delete normalsBuffer;
@@ -125,9 +122,11 @@ void initOpenGL() {
 
 void loadAssets() {
 	phongShader = new Shader("shaders/phong");
-	normalShader = new Shader("shaders/normal");
-	toonShader = new Shader("shaders/toon");
 	blurShader = new Shader("shaders/blur");
+
+	Model::loadShaders();
+	normalsBuffer = new Framebuffer(window.GetWidth(), window.GetHeight());
+	Model::setNormalsBuffer(normalsBuffer);
 
 //	background.LoadFromFile("models/Space-Background.jpg");
 //	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
@@ -218,8 +217,7 @@ void renderObjects(RenderPass pass) {
 		glScalef(0.5, 0.5, 0.5);
 		glTranslatef(10, 0, -100* i);
 		glTranslatef(0, 0, frameCounter / 5.0);
-		mars.useShader(pass == FINAL_PASS? toonShader : normalShader);
-		mars.render(pass, normalsBuffer);
+		mars.render(pass);
 		glPopMatrix();
 	}
 	
@@ -228,8 +226,7 @@ void renderObjects(RenderPass pass) {
 		glScalef(0.5, 0.5, 0.5);
 		glTranslatef(-10, -10, -100* i);
 		glTranslatef(0, 0, frameCounter / 5.0);
-		mars.useShader(pass == FINAL_PASS? toonShader : normalShader);
-		mars.render(pass, normalsBuffer);
+		mars.render(pass);
 		glPopMatrix();
 	}
 	
@@ -241,12 +238,11 @@ void renderFrame() {
 	
 	//Render normals
 	normalsBuffer->bind();
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	spaceship.model.useShader(normalShader);
-	spaceship.model.render(NORMALS_PASS, normalsBuffer);
-
 	normalsBuffer->unbind();
+
+	spaceship.model.render(NORMALS_PASS);
+
 	
 	/*
 	//Render this frame to motion blur
@@ -277,6 +273,5 @@ void renderFrame() {
 	setupLights();
 //	motionBlur->render(blurShader);
 	
-	spaceship.model.useShader(toonShader);
-	spaceship.model.render(FINAL_PASS, normalsBuffer);
+	spaceship.model.render(FINAL_PASS);
 }
