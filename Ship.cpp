@@ -55,6 +55,8 @@ void Ship::update(float tstep) {
 }
 
 
+
+
 void Ship::handleEvent(sf::Event &event, const sf::Input &input) {
 	Animation *rot;
 	switch (event.Type) {

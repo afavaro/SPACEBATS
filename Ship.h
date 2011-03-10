@@ -30,13 +30,6 @@ public:
 	void setProjectionAndView(float aspectRatio); 
 	void handleEvent(sf::Event &event, const sf::Input &input);
 	
-	GLfloat quadEaseIn(GLfloat timePassed, GLfloat power);
-	
-	GLfloat quadEaseOut(GLfloat timePassed, GLfloat power);
-	
-	GLfloat quadEaseInOut(GLfloat timePassed, GLfloat power);
-	
-	void easeToNewPosition();
 	void roll(GLfloat rotation);
 
 	void update(float tstep);
