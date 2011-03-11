@@ -12,6 +12,8 @@
 #include <btBulletDynamicsCommon.h>
 
 #include <cmath>
+#include <cstdlib>
+#include <ctime>
 
 #define TIMESTEP (1.0 / 60.0)
 
@@ -67,6 +69,8 @@ void renderBackground();
 
 int main(int argc, char** argv) {
 
+	srand(time(0));
+
 	initOpenGL();
 
 	btBroadphaseInterface *broadphase = new btDbvtBroadphase();
@@ -93,6 +97,7 @@ int main(int argc, char** argv) {
 		while (accum > TIMESTEP) {
 			spaceship.update(TIMESTEP);
 			world->stepSimulation(TIMESTEP);
+			bodyEmitter->emitBodies(TIMESTEP);
 			accum -= TIMESTEP;
 		}
 
@@ -252,16 +257,20 @@ void renderObjects(RenderPass pass) {
 	
 }
 
-void renderFrame() {
-	frameCounter++;
-	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
-	
-	//Render normals
+void clearNormalsBuffer()
+{
 	normalsBuffer->bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	normalsBuffer->unbind();
+}
 
+void renderFrame() {
+	frameCounter++;
+	
+	clearNormalsBuffer();
+	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	spaceship.model.render(NORMALS_PASS);
+	bodyEmitter->drawBodies(NORMALS_PASS);
 
 	
 	/*
@@ -284,9 +293,9 @@ void renderFrame() {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	renderBackground();
+	//renderBackground();
 
-	glClear(GL_DEPTH_BUFFER_BIT);
+	//glClear(GL_DEPTH_BUFFER_BIT);
 
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 
@@ -294,4 +303,5 @@ void renderFrame() {
 //	motionBlur->render(blurShader);
 	
 	spaceship.model.render(FINAL_PASS);
+	bodyEmitter->drawBodies(FINAL_PASS);
 }

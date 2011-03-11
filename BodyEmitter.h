@@ -5,6 +5,8 @@
 #include "Body.h"
 #include "Model.h"
 
+#include <list>
+
 #include "btBulletDynamicsCommon.h"
 
 enum BodyType {
@@ -24,10 +26,14 @@ class BodyEmitter {
 
 	private:
 		btDiscreteDynamicsWorld *world;
-		std::vector<Body> bodies;
+		std::list<Body*> bodies;
+
+		float accum;
 
 		Model models[NUM_BODY_TYPES];
 		Assimp::Importer importers[NUM_BODY_TYPES];
+
+		btCollisionShape *collisionShapes[NUM_BODY_TYPES];
 };
 
 #endif

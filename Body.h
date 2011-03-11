@@ -8,7 +8,7 @@
 
 #include <btBulletDynamicsCommon.h>
 
-class Body {
+class Body: public btRigidBody {
 	public:
 		Body(Model *model, btRigidBody::btRigidBodyConstructionInfo &btInfo);
 		~Body();
@@ -16,7 +16,6 @@ class Body {
 		void draw(RenderPass pass);
 
 	private:
-		btRigidBody *rigidBody;
 		Model *model;
 };
 
