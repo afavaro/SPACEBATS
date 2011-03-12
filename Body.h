@@ -6,6 +6,8 @@
 #include "Model.h"
 #include "Framebuffer.h"
 
+#include <list>
+
 #include <btBulletDynamicsCommon.h>
 
 class Body: public btRigidBody {
@@ -14,6 +16,8 @@ class Body: public btRigidBody {
 		~Body();
 
 		void draw(RenderPass pass);
+
+		std::list<Body*>::iterator iter;
 
 	private:
 		Model *model;

@@ -26,8 +26,9 @@ void BodyEmitter::emitBodies(float tstep) {
 		accum = 0.0;
 
 		if (bodies.size() > 0) {
-			delete bodies.back();
-			bodies.pop_back();
+			world->removeRigidBody(bodies.front());
+			delete bodies.front();
+			bodies.pop_front();
 		}
 
 		btVector3 pos(
@@ -38,7 +39,11 @@ void BodyEmitter::emitBodies(float tstep) {
 			new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), pos));
 		btRigidBody::btRigidBodyConstructionInfo
 			constructionInfo(0, motionState, collisionShapes[MARS]);
-		bodies.push_back(new Body(&models[MARS], constructionInfo));
+		Body *body = new Body(&models[MARS], constructionInfo);
+
+		world->addRigidBody(body);
+		bodies.push_front(body);
+		body->iter = bodies.begin();
 	}
 }
 
