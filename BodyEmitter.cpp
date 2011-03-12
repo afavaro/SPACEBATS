@@ -6,13 +6,17 @@
 #define BOUNDARY_Y 44.0
 #define BOUNDARY_Z -100.0
 
-#define EMIT_STEP 2.0
+#define EMIT_STEP 1.0
+
+const float NORMAL_SPEED = 5.0;
+const float BOOST_SPEED = 65.0;
 
 using namespace std;
 
 BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 	this->world = world;
 	accum = 0.0;
+	boostMode = false;
 
 	collisionShapes[MARS] = new btSphereShape(1);
 	collisionShapes[ASTEROID] = new btSphereShape(1);
@@ -36,6 +40,31 @@ BodyEmitter::~BodyEmitter() {
 	}
 }
 
+void BodyEmitter::boostSpeed(){
+	list<Body*>::iterator it;
+	for(it = bodies.begin(); it != bodies.end(); it++){
+		Body* b = *it;
+		btVector3 vel = b->getLinearVelocity();
+		vel.setZ(BOOST_SPEED);
+		b->setLinearVelocity(vel);
+	}
+}
+
+void BodyEmitter::resetSpeed(){
+	list<Body*>::iterator it;
+	for(it = bodies.begin(); it != bodies.end(); it++){
+		Body* b = *it;
+		btVector3 vel = b->getLinearVelocity();
+		vel.setZ(NORMAL_SPEED);
+		b->setLinearVelocity(vel);
+	}
+}
+
+void BodyEmitter::setBoostMode(bool boost){
+	boostMode = boost;
+}
+
+
 float RandomFloat(float min, float max){
 	float t = (float)rand() / RAND_MAX;
 	return min + t * (max - min);
@@ -43,16 +72,22 @@ float RandomFloat(float min, float max){
 
 void BodyEmitter::emitBodies(float tstep) {
 	accum += tstep;
+	
+	list<Body*>::iterator it;
+	for(it = bodies.begin(); it != bodies.end(); it++){
+		Body* b = (*it);
+		btTransform trans;
+		b->getMotionState()->getWorldTransform(trans);
+		
+		//printf("z: %f\n", trans.getOrigin().getZ());
+	}
+	//printf("--\n");
+	
 	if (accum > EMIT_STEP) {
 		accum = 0.0;
 
-//		if(bodies.size() > 0) return;
+		printf("%d\n", (int)bodies.size());
 		
-//		if (bodies.size() > 1) {
-//			delete bodies.back();
-//			bodies.pop_back();
-//		}
-
 		btVector3 pos(
 				(float)rand() / RAND_MAX * 2.0 * BOUNDARY_X - BOUNDARY_X,
 				(float)rand() / RAND_MAX * 2.0 * BOUNDARY_Y - BOUNDARY_Y,
@@ -71,10 +106,12 @@ void BodyEmitter::emitBodies(float tstep) {
 			constructionInfo(mass, motionState, collisionShapes[type]);
 		
 		Body* newBody = new Body(&models[type], constructionInfo);
-		newBody->setLinearVelocity(btVector3(RandomFloat(-4,4),RandomFloat(-4,4),25));
-		/// BULLET IS REALLY COMPLICATED
+//		newBody->setLinearVelocity(btVector3(RandomFloat(-4,4),RandomFloat(-4,4),RandomFloat(-10,10)));
+		
+		float speed = boostMode ? BOOST_SPEED : NORMAL_SPEED;
+		newBody->setLinearVelocity(btVector3(RandomFloat(-4,4),RandomFloat(-4,4),speed));
 		world->addRigidBody(newBody);
-		bodies.push_front(newBody);
+		bodies.push_back(newBody);
 	}
 }
 

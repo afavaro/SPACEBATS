@@ -29,6 +29,10 @@ class BodyEmitter {
 
 		void emitBodies(float tstep);
 		void drawBodies(RenderPass pass);
+	
+		void boostSpeed();
+		void resetSpeed();
+		void setBoostMode(bool boost);	
 
 	private:
 		btDiscreteDynamicsWorld *world;
@@ -40,6 +44,8 @@ class BodyEmitter {
 		Assimp::Importer importers[NUM_BODY_TYPES];
 
 		btCollisionShape *collisionShapes[NUM_BODY_TYPES];
+	
+		bool boostMode;
 };
 
 #endif
