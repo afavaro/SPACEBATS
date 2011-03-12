@@ -58,7 +58,7 @@ vector<InputListener*> inputListeners;
 Framebuffer *normalsBuffer = NULL;
 
 static int frameCounter = 0;
-const int NUM_MOTION_BLUR_FRAMES = 4;
+const int NUM_MOTION_BLUR_FRAMES = 10;
 MotionBlur* motionBlur;
 
 void initOpenGL();
@@ -189,6 +189,7 @@ void handleInput() {
 				glViewport(0, 0, evt.Size.Width, evt.Size.Height);
 				break;
 			default: 
+				// If you hit the escape key, well close the program
 				if(evt.Key.Code == sf::Key::Escape){
 					window.Close();
 					break;
@@ -269,6 +270,7 @@ void clearNormalsBuffer()
 	normalsBuffer->unbind();
 }
 
+
 void renderFrame() {
 	frameCounter++;
 	
@@ -278,35 +280,27 @@ void renderFrame() {
 	bodyEmitter->drawBodies(NORMALS_PASS);
 
 	
-	/*
+	
 	//Render this frame to motion blur
 	motionBlur->bind();
-	glClearColor(0.0, 1.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	setupLights();
-	spaceship.model.useShader(toonShader);
-	spaceship.model.render(FINAL_PASS, normalsBuffer);
+	spaceship.model.render(FINAL_PASS);
+	bodyEmitter->drawBodies(FINAL_PASS);
 	motionBlur->unbind();
-	
-	//int frames = frameCounter < NUM_MOTION_BLUR_FRAMES ? frameCounter : NUM_MOTION_BLUR_FRAMES;
-	//cout << frames << " frames" << endl;
-	//float val = 1.0 / frames;
-	//cout << "val per" << val << endl;
-	*/
-	//int frames = frameCounter < NUM_MOTION_BLUR_FRAMES ? frameCounter : NUM_MOTION_BLUR_FRAMES;
-	//float val = 1.0 / frames;
+
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor(1,1,1,1);
+	motionBlur->render(blurShader);
 
 	//renderBackground();
 
 	//glClear(GL_DEPTH_BUFFER_BIT);
 
-	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
-
-	setupLights();
-//	motionBlur->render(blurShader);
-	
-	spaceship.model.render(FINAL_PASS);
-	bodyEmitter->drawBodies(FINAL_PASS);
+	// camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
+	// setupLights();
+	// spaceship.model.render(FINAL_PASS);
+	// bodyEmitter->drawBodies(FINAL_PASS);
 }
