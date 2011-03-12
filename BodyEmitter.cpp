@@ -66,7 +66,7 @@ void BodyEmitter::emitBodies(float tstep) {
 			constructionInfo(mass, motionState, collisionShapes[type]);
 		
 		Body* newBody = new Body(&models[type], constructionInfo);
-		newBody->setLinearVelocity(btVector3(10,10,0));
+		newBody->setLinearVelocity(btVector3(0,0,10));
 		
 		/// BULLET IS REALLY COMPLICATED
 		world->addRigidBody(newBody);

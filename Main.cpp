@@ -78,7 +78,7 @@ int main(int argc, char** argv) {
 	btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfig);
 	btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
 	world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfig);
-	world->setGravity(btVector3(0, -10, 0));
+	world->setGravity(btVector3(0, 0, 0));
 	
 	loadAssets();
 	
