@@ -330,8 +330,8 @@ void renderFrame() {
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	setupLights();
 	//if(!useMotionBlur){
-		bodyEmitter->drawBodies(FINAL_PASS);
-	//å}
+	bodyEmitter->drawBodies(FINAL_PASS);
+	//}
 	spaceship.model.render(FINAL_PASS);
 
 }
