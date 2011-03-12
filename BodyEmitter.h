@@ -8,6 +8,7 @@
 #include <list>
 
 #include "btBulletDynamicsCommon.h"
+#include "ObjectMotionState.h"
 
 enum BodyType {
 	MARS,

@@ -6,11 +6,11 @@
 #include "Model.h"
 #include "btBulletDynamicsCommon.h"
 
-class ObjectMotionState : public btMotionState{
+class ObjectMotionState : public btDefaultMotionState{
 
 public:
 	
-	ObjectMotionState(const btTransform & initialPosition);
+	ObjectMotionState(const btTransform & transform);
 	virtual ~ObjectMotionState();
 	
 	virtual void getWorldTransform(btTransform & worldTrans) const;
@@ -18,7 +18,7 @@ public:
 	
 private:
 	
-	btTransform initialPosition;
+	btTransform transform;
 };
 
 #endif //objectmotionstate.h
