@@ -14,10 +14,18 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 	accum = 0.0;
 
 	collisionShapes[MARS] = new btSphereShape(1);
+	collisionShapes[ASTEROID] = new btSphereShape(1);
+	collisionShapes[EROS] = new btSphereShape(1);
+
+// These models were good... but a little too big?
+//	collisionShapes[GOLEVKA] = new btSphereShape(1);
+//	collisionShapes[JUNO] = new btSphereShape(1);
 }
 
-BodyEmitter::~BodyEmitter() {
-	delete collisionShapes[MARS];
+BodyEmitter::~BodyEmitter() {	
+	for(int i = 0; i < NUM_BODY_TYPES; i++){
+		delete collisionShapes[i];
+	}
 }
 
 void BodyEmitter::emitBodies(float tstep) {
@@ -36,9 +44,12 @@ void BodyEmitter::emitBodies(float tstep) {
 				BOUNDARY_Z);
 		btDefaultMotionState *motionState =
 			new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), pos));
+		
+		int type = rand() % NUM_BODY_TYPES;
+		
 		btRigidBody::btRigidBodyConstructionInfo
-			constructionInfo(0, motionState, collisionShapes[MARS]);
-		bodies.push_back(new Body(&models[MARS], constructionInfo));
+			constructionInfo(4.0 , motionState, collisionShapes[type]);
+		bodies.push_back(new Body(&models[type], constructionInfo));
 	}
 }
 
@@ -50,4 +61,8 @@ void BodyEmitter::drawBodies(RenderPass pass) {
 
 void BodyEmitter::loadModels() {
 	models[MARS].loadFromFile("models/mars", "mars.3ds", importers[MARS]);
+	models[ASTEROID].loadFromFile("models/aster", "asteroid.3ds", importers[ASTEROID]);
+	models[EROS].loadFromFile("models/eros", "eros.3ds", importers[EROS]);
+//	models[GOLEVKA].loadFromFile("models/golevka", "golevka.3ds", importers[GOLEVKA]);
+//	models[JUNO].loadFromFile("models/juno", "juno.3ds", importers[JUNO]);
 }

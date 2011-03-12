@@ -11,8 +11,13 @@
 
 enum BodyType {
 	MARS,
+	ASTEROID,
+	EROS,
 	NUM_BODY_TYPES
 };
+
+//GOLEVKA,
+//JUNO,
 
 class BodyEmitter {
 	public:
