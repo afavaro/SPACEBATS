@@ -306,6 +306,7 @@ void renderFrame() {
 	if(motionBlur->shouldRenderFrame()){
 		motionBlur->bind();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(0.18, 0.18, 0.18, 1.0);
 		camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 		setupLights();
 		//spaceship.model.render(FINAL_PASS);
@@ -328,8 +329,9 @@ void renderFrame() {
 	
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	setupLights();
-	spaceship.model.render(FINAL_PASS);
-	if(!useMotionBlur){
+	//if(!useMotionBlur){
 		bodyEmitter->drawBodies(FINAL_PASS);
-	}
+	//å}
+	spaceship.model.render(FINAL_PASS);
+
 }
