@@ -6,8 +6,7 @@ uniform sampler2D frame4;
 varying vec4 clipPosition;
 
 void main() {
-	clipPosition /= clipPosition.w;	
-	vec2 normcoord = 0.5 * clipPosition.xy + vec2(0.5, 0.5);
+	vec2 normcoord = 0.5 * (clipPosition.xy / clipPosition.w) + vec2(0.5, 0.5);
 
 
 	vec4 val1 = texture2D(frame1, normcoord);

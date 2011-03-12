@@ -189,6 +189,11 @@ void handleInput() {
 				glViewport(0, 0, evt.Size.Width, evt.Size.Height);
 				break;
 			default: 
+				if(evt.Key.Code == sf::Key::Escape){
+					window.Close();
+					break;
+				}
+			
 				for (unsigned i = 0; i < inputListeners.size(); i++)
 					inputListeners[i]->handleEvent(evt, window.GetInput());
 				break;
