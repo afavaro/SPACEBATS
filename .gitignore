@@ -4,3 +4,5 @@ models/*
 xcode/*
 *DS_Store
 Makefile
+*.o
+main

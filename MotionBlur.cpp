@@ -13,6 +13,8 @@
 #include <vector>
 using namespace std;
 
+const int SEPARATION = 4;
+
 
 MotionBlur::MotionBlur(int numFrames, int width, int height){
 	buffers = new Framebuffer*[numFrames];
@@ -22,6 +24,7 @@ MotionBlur::MotionBlur(int numFrames, int width, int height){
 	}
 	counter = 0;
 	cur = 0;
+	curIndex = 0;
 	this->width = width;
 	this->height = height;
 }
@@ -34,9 +37,19 @@ MotionBlur::~MotionBlur(){
 	delete buffers;
 }
 
+bool MotionBlur::shouldRenderFrame(){
+	return counter % SEPARATION == 0;
+}
+
+
 Framebuffer* MotionBlur::getFrame(int frame){
 	return buffers[frame];
 }
+
+void MotionBlur::update(){
+	counter++;
+}
+
 
 void MotionBlur::bind(){
 	getFrame(cur)->bind();
@@ -44,12 +57,12 @@ void MotionBlur::bind(){
 
 void MotionBlur::unbind(){
 	getFrame(cur)->unbind();
-
-	counter++;
-	cur = counter % numFrames;
+	cur++;
+	cur = cur % numFrames;
 }
 
-
+// This method renders a full screen quad. It takes the four last textures which are
+// averaged to compute the current frame.
 void MotionBlur::render(Shader* shader){
 	glUseProgram(shader->programID());
 	
@@ -73,34 +86,20 @@ void MotionBlur::render(Shader* shader){
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, getFrame(3)->colorTextureId());
 	
-	
-//	glMatrixMode(GL_PROJECTION);
-//	glLoadIdentity();
-//	gluOrtho2D(0, 1, 0, 1);
-//	glMatrixMode(GL_MODELVIEW);
-//	glLoadIdentity();
-	
-	vector<aiVector3D> vertices;
-	aiVector3D v1(0,0,0);
-	aiVector3D v2(0,1,0);
-	aiVector3D v3(4,0,0);
-	aiVector3D v4(1,1,0);
-	vertices.push_back(v1);
-	vertices.push_back(v2);
-	vertices.push_back(v3);
-	vertices.push_back(v4);
-	
-	vector<unsigned> indexBuffer;
-	indexBuffer.push_back(0);
-	indexBuffer.push_back(1);
-	indexBuffer.push_back(2);
-	indexBuffer.push_back(3);
-	
-	
-	GLint pos = glGetAttribLocation(shader->programID(), "positionIn");
-	glEnableVertexAttribArray(pos);
-	glVertexAttribPointer(pos, 3, GL_FLOAT, 0, sizeof(aiVector3D), &vertices[0]);
-	
-	glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, &indexBuffer[0]);
+		
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(-1.0, 1.0, -1.0, 1.0);
 
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	GLint pos = glGetAttribLocation(shader->programID(), "positionIn");
+	glBegin(GL_QUADS);
+	glVertexAttrib2f(pos, -1.0, -1.0);
+	glVertexAttrib2f(pos, 1.0, -1.0);
+	glVertexAttrib2f(pos, 1.0, 1.0);
+	glVertexAttrib2f(pos, -1.0, 1.0);
+	glEnd();
+	
 }

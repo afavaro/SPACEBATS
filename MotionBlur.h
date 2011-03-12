@@ -18,9 +18,11 @@ public:
 	
 	Framebuffer* getFrame(int frame);
 	void render(Shader* shader);
+	bool shouldRenderFrame();
 	
 	void bind();
 	void unbind();
+	void update();
 	
 private:
 	Framebuffer **buffers;
@@ -29,4 +31,5 @@ private:
 	int numFrames;
 	int width, height;
 
+	int curIndex;
 };
