@@ -7,7 +7,7 @@
 #include "btBulletDynamicsCommon.h"
 
 #define Z_NEAR 0.1
-#define Z_FAR 200.0
+#define Z_FAR 300.0
 
 class Camera : public InputListener {
 public:
