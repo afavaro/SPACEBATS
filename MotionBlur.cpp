@@ -13,6 +13,8 @@
 #include <vector>
 using namespace std;
 
+const int SEPARATION = 4;
+
 
 MotionBlur::MotionBlur(int numFrames, int width, int height){
 	buffers = new Framebuffer*[numFrames];
@@ -22,6 +24,7 @@ MotionBlur::MotionBlur(int numFrames, int width, int height){
 	}
 	counter = 0;
 	cur = 0;
+	curIndex = 0;
 	this->width = width;
 	this->height = height;
 }
@@ -34,9 +37,19 @@ MotionBlur::~MotionBlur(){
 	delete buffers;
 }
 
+bool MotionBlur::shouldRenderFrame(){
+	return counter % SEPARATION == 0;
+}
+
+
 Framebuffer* MotionBlur::getFrame(int frame){
 	return buffers[frame];
 }
+
+void MotionBlur::update(){
+	counter++;
+}
+
 
 void MotionBlur::bind(){
 	getFrame(cur)->bind();
@@ -44,12 +57,12 @@ void MotionBlur::bind(){
 
 void MotionBlur::unbind(){
 	getFrame(cur)->unbind();
-
-	counter++;
-	cur = counter % numFrames;
+	cur++;
+	cur = cur % numFrames;
 }
 
-
+// This method renders a full screen quad. It takes the four last textures which are
+// averaged to compute the current frame.
 void MotionBlur::render(Shader* shader){
 	glUseProgram(shader->programID());
 	

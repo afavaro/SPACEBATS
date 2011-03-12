@@ -58,7 +58,7 @@ vector<InputListener*> inputListeners;
 Framebuffer *normalsBuffer = NULL;
 
 static int frameCounter = 0;
-const int NUM_MOTION_BLUR_FRAMES = 10;
+const int NUM_MOTION_BLUR_FRAMES = 4;
 MotionBlur* motionBlur;
 
 void initOpenGL();
@@ -68,30 +68,30 @@ void renderFrame();
 void renderBackground();
 
 int main(int argc, char** argv) {
-
+	
 	srand(time(0));
-
+	
 	initOpenGL();
-
+	
 	btBroadphaseInterface *broadphase = new btDbvtBroadphase();
 	btDefaultCollisionConfiguration *collisionConfig = new btDefaultCollisionConfiguration();
 	btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfig);
 	btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
 	world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfig);
-
+	
 	loadAssets();
-
+	
 	motionBlur = new MotionBlur(NUM_MOTION_BLUR_FRAMES, window.GetWidth(), window.GetHeight());
 	glClear(GL_ACCUM_BUFFER_BIT);
-
+	
 	inputListeners.push_back(&camera);
 	inputListeners.push_back(&spaceship);
-
-
+	
+	
 	// Put your game loop here (i.e., render with OpenGL, update animation)
 	while (window.IsOpened()) {	
 		handleInput();
-
+		
 		accum += clck.GetElapsedTime();
 		clck.Reset();
 		while (accum > TIMESTEP) {
@@ -100,22 +100,22 @@ int main(int argc, char** argv) {
 			bodyEmitter->emitBodies(TIMESTEP);
 			accum -= TIMESTEP;
 		}
-
+		
 		renderFrame();
 		window.Display();
 	}
-
+	
 	delete phongShader;
 	delete blurShader;
-
+	
 	delete normalsBuffer;
-
+	
 	delete world;
 	delete solver;
 	delete dispatcher;
 	delete collisionConfig;
 	delete broadphase;
-
+	
 	return 0;
 }
 
@@ -140,28 +140,28 @@ void initOpenGL() {
     glClearDepth(1.0f);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glEnable(GL_DEPTH_TEST);
-		glEnable(GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_2D);
     glViewport(0, 0, window.GetWidth(), window.GetHeight());
 }
 
 void loadAssets() {
 	phongShader = new Shader("shaders/phong");
 	blurShader = new Shader("shaders/blur");
-
+	
 	bodyEmitter = new BodyEmitter(world);
 	bodyEmitter->loadModels();
-
+	
 	Model::loadShaders();
 	normalsBuffer = new Framebuffer(window.GetWidth(), window.GetHeight());
 	Model::setNormalsBuffer(normalsBuffer);
-
-//	background.LoadFromFile("models/Space-Background.jpg");
-//	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
-//	mars.loadFromFile("models", "mars.3ds", marsImporter);
-//	aiMatrix4x4 rot;
-//	aiMatrix4x4::RotationX(-M_PI / 2.0, rot);
-//	spaceship.setTransformation(rot);	
-
+	
+	//	background.LoadFromFile("models/Space-Background.jpg");
+	//	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
+	//	mars.loadFromFile("models", "mars.3ds", marsImporter);
+	//	aiMatrix4x4 rot;
+	//	aiMatrix4x4::RotationX(-M_PI / 2.0, rot);
+	//	spaceship.setTransformation(rot);	
+	
 	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
 }
 
@@ -194,7 +194,7 @@ void handleInput() {
 					window.Close();
 					break;
 				}
-			
+				
 				for (unsigned i = 0; i < inputListeners.size(); i++)
 					inputListeners[i]->handleEvent(evt, window.GetInput());
 				break;
@@ -219,17 +219,17 @@ void setupLights()
 void renderBackground()
 {
 	glUseProgram(0);
-
+	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluOrtho2D(-1.0, 1.0, -1.0, 1.0);
-
+	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
+	
 	glActiveTexture(GL_TEXTURE0);
 	background.Bind();
-
+	
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0, 0.0);
 	glVertex2f(-1.0, -1.0);
@@ -278,27 +278,30 @@ void renderFrame() {
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	spaceship.model.render(NORMALS_PASS);
 	bodyEmitter->drawBodies(NORMALS_PASS);
-
+	
 	
 	
 	//Render this frame to motion blur
-	motionBlur->bind();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
-	setupLights();
-	spaceship.model.render(FINAL_PASS);
-	bodyEmitter->drawBodies(FINAL_PASS);
-	motionBlur->unbind();
-
-
+	if(motionBlur->shouldRenderFrame()){
+		motionBlur->bind();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
+		setupLights();
+		spaceship.model.render(FINAL_PASS);
+		bodyEmitter->drawBodies(FINAL_PASS);
+		motionBlur->unbind();
+	}
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(1,1,1,1);
 	motionBlur->render(blurShader);
+	motionBlur->update();
 
+	
 	//renderBackground();
-
+	
 	//glClear(GL_DEPTH_BUFFER_BIT);
-
+	
 	// camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	// setupLights();
 	// spaceship.model.render(FINAL_PASS);
