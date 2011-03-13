@@ -270,7 +270,7 @@ void renderFrame() {
 
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-		camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
+		camera.setProjectionAndView((float)window.GetWidth() / window.GetHeight());
 		setupLights();
 
 		bodyEmitter->drawBodies(FINAL_PASS);
