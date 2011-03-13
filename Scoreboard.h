@@ -12,13 +12,16 @@ public:
 	~Scoreboard();
 	void render();
 	
+	void setXLocation(float x);
+	
 	void setScore(float s);
 	void add(float s);
 	void subtract(float s);
 	void print();
-	
-private:
+
 	float score;
+private:
+	float xLoc;
 	sf::RenderWindow* window;
 	Shader* shader;
 };

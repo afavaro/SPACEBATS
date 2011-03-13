@@ -83,7 +83,7 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 	if(body->getType() == GATE){
 		Gate* gate = (Gate*)body;
 		gate->setCompleted();
-		printf("GATE COMPLETED!\n");
+		//printf("GATE COMPLETED!\n");
 	}else {
 		spaceship->shiverMeTimbers();
 		
@@ -191,6 +191,13 @@ void Ship::update(float tstep) {
 	updateShake(tstep);
 	btTransform transform(quat, pos);
 	model.setTransformation(transform);
+	
+	
+	if(boostMode){
+		scoreboard->subtract(1);
+	}else{
+		scoreboard->add(0.05);
+	}
 }
 
 void Ship::setRotation(btQuaternion rot) {
