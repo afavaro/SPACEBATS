@@ -20,6 +20,7 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 	boostMode = false;
 
 	collisionShapes[MARS] = new btSphereShape(20);
+	collisionShapes[SPACEBAT] = new btSphereShape(20);
 	collisionShapes[ASTEROID] = new btSphereShape(20);
 	collisionShapes[EROS] = new btSphereShape(20);
 	
@@ -96,7 +97,7 @@ void BodyEmitter::emitBodies(float tstep) {
 	if (accum > EMIT_STEP) {
 		accum = 0.0;
 		
-		if(bodies.size() > 10) return;
+		//if(bodies.size() > 10) return;
 
 		printf("%d\n", (int)bodies.size());
 		
@@ -110,7 +111,7 @@ void BodyEmitter::emitBodies(float tstep) {
 		//ObjectMotionState *motionState =
 		//	new ObjectMotionState(btTransform(btQuaternion(0, 0, 0, 1), pos));
 		
-		int type = rand() % NUM_BODY_TYPES;
+		int type = SPACEBAT;//rand() % NUM_BODY_TYPES;
 		
 		btScalar mass = 4.0;
 		
@@ -139,6 +140,7 @@ void BodyEmitter::loadModels() {
 	models[MARS].loadFromFile("models/mars", "mars.3ds", importers[MARS]);
 	models[ASTEROID].loadFromFile("models/aster", "asteroid.3ds", importers[ASTEROID]);
 	models[EROS].loadFromFile("models/eros", "eros.3ds", importers[EROS]);
+	models[SPACEBAT].loadFromFile("models/spacebat", "roid.obj", importers[SPACEBAT]);
 //	models[GOLEVKA].loadFromFile("models/golevka", "golevka.3ds", importers[GOLEVKA]);
 //	models[JUNO].loadFromFile("models/juno", "juno.3ds", importers[JUNO]);
 }
