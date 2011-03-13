@@ -3,6 +3,5 @@ models/*
 *.swp
 xcode/*
 *DS_Store
-Makefile
 *.o
 main

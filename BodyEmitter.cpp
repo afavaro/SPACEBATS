@@ -1,6 +1,5 @@
 
 #include "BodyEmitter.h"
-#include "ObjectMotionState.h"
 #include "Camera.h"
 
 #define BOUNDARY_X 50.0
@@ -142,10 +141,12 @@ void BodyEmitter::loadModels() {
 	models[ASTEROID].loadFromFile("models/aster", "asteroid.3ds", importers[ASTEROID]);
 	models[ASTEROID].setScaleFactor(0.1);
 	models[EROS].loadFromFile("models/eros", "eros.3ds", importers[EROS]);
+	models[EROS].setScaleFactor(0.7);
 	models[GOLEVKA].loadFromFile("models/golevka", "golevka.3ds", importers[GOLEVKA]);
 	models[GOLEVKA].setScaleFactor(0.05);
 	models[JUNO].loadFromFile("models/juno", "juno.3ds", importers[JUNO]);
 	models[JUNO].setScaleFactor(0.05);
+
 }
 
 BodyEmitter::ContactCallback::ContactCallback(BodyEmitter *bodyEmitter)
