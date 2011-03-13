@@ -45,6 +45,8 @@ class BodyEmitter {
 		ContactCallback *contactCallback;
 
 		btVector3 getAngularVelocityForType(BodyType type);
+		btVector3 getPositionForType(BodyType type);
+	btVector3 getLinearVelocityForType(BodyType type);
 		void setSpeed(float speed);
 	
 	

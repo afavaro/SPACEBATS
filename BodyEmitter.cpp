@@ -93,6 +93,30 @@ btVector3 BodyEmitter::getAngularVelocityForType(BodyType type){
 	
 }
 
+btVector3 BodyEmitter::getPositionForType(BodyType type){
+	switch (type) {
+		case GATE:
+			return btVector3(0,0, BOUNDARY_Z);
+		default:
+			return btVector3(
+							 (float)rand() / RAND_MAX * 2.0 * BOUNDARY_X - BOUNDARY_X,
+							 (float)rand() / RAND_MAX * 2.0 * BOUNDARY_Y - BOUNDARY_Y,
+							 BOUNDARY_Z );
+	}
+}
+
+
+btVector3 BodyEmitter::getLinearVelocityForType(BodyType type){
+	float speed = boostMode ? BOOST_SPEED : NORMAL_SPEED;
+	switch(type){
+		case GATE:
+			return btVector3(0,0, 20);
+		default:
+			return btVector3(RandomFloat(-1,1),RandomFloat(-1,1),speed);
+	}
+}
+
+
 void BodyEmitter::emitBodies(float tstep) {
 	accum += tstep;
 	world->contactTest(wall, *contactCallback);
@@ -110,14 +134,15 @@ void BodyEmitter::emitBodies(float tstep) {
 	if (accum > EMIT_STEP) {
 		accum = 0.0;
 		
-		btVector3 pos(
-				(float)rand() / RAND_MAX * 2.0 * BOUNDARY_X - BOUNDARY_X,
-				(float)rand() / RAND_MAX * 2.0 * BOUNDARY_Y - BOUNDARY_Y,
-				BOUNDARY_Z);
-		btDefaultMotionState *motionState =
-			new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), pos));
+
+
 		
 		int type = rand() % NUM_BODY_TYPES;
+	
+		btVector3 pos = getPositionForType(BodyType(type));
+		btDefaultMotionState *motionState =
+			new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), pos));
+
 		
 		btScalar mass = 4.0;
 		
@@ -126,8 +151,8 @@ void BodyEmitter::emitBodies(float tstep) {
 		
 		Body* newBody = new Body(&models[type], constructionInfo);
 		
-		float speed = boostMode ? BOOST_SPEED : NORMAL_SPEED;
-		newBody->setLinearVelocity(btVector3(RandomFloat(-1,1),RandomFloat(-1,1),speed));
+
+		newBody->setLinearVelocity(getLinearVelocityForType(BodyType(type)));
 		newBody->setAngularVelocity(getAngularVelocityForType(BodyType(type)));
 
 		world->addRigidBody(newBody);
