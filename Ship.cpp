@@ -29,10 +29,13 @@ Ship::ShipContactCallback::ShipContactCallback(Ship* ship)
 {
 }
 
-void Ship::setScoreboard(Scoreboard* s){
-	scoreboard = s;
+void Ship::setBoostBar(Scoreboard* s){
+	boostBar = s;
 }
 
+void Ship::setHealthBar(Scoreboard* s){
+	healthBar = s;
+}
 
 void Ship::shiverMeTimbers(){
 	//if(!curShake) return;
@@ -83,16 +86,15 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 	if(body->getType() == GATE){
 		Gate* gate = (Gate*)body;
 		gate->setCompleted();
-		//printf("GATE COMPLETED!\n");
+		spaceship->healthBar->add(10);
 	}else {
 		spaceship->shiverMeTimbers();
-		
-		spaceship->scoreboard->subtract(5);
-		spaceship->scoreboard->print();
-		printf("COLLISION\n");
+		spaceship->healthBar->subtract(15);
 	}
 	
-
+	printf("Healthbar: ");
+	spaceship->healthBar->print();
+	
 	return 0;
 }
 
@@ -194,9 +196,9 @@ void Ship::update(float tstep) {
 	
 	
 	if(boostMode){
-		scoreboard->subtract(1);
+		boostBar->subtract(1);
 	}else{
-		scoreboard->add(0.05);
+		boostBar->add(0.05);
 	}
 }
 

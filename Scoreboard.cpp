@@ -53,7 +53,7 @@ void Scoreboard::render(){
 }
 
 void Scoreboard::print(){
-	printf("Score: %f\n", score);
+	printf("%f\n", score);
 }
 
 void Scoreboard::setScore(float s){

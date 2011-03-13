@@ -38,7 +38,9 @@ public:
 	void handleEvent(sf::Event &event, const sf::Input &input);
 	void update(float tstep);
 	
-	void setScoreboard(Scoreboard* s);
+	void setBoostBar(Scoreboard* s);
+	void setHealthBar(Scoreboard* s);
+	
 	
 	Rotation *curRot;
 	Model model;
@@ -77,7 +79,8 @@ private:
 	btDiscreteDynamicsWorld *world;
 	ShipContactCallback* callback;
 	
-	Scoreboard* scoreboard;
+	Scoreboard* boostBar;
+	Scoreboard* healthBar;
 	
 	void updatePosition(float tstep);
 	void updateRotation(float tstep);

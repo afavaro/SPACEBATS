@@ -96,9 +96,8 @@ int main(int argc, char** argv) {
 	Gate::setScoreboard(healthbar);
 	Gate::loadChangeImage();
 	
-	
-	spaceship.setScoreboard(scoreboard);
-	
+	spaceship.setBoostBar(scoreboard);
+	spaceship.setHealthBar(healthbar);
 
 	
 	motionBlur = new MotionBlur(NUM_MOTION_BLUR_FRAMES, window.GetWidth(), window.GetHeight());
