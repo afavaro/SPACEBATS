@@ -24,6 +24,11 @@ struct Rotation {
 	GLfloat time, duration;
 };
 
+struct Shake {
+	btVector3 position;
+	GLfloat time, duration;
+};
+
 class Ship : public InputListener {
 public:
 	Ship(btVector3 pos, Camera* c);
@@ -34,10 +39,12 @@ public:
 	
 	Rotation *curRot;
 	Model model;
+
 	btVector3 pos;
 	btVector3 velocity;
 	btVector3 acceleration;
 	btQuaternion quat;
+
 	bool isStopping;
 	
 	void setWorld(btDiscreteDynamicsWorld* world);
@@ -71,12 +78,19 @@ private:
 	void updateRotation(float tstep);
 
 	void setRotation(btQuaternion end);
-
+	
+	void shiverMeTimbers();
+	void updateShake(float tstep);
+	Shake* curShake;
+	
 	btQuaternion neutral;
 	btQuaternion maxRollLeft;
 	btQuaternion maxRollRight;
 	btQuaternion maxPitchUp;
 	btQuaternion maxPitchDown;
+
+	bool boostMode;
+
 };
 
 #endif
