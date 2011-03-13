@@ -31,15 +31,14 @@ Ship::ShipContactCallback::ShipContactCallback(Ship* ship)
 btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 											  const btCollisionObject* colObj0, int partId0, int index0,
 											  const btCollisionObject* colObj1, int partId1, int index1){
-
-	btVector3 point;
-	//if(colObj0 == &
-	//printf("ADD SINGLE RESULT\n");
 	
-	if(colObj0 == spaceship->spaceshipCollider || 
-	   colObj1 == spaceship->spaceshipCollider){
-		printf("SPACESHIP COLLISION\n");
-	}
+	if(spaceship->lastCollision == colObj0 || 
+	   spaceship->lastCollision == colObj1) return 0;
+	
+	if(colObj0 == spaceship->spaceshipCollider) spaceship->lastCollision = (btCollisionObject*)colObj1;
+	if(colObj1 == spaceship->spaceshipCollider) spaceship->lastCollision = (btCollisionObject*)colObj0;
+	
+	printf("SPACESHIP COLLISION\n");
 	return 0;
 }
 
@@ -70,13 +69,14 @@ Ship::Ship(btVector3 pos, Camera* c) {
 	curRot = NULL;
 	isStopping = false;
 	
-	spaceshipShape = new btSphereShape(0.001);
+	spaceshipShape = new btSphereShape(6);
 	spaceshipCollider = new btCollisionObject();
 	spaceshipCollider->setWorldTransform(btTransform(quat, pos));
 	spaceshipCollider->setCollisionShape(spaceshipShape);
 	
 	world = NULL;
 	callback = new ShipContactCallback(this);
+	lastCollision = NULL;
 }
 
 Ship::~Ship() {}

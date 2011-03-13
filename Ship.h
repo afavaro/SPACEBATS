@@ -62,6 +62,8 @@ private:
 	
 	friend struct ShipContactCallback;
 	
+	btCollisionObject* lastCollision;
+	
 	btDiscreteDynamicsWorld *world;
 	ShipContactCallback* callback;
 	
