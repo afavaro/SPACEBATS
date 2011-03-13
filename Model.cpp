@@ -130,6 +130,7 @@ static void setMaterial(aiMaterial *mat, Shader *shader)
 
 static void setTextures(Image *diffuse, Image *specular, Shader *shader, Framebuffer *normalsBuffer)
 {
+	glSecondaryColor3f(0.0,0.0,0.0);
 	GLint diff = glGetUniformLocation(shader->programID(), "diffuseMap");
 	glUniform1i(diff, 1);
 	glActiveTexture(GL_TEXTURE1);

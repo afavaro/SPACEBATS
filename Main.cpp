@@ -170,7 +170,7 @@ void loadAssets() {
 	normalsBuffer = new Framebuffer(window.GetWidth(), window.GetHeight());
 	Model::setNormalsBuffer(normalsBuffer);
 	
-	//	background.LoadFromFile("models/Space-Background.jpg");
+	background.LoadFromFile("models/armadillo_n.jpg");
 	//	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
 	//	mars.loadFromFile("models", "mars.3ds", marsImporter);
 	//	aiMatrix4x4 rot;
@@ -240,6 +240,7 @@ void setupLights()
 
 void renderBackground()
 {
+	glSecondaryColor3i(0,0,0);
 	glUseProgram(0);
 	
 	glMatrixMode(GL_PROJECTION);
@@ -299,43 +300,49 @@ void renderFrame() {
 	clearNormalsBuffer();
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	spaceship.model.render(NORMALS_PASS);
-	bodyEmitter->drawBodies(NORMALS_PASS);
-	
-	
-	
-	//Render this frame to motion blur
-	if(motionBlur->shouldRenderFrame()){
-		motionBlur->bind();
-
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(0.18, 0.18, 0.18, 1.0);
-
-		camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
-		setupLights();
-
-		bodyEmitter->drawBodies(FINAL_PASS);
-		motionBlur->unbind();
-	}
-	
+//	bodyEmitter->drawBodies(NORMALS_PASS);
+//	
+//	
+//	
+//	//Render this frame to motion blur
+//	if(motionBlur->shouldRenderFrame()){
+//		motionBlur->bind();
+//
+//		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//		glClearColor(0.18, 0.18, 0.18, 1.0);
+//
+//		camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
+//		setupLights();
+//
+//		bodyEmitter->drawBodies(FINAL_PASS);
+//		motionBlur->unbind();
+//	}
+//	
+//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//	//glClearColor(1,1,1,1);
+//	glClearColor(0.18, 0.18, 0.18, 1.0);
+//	if(useMotionBlur){
+//		motionBlur->render(blurShader);
+//	}
+//	motionBlur->update();
+//	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//glClearColor(1,1,1,1);
-	glClearColor(0.18, 0.18, 0.18, 1.0);
-	if(useMotionBlur){
-		motionBlur->render(blurShader);
-	}
-	motionBlur->update();
-	
-	
-	//renderBackground();
-	
+	renderBackground();
 	glClear(GL_DEPTH_BUFFER_BIT);
-	
+//	
+//	
+//	//glClear(GL_DEPTH_BUFFER_BIT);
+//	
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	setupLights();
-
-	//if(!useMotionBlur){
-		bodyEmitter->drawBodies(FINAL_PASS);
-	//}
+//
+//	//if(!useMotionBlur){
+//		bodyEmitter->drawBodies(FINAL_PASS);
+//	//}
+	
+	//glSecondaryColor3f(0.0,0.0,0.0);
 	spaceship.model.render(FINAL_PASS);
+	
+
 
 }

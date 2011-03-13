@@ -12,8 +12,11 @@
 
 enum BodyType {
 	MARS,
-	ASTEROID,
+	//ASTEROID,
+	TECHNI,
+	SPACEBAT,
 	EROS,
+	GATE,
 	NUM_BODY_TYPES
 };
 

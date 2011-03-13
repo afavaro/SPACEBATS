@@ -20,7 +20,10 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 	boostMode = false;
 
 	collisionShapes[MARS] = new btSphereShape(10);
-	collisionShapes[ASTEROID] = new btSphereShape(10);
+	collisionShapes[SPACEBAT] = new btSphereShape(10);
+	collisionShapes[TECHNI] = new btSphereShape(10);
+	//collisionShapes[ASTEROID] = new btSphereShape(10);
+	collisionShapes[GATE] = new btSphereShape(10);
 	collisionShapes[EROS] = new btSphereShape(10);
 	
 	btScalar mass = 4.0;
@@ -83,6 +86,10 @@ btVector3 BodyEmitter::getAngularVelocityForType(BodyType type){
 	switch (type){
 		case MARS:
 			return btVector3(0,1,0);
+		case GATE:
+			return btVector3(0,0,0);
+		case SPACEBAT:
+			return btVector3(0,0,0);
 		default:
 			return btVector3(RandomFloat(-1,1), RandomFloat(-1,1), RandomFloat(-1,1));
 	}
@@ -139,8 +146,12 @@ void BodyEmitter::drawBodies(RenderPass pass) {
 
 void BodyEmitter::loadModels() {
 	models[MARS].loadFromFile("models/mars", "mars.3ds", importers[MARS]);
-	models[ASTEROID].loadFromFile("models/aster", "asteroid.3ds", importers[ASTEROID]);
-	models[ASTEROID].setScaleFactor(0.1);
+	//models[ASTEROID].loadFromFile("models/aster", "asteroid.obj", importers[ASTEROID]);
+	//models[ASTEROID].setScaleFactor(0.1);
+	models[TECHNI].loadFromFile("models/techni", "techni.obj", importers[TECHNI]);
+	models[TECHNI].setScaleFactor(4.0);
+	models[SPACEBAT].loadFromFile("models/spacebat", "BatMessWings.obj", importers[SPACEBAT]);
+	models[GATE].loadFromFile("models/aster", "roid.obj", importers[GATE]);
 	models[EROS].loadFromFile("models/eros", "eros.3ds", importers[EROS]);
 //	models[GOLEVKA].loadFromFile("models/golevka", "golevka.3ds", importers[GOLEVKA]);
 //	models[JUNO].loadFromFile("models/juno", "juno.3ds", importers[JUNO]);
