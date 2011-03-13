@@ -85,21 +85,10 @@ int main(int argc, char** argv) {
 	world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfig);
 	world->setGravity(btVector3(0, 0, 0));
 	
-	///Add back wall for object collision detection and removal
-	btCollisionShape* wallShape = new btStaticPlaneShape(btVector3(0,0,5), 1);
-	
-	btDefaultMotionState* wallMotionState = 
-	new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1), btVector3(0,0,-10)));
-	btRigidBody::btRigidBodyConstructionInfo
-	wallRigidBodyCI(40, wallMotionState, wallShape, btVector3(0,0,0));
-	btRigidBody* wallBody = new btRigidBody(wallRigidBodyCI);
-	world->addRigidBody(wallBody);
-	
 	spaceship.setWorld(world);
 	
 	hud = new HUD(&spaceship);
-	hud->addComponent(new Scoreboard());
-	
+	hud->addComponent(new Scoreboard(&window));
 	
 	loadAssets();
 	
@@ -303,6 +292,8 @@ void clearNormalsBuffer()
 void renderFrame() {
 	frameCounter++;
 	
+	glViewport(0,0,1000,650);
+	
 	clearNormalsBuffer();
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	spaceship.model.render(NORMALS_PASS);
@@ -335,14 +326,11 @@ void renderFrame() {
 	
 	//renderBackground();
 	
-	glClear(GL_DEPTH_BUFFER_BIT);
-	
+	glClear(GL_DEPTH_BUFFER_BIT);	
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	setupLights();
-
-	//if(!useMotionBlur){
-		bodyEmitter->drawBodies(FINAL_PASS);
-	//}
+	bodyEmitter->drawBodies(FINAL_PASS);
 	spaceship.model.render(FINAL_PASS);
-
+//	
+//	hud->render();	
 }
