@@ -25,7 +25,7 @@ using namespace std;
 // and using rendering settings
 // http://www.sfml-dev.org/tutorials/1.6/window-window.php
 sf::WindowSettings settings(24, 8, 2);
-sf::RenderWindow window(sf::VideoMode(1000, 650), "sPaCEbaTS", sf::Style::Close, settings);
+sf::RenderWindow window(sf::VideoMode(1200, 800), "sPaCEbaTS", sf::Style::Close, settings);
 
 // This is a clock you can use to control animation.  For more info, see:
 // http://www.sfml-dev.org/tutorials/1.6/window-time.php
@@ -221,7 +221,7 @@ void setupLights()
 	GLfloat pos[] = { 0.0, 1.0, 0.0, 0.0 };
 	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat ambient[] = { 0.3, 0.3, 0.3, 1.0 };
+	GLfloat ambient[] = { 0.7, 0.7, 0.7, 1.0 };
 	
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
@@ -263,7 +263,7 @@ void clearNormalsBuffer()
 
 
 void renderFrame() {
-	glViewport(0,0,1000,650);
+	glViewport(0,0,window.GetWidth(),window.GetHeight());
 
 	clearNormalsBuffer();
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());

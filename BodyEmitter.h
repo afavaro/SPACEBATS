@@ -13,6 +13,8 @@ enum BodyType {
 	EROS,
 	GOLEVKA,
 	JUNO,
+	GATE,
+	SPACEBAT,
 	NUM_BODY_TYPES
 };
 

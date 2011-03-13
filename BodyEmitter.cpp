@@ -23,6 +23,8 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 	collisionShapes[EROS] = new btSphereShape(5);
 	collisionShapes[GOLEVKA] = new btSphereShape(5);
 	collisionShapes[JUNO] = new btSphereShape(5);
+	collisionShapes[GATE] = new btSphereShape(5);
+	collisionShapes[SPACEBAT] = new btSphereShape(5);
 	
 	btScalar mass = 4.0;
 	btVector3 inertia(0,0,0);
@@ -82,6 +84,9 @@ btVector3 BodyEmitter::getAngularVelocityForType(BodyType type){
 	switch (type){
 		case MARS:
 			return btVector3(0,1,0);
+		case GATE:
+		case SPACEBAT:
+			return btVector3(0,0,0);
 		default:
 			return btVector3(RandomFloat(-1,1), RandomFloat(-1,1), RandomFloat(-1,1));
 	}
@@ -146,6 +151,12 @@ void BodyEmitter::loadModels() {
 	models[GOLEVKA].setScaleFactor(0.05);
 	models[JUNO].loadFromFile("models/juno", "juno.3ds", importers[JUNO]);
 	models[JUNO].setScaleFactor(0.05);
+	
+	
+	models[GATE].loadFromFile("models/gate", "gate.obj", importers[GATE]);
+	models[GATE].setScaleFactor(0.1);
+	
+	models[SPACEBAT].loadFromFile("models/spacebat", "spacebat.obj", importers[SPACEBAT]);
 
 }
 
