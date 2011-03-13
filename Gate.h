@@ -4,7 +4,7 @@
 #include "Framework.h"
 #include "Body.h"
 #include <btBulletDynamicsCommon.h>
-
+#include "Model.h"
 
 class Gate: public Body{
 
@@ -13,7 +13,14 @@ public:
 	~Gate();
 	
 	static sf::Image* changed;
-	void changeColor();
+	static void loadChangeImage();
+	void setCompleted();
+	virtual void draw(RenderPass pass);
+
+	
+private:
+	
+	bool completed;
 };
 
 #endif // Gate.h

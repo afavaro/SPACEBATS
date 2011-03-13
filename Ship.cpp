@@ -3,6 +3,7 @@
 #include <iostream>
 #include <math.h>
 #include "Body.h"
+#include "Gate.h"
 
 #define DURATION 0.2
 #define SHAKE_DURATION 0.5
@@ -75,6 +76,8 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 	Body* body = (Body*) spaceship->lastCollision;
 	body->printType();
 	if(body->getType() == GATE){
+		Gate* gate = (Gate*)body;
+		gate->setCompleted();
 		printf("GATE COMPLETED!\n");
 	}else {
 		spaceship->shiverMeTimbers();

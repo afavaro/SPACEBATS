@@ -10,6 +10,7 @@
 #include "BodyEmitter.h"
 #include "HUD.h"
 #include "Scoreboard.h"
+#include "Gate.h"
 
 #include <btBulletDynamicsCommon.h>
 
@@ -84,7 +85,7 @@ int main(int argc, char** argv) {
 	hud = new HUD(&spaceship);
 	hud->addComponent(new Scoreboard(&window));
 
-	
+	Gate::loadChangeImage();
 	loadAssets();
 	
 	motionBlur = new MotionBlur(NUM_MOTION_BLUR_FRAMES, window.GetWidth(), window.GetHeight());

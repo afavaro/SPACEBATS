@@ -34,7 +34,9 @@ void Model::setDiffuseImage(sf::Image* img){
 	diffuse = img;
 }
 
-
+sf::Image* Model::getDiffuseImage(){
+	return diffuse;
+}
 
 void Model::loadShaders() {
 	normalShader = new Shader("shaders/normal");

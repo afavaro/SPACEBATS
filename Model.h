@@ -35,6 +35,7 @@ class Model {
 		static void setNormalsBuffer(Framebuffer *fb);
 	
 		void setDiffuseImage(sf::Image* img);
+		sf::Image* getDiffuseImage();
 
 	private:
 		btTransform transformation;

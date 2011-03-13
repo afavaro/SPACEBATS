@@ -1,6 +1,7 @@
 
 #include "BodyEmitter.h"
 #include "Camera.h"
+#include "Gate.h"
 
 #define BOUNDARY_X 50.0
 #define BOUNDARY_Y 44.0
@@ -146,12 +147,10 @@ void BodyEmitter::emitBodies(float tstep) {
 		accum = 0.0;
 		
 
+		BodyType type = BodyType(rand() % NUM_BODY_TYPES);	
 
 		
-		int type = rand() % NUM_BODY_TYPES;	
-
-		
-		btVector3 pos = getPositionForType(BodyType(type));
+		btVector3 pos = getPositionForType(type);
 		btDefaultMotionState *motionState =
 			new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), pos));
 
@@ -161,10 +160,16 @@ void BodyEmitter::emitBodies(float tstep) {
 		btRigidBody::btRigidBodyConstructionInfo
 			constructionInfo(mass, motionState, collisionShapes[type]);
 		
-		Body* newBody = new Body(&models[type], constructionInfo, BodyType(type));
-
-		newBody->setLinearVelocity(getLinearVelocityForType(BodyType(type)));
-		newBody->setAngularVelocity(getAngularVelocityForType(BodyType(type)));
+		
+		Body* newBody;
+		
+		if(type == GATE){
+			newBody = new Gate(&models[type], constructionInfo, type);
+		}else{
+			newBody = new Body(&models[type], constructionInfo, type);
+		}
+		newBody->setLinearVelocity(getLinearVelocityForType(type));
+		newBody->setAngularVelocity(getAngularVelocityForType(type));
 
 		world->addRigidBody(newBody);
 		bodies.push_back(newBody);
