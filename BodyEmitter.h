@@ -36,7 +36,7 @@ class BodyEmitter {
 
 	private:
 		btVector3 getAngularVelocityForType(BodyType type);
-
+		void setSpeed(float speed);
 	
 	
 		btDiscreteDynamicsWorld *world;

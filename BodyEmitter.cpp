@@ -41,24 +41,22 @@ BodyEmitter::~BodyEmitter() {
 	}
 }
 
-void BodyEmitter::boostSpeed(){
+void BodyEmitter::setSpeed(float speed){
 	list<Body*>::iterator it;
 	for(it = bodies.begin(); it != bodies.end(); it++){
 		Body* b = *it;
 		btVector3 vel = b->getLinearVelocity();
-		vel.setZ(BOOST_SPEED);
+		vel.setZ(speed);
 		b->setLinearVelocity(vel);
 	}
 }
 
+void BodyEmitter::boostSpeed(){
+	setSpeed(BOOST_SPEED);
+}
+
 void BodyEmitter::resetSpeed(){
-	list<Body*>::iterator it;
-	for(it = bodies.begin(); it != bodies.end(); it++){
-		Body* b = *it;
-		btVector3 vel = b->getLinearVelocity();
-		vel.setZ(NORMAL_SPEED);
-		b->setLinearVelocity(vel);
-	}
+	setSpeed(NORMAL_SPEED);
 }
 
 void BodyEmitter::setBoostMode(bool boost){
