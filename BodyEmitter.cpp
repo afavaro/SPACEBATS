@@ -142,6 +142,7 @@ void BodyEmitter::loadModels() {
 	models[ASTEROID].loadFromFile("models/aster", "asteroid.3ds", importers[ASTEROID]);
 	models[ASTEROID].setScaleFactor(0.1);
 	models[EROS].loadFromFile("models/eros", "eros.3ds", importers[EROS]);
+	models[EROS].setScaleFactor(0.7);
 //	models[GOLEVKA].loadFromFile("models/golevka", "golevka.3ds", importers[GOLEVKA]);
 //	models[JUNO].loadFromFile("models/juno", "juno.3ds", importers[JUNO]);
 }
