@@ -1,6 +1,6 @@
 OS:=$(shell uname)
 
-OBJS = Main.o Shader.o Model.o Camera.o Framebuffer.o MotionBlur.o Ship.o Body.o BodyEmitter.o HUD.o HUDComponent.o
+OBJS = Main.o Shader.o Model.o Camera.o Framebuffer.o MotionBlur.o Ship.o Body.o BodyEmitter.o HUD.o HUDComponent.o Scoreboard.o
 
 ifeq ($(OS), Darwin)
 	CXXFLAGS = -g -Wall -Ilinux/include -I/usr/local/include/bullet

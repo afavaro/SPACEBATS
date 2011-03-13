@@ -8,6 +8,8 @@
 #include "MotionBlur.h"
 #include "Ship.h"
 #include "BodyEmitter.h"
+#include "HUD.h"
+#include "Scoreboard.h"
 
 #include <btBulletDynamicsCommon.h>
 
@@ -62,6 +64,8 @@ const int NUM_MOTION_BLUR_FRAMES = 4;
 MotionBlur* motionBlur;
 bool useMotionBlur = false;
 
+HUD* hud;
+
 void initOpenGL();
 void loadAssets();
 void handleInput();
@@ -92,6 +96,9 @@ int main(int argc, char** argv) {
 	world->addRigidBody(wallBody);
 	
 	spaceship.setWorld(world);
+	
+	hud = new HUD(&spaceship);
+	hud->addComponent(new Scoreboard());
 	
 	
 	loadAssets();
