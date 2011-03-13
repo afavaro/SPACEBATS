@@ -35,7 +35,7 @@ GLfloat accum = 0.0;
 // It automatically manages resources for you, and frees them when the program
 // exits.
 Assimp::Importer importer;
-Shader *phongShader, *blurShader;
+Shader *blurShader, *bgShader;
 
 sf::Image background;
 
@@ -121,7 +121,6 @@ int main(int argc, char** argv) {
 		window.Display();
 	}
 	
-	delete phongShader;
 	delete blurShader;
 	
 	delete normalsBuffer;
@@ -159,8 +158,8 @@ void initOpenGL() {
 }
 
 void loadAssets() {
-	phongShader = new Shader("shaders/phong");
 	blurShader = new Shader("shaders/blur");
+	bgShader = new Shader("shaders/background");
 	
 	bodyEmitter = new BodyEmitter(world);
 	bodyEmitter->loadModels();
@@ -170,11 +169,6 @@ void loadAssets() {
 	Model::setNormalsBuffer(normalsBuffer);
 	
 	background.LoadFromFile("models/Space-Background.jpg");
-	//	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
-	//	mars.loadFromFile("models", "mars.3ds", marsImporter);
-	//	aiMatrix4x4 rot;
-	//	aiMatrix4x4::RotationX(-M_PI / 2.0, rot);
-	//	spaceship.setTransformation(rot);	
 	
 	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
 	spaceship.model.setScaleFactor(0.5);
@@ -240,7 +234,7 @@ void setupLights()
 
 void renderBackground()
 {
-	glUseProgram(0);
+	glUseProgram(bgShader->programID());
 	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -248,11 +242,15 @@ void renderBackground()
 	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	
+
+	GLint tex = glGetUniformLocation(bgShader->programID(), "texture");
+	glUniform1i(tex, 0);
 	glActiveTexture(GL_TEXTURE0);
 	background.Bind();
 	
+	GLint pos = glGetAttribLocation(bgShader->programID(), "positionIn");
 	glBegin(GL_QUADS);
+	/*
 	glTexCoord2f(0.0, 0.0);
 	glVertex2f(-1.0, -1.0);
 	glTexCoord2f(1.0, 0.0);
@@ -261,6 +259,11 @@ void renderBackground()
 	glVertex2f(1.0, 1.0);
 	glTexCoord2f(0.0, 1.0);
 	glVertex2f(-1.0, 1.0);
+	*/
+	glVertexAttrib2f(pos, -1.0, -1.0);
+	glVertexAttrib2f(pos, 1.0, -1.0);
+	glVertexAttrib2f(pos, 1.0, 1.0);
+	glVertexAttrib2f(pos, -1.0, 1.0);
 	glEnd();
 }
 
@@ -300,11 +303,10 @@ void renderFrame() {
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	spaceship.model.render(NORMALS_PASS);
 	bodyEmitter->drawBodies(NORMALS_PASS);
+
+/*	
 	
 	
-	
-	//Render this frame to motion blur
-	if(motionBlur->shouldRenderFrame()){
 		motionBlur->bind();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -322,20 +324,25 @@ void renderFrame() {
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//glClearColor(1,1,1,1);
-	glClearColor(0.18, 0.18, 0.18, 1.0);
+	glClearColor(0.18, 0.18, 0.18, 1.0);*/
+
+	glClearColor(1.0, 0, 0, 1);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	renderBackground();
+	glClear(GL_DEPTH_BUFFER_BIT);
 		
-	if(useMotionBlur){
+	/*if(useMotionBlur){
 		motionBlur->render(blurShader);
 	} else {
 		renderBackground();	
 		glClear(GL_DEPTH_BUFFER_BIT);
 	}
-	motionBlur->update();
+	motionBlur->update(); */
 	
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	setupLights();
 
-	bodyEmitter->drawBodies(FINAL_PASS);
+	//bodyEmitter->drawBodies(FINAL_PASS);
 	spaceship.model.render(FINAL_PASS);
 
 }
