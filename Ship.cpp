@@ -15,8 +15,8 @@
 #define PITCH_ROTATION	M_PI/15.0
 #define ROLL_ROTATION	M_PI/6.0
 
-#define BOUNDARY_X 25.0
-#define BOUNDARY_Y 22.0
+#define BOUNDARY_X 35.0
+#define BOUNDARY_Y 25.0
 #define DELTA 0.01
 
 #define STOP_THRESHOLD 2
@@ -152,7 +152,6 @@ void Ship::updateRotation(float tstep) {
 	}
 }
 
-
 void Ship::updatePosition(float tstep) {
 	pos += velocity * tstep;
 	velocity += acceleration * tstep;
@@ -182,6 +181,8 @@ void Ship::updatePosition(float tstep) {
 		velocity = acceleration = btVector3(0, 0, 0);
 		isStopping = false;
 	}
+
+	cam->setTarget(btVector3(0.2 * pos.x(), 0.2 * pos.y(), pos.z()));
 }
 
 void Ship::update(float tstep) {
@@ -200,7 +201,6 @@ void Ship::setRotation(btQuaternion rot) {
 	curRot->time = 0.0;
 	curRot->duration = DURATION;
 }
-
 
 
 void Ship::handleEvent(sf::Event &event, const sf::Input &input) {
