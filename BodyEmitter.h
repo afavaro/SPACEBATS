@@ -4,16 +4,15 @@
 #include "Framework.h"
 #include "Body.h"
 #include "Model.h"
-
 #include <list>
-
 #include "btBulletDynamicsCommon.h"
-#include "ObjectMotionState.h"
 
 enum BodyType {
 	MARS,
 	ASTEROID,
 	EROS,
+	GOLEVKA,
+	JUNO,
 	NUM_BODY_TYPES
 };
 
