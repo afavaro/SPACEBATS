@@ -91,8 +91,7 @@ int main(int argc, char** argv) {
 	btRigidBody* wallBody = new btRigidBody(wallRigidBodyCI);
 	world->addRigidBody(wallBody);
 	
-	spaceship.setWorld(world);
-	
+	spaceship.setWorld(world);	
 	
 	loadAssets();
 	
@@ -170,7 +169,7 @@ void loadAssets() {
 	normalsBuffer = new Framebuffer(window.GetWidth(), window.GetHeight());
 	Model::setNormalsBuffer(normalsBuffer);
 	
-	//	background.LoadFromFile("models/Space-Background.jpg");
+	background.LoadFromFile("models/Space-Background.jpg");
 	//	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
 	//	mars.loadFromFile("models", "mars.3ds", marsImporter);
 	//	aiMatrix4x4 rot;
@@ -178,6 +177,7 @@ void loadAssets() {
 	//	spaceship.setTransformation(rot);	
 	
 	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
+	spaceship.model.setScaleFactor(0.5);
 }
 
 
@@ -310,6 +310,9 @@ void renderFrame() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.18, 0.18, 0.18, 1.0);
 
+		renderBackground();	
+		glClear(GL_DEPTH_BUFFER_BIT);
+
 		camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 		setupLights();
 
@@ -320,22 +323,19 @@ void renderFrame() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//glClearColor(1,1,1,1);
 	glClearColor(0.18, 0.18, 0.18, 1.0);
+		
 	if(useMotionBlur){
 		motionBlur->render(blurShader);
+	} else {
+		renderBackground();	
+		glClear(GL_DEPTH_BUFFER_BIT);
 	}
 	motionBlur->update();
-	
-	
-	//renderBackground();
-	
-	glClear(GL_DEPTH_BUFFER_BIT);
 	
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	setupLights();
 
-	//if(!useMotionBlur){
-		bodyEmitter->drawBodies(FINAL_PASS);
-	//}
+	bodyEmitter->drawBodies(FINAL_PASS);
 	spaceship.model.render(FINAL_PASS);
 
 }
