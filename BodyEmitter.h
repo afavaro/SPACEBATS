@@ -14,6 +14,8 @@ enum BodyType {
 	MARS,
 	ASTEROID,
 	EROS,
+	GOLEVKA,
+	JUNO,
 	NUM_BODY_TYPES
 };
 
