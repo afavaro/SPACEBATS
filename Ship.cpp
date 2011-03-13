@@ -20,6 +20,33 @@
 
 using namespace std;
 
+
+Ship::ShipContactCallback::ShipContactCallback(Ship* ship)
+: btCollisionWorld::ContactResultCallback(), spaceship(ship)
+{
+
+}
+
+
+btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
+											  const btCollisionObject* colObj0, int partId0, int index0,
+											  const btCollisionObject* colObj1, int partId1, int index1){
+
+	btVector3 point;
+	//if(colObj0 == &
+	return 0;
+}
+
+void Ship::testCollision(){
+	//printf("Called ship test collision\n");
+}
+
+
+void Ship::setWorld(btDiscreteDynamicsWorld* world){
+	this->world = world;
+}
+
+
 Ship::Ship(btVector3 pos, Camera* c) {
 	btQuaternion adjust(btVector3(1, 0, 0), -M_PI / 2.0);
 	neutral = btQuaternion(btVector3(0, 1, 0), -M_PI / 2.0) * adjust;
@@ -34,6 +61,14 @@ Ship::Ship(btVector3 pos, Camera* c) {
 	quat = neutral;
 	curRot = NULL;
 	isStopping = false;
+	
+	spaceshipShape = new btSphereShape(30);
+	spaceshipCollider = new btCollisionObject();
+	spaceshipCollider->setWorldTransform(btTransform(quat, pos));
+	spaceshipCollider->setCollisionShape(spaceshipShape);
+	
+	world = NULL;
+	callback = new ShipContactCallback(this);
 }
 
 Ship::~Ship() {}

@@ -91,6 +91,9 @@ int main(int argc, char** argv) {
 	btRigidBody* wallBody = new btRigidBody(wallRigidBodyCI);
 	world->addRigidBody(wallBody);
 	
+	spaceship.setWorld(world);
+	
+	
 	loadAssets();
 	
 	motionBlur = new MotionBlur(NUM_MOTION_BLUR_FRAMES, window.GetWidth(), window.GetHeight());
@@ -109,6 +112,8 @@ int main(int argc, char** argv) {
 		while (accum > TIMESTEP) {
 			spaceship.update(TIMESTEP);
 			world->stepSimulation(TIMESTEP);
+			spaceship.testCollision();
+			
 			bodyEmitter->emitBodies(TIMESTEP);
 			accum -= TIMESTEP;
 		}

@@ -19,9 +19,9 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 	accum = 0.0;
 	boostMode = false;
 
-	collisionShapes[MARS] = new btSphereShape(20);
-	collisionShapes[ASTEROID] = new btSphereShape(20);
-	collisionShapes[EROS] = new btSphereShape(20);
+	collisionShapes[MARS] = new btSphereShape(5);
+	collisionShapes[ASTEROID] = new btSphereShape(50);
+	collisionShapes[EROS] = new btSphereShape(40);
 	
 	btScalar mass = 4.0;
 	btVector3 inertia(0,0,0);
@@ -96,7 +96,7 @@ void BodyEmitter::emitBodies(float tstep) {
 	if (accum > EMIT_STEP) {
 		accum = 0.0;
 		
-		if(bodies.size() > 10) return;
+		//if(bodies.size() > 10) return;
 
 		printf("%d\n", (int)bodies.size());
 		
@@ -118,10 +118,10 @@ void BodyEmitter::emitBodies(float tstep) {
 			constructionInfo(mass, motionState, collisionShapes[type]);
 		
 		Body* newBody = new Body(&models[type], constructionInfo);
-		newBody->setLinearVelocity(btVector3(RandomFloat(-4,4),RandomFloat(-4,4),RandomFloat(-10,10)));
+//		newBody->setLinearVelocity(btVector3(RandomFloat(-4,4),RandomFloat(-4,4),RandomFloat(-10,10)));
 		
 		float speed = boostMode ? BOOST_SPEED : NORMAL_SPEED;
-//		newBody->setLinearVelocity(btVector3(RandomFloat(-4,4),RandomFloat(-4,4),speed));
+		newBody->setLinearVelocity(btVector3(RandomFloat(-4,4),RandomFloat(-4,4),speed));
 		newBody->setAngularVelocity(getAngularVelocityForType(BodyType(type)));
 		//		newBody->setAngularVelocity(btVector3(RandomFloat(-1,1), RandomFloat(-1,1), RandomFloat(-1,1)));
 		world->addRigidBody(newBody);
