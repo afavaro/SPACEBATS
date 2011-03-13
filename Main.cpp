@@ -57,7 +57,6 @@ vector<InputListener*> inputListeners;
 
 Framebuffer *normalsBuffer = NULL;
 
-static int frameCounter = 0;
 const int NUM_MOTION_BLUR_FRAMES = 4;
 MotionBlur* motionBlur;
 bool useMotionBlur = false;
@@ -79,18 +78,7 @@ int main(int argc, char** argv) {
 	btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfig);
 	btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
 	world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfig);
-	world->setGravity(btVector3(0, 0, 0));
-	
-	///Add back wall for object collision detection and removal
-	btCollisionShape* wallShape = new btStaticPlaneShape(btVector3(0,0,5), 1);
-	
-	btDefaultMotionState* wallMotionState = 
-	new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1), btVector3(0,0,-10)));
-	btRigidBody::btRigidBodyConstructionInfo
-	wallRigidBodyCI(40, wallMotionState, wallShape, btVector3(0,0,0));
-	btRigidBody* wallBody = new btRigidBody(wallRigidBodyCI);
-	world->addRigidBody(wallBody);
-	
+		
 	spaceship.setWorld(world);	
 	
 	loadAssets();
@@ -250,42 +238,11 @@ void renderBackground()
 	
 	GLint pos = glGetAttribLocation(bgShader->programID(), "positionIn");
 	glBegin(GL_QUADS);
-	/*
-	glTexCoord2f(0.0, 0.0);
-	glVertex2f(-1.0, -1.0);
-	glTexCoord2f(1.0, 0.0);
-	glVertex2f(1.0, -1.0);
-	glTexCoord2f(1.0, 1.0);
-	glVertex2f(1.0, 1.0);
-	glTexCoord2f(0.0, 1.0);
-	glVertex2f(-1.0, 1.0);
-	*/
 	glVertexAttrib2f(pos, -1.0, -1.0);
 	glVertexAttrib2f(pos, 1.0, -1.0);
 	glVertexAttrib2f(pos, 1.0, 1.0);
 	glVertexAttrib2f(pos, -1.0, 1.0);
 	glEnd();
-}
-
-void renderObjects(RenderPass pass) {
-	for(int i = 0; i < 10; i++){
-		glPushMatrix();
-		glScalef(0.5, 0.5, 0.5);
-		glTranslatef(10, 0, -100* i);
-		glTranslatef(0, 0, frameCounter / 5.0);
-		mars.render(pass);
-		glPopMatrix();
-	}
-	
-	for(int i = 0; i < 10; i++){
-		glPushMatrix();
-		glScalef(0.5, 0.5, 0.5);
-		glTranslatef(-10, -10, -100* i);
-		glTranslatef(0, 0, frameCounter / 5.0);
-		mars.render(pass);
-		glPopMatrix();
-	}
-	
 }
 
 void clearNormalsBuffer()
@@ -297,22 +254,20 @@ void clearNormalsBuffer()
 
 
 void renderFrame() {
-	frameCounter++;
-	
+
 	clearNormalsBuffer();
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	spaceship.model.render(NORMALS_PASS);
 	bodyEmitter->drawBodies(NORMALS_PASS);
 
-/*	
 	
-	
+	if (motionBlur->shouldRenderFrame()) {	
 		motionBlur->bind();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(0.18, 0.18, 0.18, 1.0);
 
 		renderBackground();	
+
 		glClear(GL_DEPTH_BUFFER_BIT);
 
 		camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
@@ -320,29 +275,21 @@ void renderFrame() {
 
 		bodyEmitter->drawBodies(FINAL_PASS);
 		motionBlur->unbind();
-	}
-	
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//glClearColor(1,1,1,1);
-	glClearColor(0.18, 0.18, 0.18, 1.0);*/
+	}	
 
-	glClearColor(1.0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	renderBackground();
-	glClear(GL_DEPTH_BUFFER_BIT);
 		
-	/*if(useMotionBlur){
+	if(useMotionBlur){
 		motionBlur->render(blurShader);
 	} else {
 		renderBackground();	
 		glClear(GL_DEPTH_BUFFER_BIT);
 	}
-	motionBlur->update(); */
+	motionBlur->update();
 	
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	setupLights();
 
-	//bodyEmitter->drawBodies(FINAL_PASS);
+	bodyEmitter->drawBodies(FINAL_PASS);
 	spaceship.model.render(FINAL_PASS);
-
 }
