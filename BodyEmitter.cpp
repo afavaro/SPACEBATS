@@ -1,15 +1,16 @@
 
 #include "BodyEmitter.h"
 #include "ObjectMotionState.h"
+#include "Camera.h"
 
 #define BOUNDARY_X 50.0
 #define BOUNDARY_Y 44.0
 #define BOUNDARY_Z -250.0
 
-#define EMIT_STEP 1.0
+#define EMIT_STEP 0.3
 
-const float NORMAL_SPEED = 5.0;
-const float BOOST_SPEED = 65.0;
+const float NORMAL_SPEED = 100.0;
+const float BOOST_SPEED = 200.0;
 
 using namespace std;
 
@@ -18,9 +19,9 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 	accum = 0.0;
 	boostMode = false;
 
-	collisionShapes[MARS] = new btSphereShape(1);
-	collisionShapes[ASTEROID] = new btSphereShape(1);
-	collisionShapes[EROS] = new btSphereShape(1);
+	collisionShapes[MARS] = new btSphereShape(10);
+	collisionShapes[ASTEROID] = new btSphereShape(10);
+	collisionShapes[EROS] = new btSphereShape(10);
 	
 	btScalar mass = 4.0;
 	btVector3 inertia(0,0,0);
@@ -49,24 +50,22 @@ BodyEmitter::~BodyEmitter() {
 	delete contactCallback;
 }
 
-void BodyEmitter::boostSpeed(){
+void BodyEmitter::setSpeed(float speed){
 	list<Body*>::iterator it;
 	for(it = bodies.begin(); it != bodies.end(); it++){
 		Body* b = *it;
 		btVector3 vel = b->getLinearVelocity();
-		vel.setZ(BOOST_SPEED);
+		vel.setZ(speed);
 		b->setLinearVelocity(vel);
 	}
 }
 
+void BodyEmitter::boostSpeed(){
+	setSpeed(BOOST_SPEED);
+}
+
 void BodyEmitter::resetSpeed(){
-	list<Body*>::iterator it;
-	for(it = bodies.begin(); it != bodies.end(); it++){
-		Body* b = *it;
-		btVector3 vel = b->getLinearVelocity();
-		vel.setZ(NORMAL_SPEED);
-		b->setLinearVelocity(vel);
-	}
+	setSpeed(NORMAL_SPEED);
 }
 
 void BodyEmitter::setBoostMode(bool boost){
@@ -77,6 +76,17 @@ void BodyEmitter::setBoostMode(bool boost){
 float RandomFloat(float min, float max){
 	float t = (float)rand() / RAND_MAX;
 	return min + t * (max - min);
+}
+
+
+btVector3 BodyEmitter::getAngularVelocityForType(BodyType type){
+	switch (type){
+		case MARS:
+			return btVector3(0,1,0);
+		default:
+			return btVector3(RandomFloat(-1,1), RandomFloat(-1,1), RandomFloat(-1,1));
+	}
+	
 }
 
 void BodyEmitter::emitBodies(float tstep) {
@@ -113,7 +123,8 @@ void BodyEmitter::emitBodies(float tstep) {
 		Body* newBody = new Body(&models[type], constructionInfo);
 		
 		float speed = boostMode ? BOOST_SPEED : NORMAL_SPEED;
-		newBody->setLinearVelocity(btVector3(RandomFloat(-4,4),RandomFloat(-4,4),speed));
+		newBody->setLinearVelocity(btVector3(RandomFloat(-1,1),RandomFloat(-1,1),speed));
+		newBody->setAngularVelocity(getAngularVelocityForType(BodyType(type)));
 
 		world->addRigidBody(newBody);
 		bodies.push_back(newBody);
@@ -129,6 +140,7 @@ void BodyEmitter::drawBodies(RenderPass pass) {
 void BodyEmitter::loadModels() {
 	models[MARS].loadFromFile("models/mars", "mars.3ds", importers[MARS]);
 	models[ASTEROID].loadFromFile("models/aster", "asteroid.3ds", importers[ASTEROID]);
+	models[ASTEROID].setScaleFactor(0.1);
 	models[EROS].loadFromFile("models/eros", "eros.3ds", importers[EROS]);
 //	models[GOLEVKA].loadFromFile("models/golevka", "golevka.3ds", importers[GOLEVKA]);
 //	models[JUNO].loadFromFile("models/juno", "juno.3ds", importers[JUNO]);

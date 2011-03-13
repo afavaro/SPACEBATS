@@ -23,6 +23,8 @@ class Model {
 		void setTransformation(btTransform &t);
 
 		void render(RenderPass pass);
+	
+		void setScaleFactor(float f);
 
 		static sf::Image white;
 
@@ -35,6 +37,8 @@ class Model {
 	private:
 		btTransform transformation;
 		const aiScene *scene;
+	
+		float scaleFactor;
 
 		sf::Image *diffuse, *specular;
 

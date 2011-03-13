@@ -43,6 +43,10 @@ class BodyEmitter {
 		friend struct ContactCallback;
 		ContactCallback *contactCallback;
 
+		btVector3 getAngularVelocityForType(BodyType type);
+		void setSpeed(float speed);
+	
+	
 		btDiscreteDynamicsWorld *world;
 		std::list<Body*> bodies;
 

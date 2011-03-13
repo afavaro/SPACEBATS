@@ -13,7 +13,7 @@
 #include <vector>
 using namespace std;
 
-const int SEPARATION = 3;
+const int SEPARATION = 1;
 
 
 MotionBlur::MotionBlur(int numFrames, int width, int height){
