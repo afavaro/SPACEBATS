@@ -18,11 +18,11 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 	accum = 0.0;
 	boostMode = false;
 
-	collisionShapes[MARS] = new btSphereShape(1);
-	collisionShapes[ASTEROID] = new btSphereShape(1);
-	collisionShapes[EROS] = new btSphereShape(1);
-	collisionShapes[GOLEVKA] = new btSphereShape(1);
-	collisionShapes[JUNO] = new btSphereShape(1);
+	collisionShapes[MARS] = new btSphereShape(5);
+	collisionShapes[ASTEROID] = new btSphereShape(5);
+	collisionShapes[EROS] = new btSphereShape(5);
+	collisionShapes[GOLEVKA] = new btSphereShape(5);
+	collisionShapes[JUNO] = new btSphereShape(5);
 	
 	btScalar mass = 4.0;
 	btVector3 inertia(0,0,0);

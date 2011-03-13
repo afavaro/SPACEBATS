@@ -8,6 +8,8 @@
 #include "MotionBlur.h"
 #include "Ship.h"
 #include "BodyEmitter.h"
+#include "HUD.h"
+#include "Scoreboard.h"
 
 #include <btBulletDynamicsCommon.h>
 
@@ -61,6 +63,8 @@ const int NUM_MOTION_BLUR_FRAMES = 4;
 MotionBlur* motionBlur;
 bool useMotionBlur = false;
 
+HUD* hud;
+
 void initOpenGL();
 void loadAssets();
 void handleInput();
@@ -78,8 +82,13 @@ int main(int argc, char** argv) {
 	btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfig);
 	btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
 	world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfig);
-		
-	spaceship.setWorld(world);	
+	world->setGravity(btVector3(0, 0, 0));
+	
+	spaceship.setWorld(world);
+	
+	hud = new HUD(&spaceship);
+	hud->addComponent(new Scoreboard(&window));
+
 	
 	loadAssets();
 	
@@ -253,15 +262,12 @@ void clearNormalsBuffer()
 
 
 void renderFrame() {
+	glViewport(0,0,1000,650);
 
 	clearNormalsBuffer();
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	spaceship.model.render(NORMALS_PASS);
-
-	renderBackground();
-	
 	bodyEmitter->drawBodies(NORMALS_PASS);
-
 	
 	if (motionBlur->shouldRenderFrame()) {	
 		motionBlur->bind();
@@ -272,7 +278,7 @@ void renderFrame() {
 
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-		camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
+		camera.setProjectionAndView((float)window.GetWidth() / window.GetHeight());
 		setupLights();
 
 		bodyEmitter->drawBodies(FINAL_PASS);
@@ -288,10 +294,12 @@ void renderFrame() {
 		glClear(GL_DEPTH_BUFFER_BIT);
 	}
 	motionBlur->update();
-	glClear(GL_DEPTH_BUFFER_BIT);
+
+	glClear(GL_DEPTH_BUFFER_BIT);	
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	setupLights();
-
 	bodyEmitter->drawBodies(FINAL_PASS);
 	spaceship.model.render(FINAL_PASS);
+
+	//	hud->render();	
 }

@@ -24,6 +24,11 @@ struct Rotation {
 	GLfloat time, duration;
 };
 
+struct Shake {
+	btVector3 position;
+	GLfloat time, duration;
+};
+
 class Ship : public InputListener {
 public:
 	Ship(btVector3 pos, Camera* c);
@@ -62,6 +67,8 @@ private:
 	
 	friend struct ShipContactCallback;
 	
+	btCollisionObject* lastCollision;
+	
 	btDiscreteDynamicsWorld *world;
 	ShipContactCallback* callback;
 	
@@ -69,7 +76,11 @@ private:
 	void updateRotation(float tstep);
 
 	void setRotation(btQuaternion end);
-
+	
+	void shiverMeTimbers();
+	void updateShake(float tstep);
+	Shake* curShake;
+	
 	btQuaternion neutral;
 	btQuaternion maxRollLeft;
 	btQuaternion maxRollRight;
