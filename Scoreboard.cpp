@@ -37,6 +37,8 @@ void Scoreboard::render(){
 //	glVertex2f(1.0,0.0);
 //	glEnd();
 
+	
+	
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	sf::String scoreString("50", sf::Font::GetDefaultFont(), 30.f);
 	scoreString.SetColor(sf::Color(200, 0,0));
@@ -45,7 +47,18 @@ void Scoreboard::render(){
 	
 }
 
+void Scoreboard::print(){
+	printf("Score: %f\n", score);
+}
 
-void Scoreboard::setScore(int s){
+void Scoreboard::setScore(float s){
 	score = s;
+}
+
+void Scoreboard::add(float s){
+	score += s;
+}
+
+void Scoreboard::subtract(float s){
+	score -= s;
 }

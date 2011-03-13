@@ -29,6 +29,11 @@ Ship::ShipContactCallback::ShipContactCallback(Ship* ship)
 {
 }
 
+void Ship::setScoreboard(Scoreboard* s){
+	scoreboard = s;
+}
+
+
 void Ship::shiverMeTimbers(){
 	//if(!curShake) return;
 	delete curShake;
@@ -81,6 +86,9 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 		printf("GATE COMPLETED!\n");
 	}else {
 		spaceship->shiverMeTimbers();
+		
+		spaceship->scoreboard->subtract(5);
+		spaceship->scoreboard->print();
 		printf("COLLISION\n");
 	}
 	

@@ -82,10 +82,17 @@ int main(int argc, char** argv) {
 	
 	spaceship.setWorld(world);
 	
+	
 	hud = new HUD(&spaceship);
-	hud->addComponent(new Scoreboard(&window));
-
+	Scoreboard* scoreboard = new Scoreboard(&window);
+	hud->addComponent(scoreboard);
+	Gate::setScoreboard(scoreboard);
+	
 	Gate::loadChangeImage();
+	
+	
+	spaceship.setScoreboard(scoreboard);
+	
 	loadAssets();
 	
 	motionBlur = new MotionBlur(NUM_MOTION_BLUR_FRAMES, window.GetWidth(), window.GetHeight());

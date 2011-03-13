@@ -5,6 +5,7 @@
 #include "Body.h"
 #include <btBulletDynamicsCommon.h>
 #include "Model.h"
+#include "Scoreboard.h"
 
 class Gate: public Body{
 
@@ -14,9 +15,13 @@ public:
 	
 	static sf::Image* changed;
 	static void loadChangeImage();
+	
 	void setCompleted();
 	virtual void draw(RenderPass pass);
 
+	static Scoreboard* scoreboard;
+	static void setScoreboard(Scoreboard* s);
+	
 	
 private:
 	

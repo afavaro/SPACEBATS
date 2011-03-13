@@ -13,6 +13,7 @@
 #include "InputListener.h"
 #include "Model.h"
 #include "Camera.h"
+#include "Scoreboard.h"
 
 #include "btBulletDynamicsCommon.h"
 
@@ -36,6 +37,8 @@ public:
 	
 	void handleEvent(sf::Event &event, const sf::Input &input);
 	void update(float tstep);
+	
+	void setScoreboard(Scoreboard* s);
 	
 	Rotation *curRot;
 	Model model;
@@ -73,6 +76,8 @@ private:
 	
 	btDiscreteDynamicsWorld *world;
 	ShipContactCallback* callback;
+	
+	Scoreboard* scoreboard;
 	
 	void updatePosition(float tstep);
 	void updateRotation(float tstep);

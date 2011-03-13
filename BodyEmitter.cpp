@@ -28,7 +28,7 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 	
 	
 	//collisionShapes[GATE] = new btSphereShape(5);
-	collisionShapes[GATE] = new btCylinderShapeZ( btVector3(2,2,0.1) );
+	collisionShapes[GATE] = new btCylinderShapeZ( btVector3(1,1,0.1) );
 	
 	
 	collisionShapes[SPACEBAT] = new btSphereShape(5);

@@ -11,9 +11,13 @@ public:
 	~Scoreboard();
 	void render();
 	
-	void setScore(int s);
+	void setScore(float s);
+	void add(float s);
+	void subtract(float s);
+	void print();
+	
 private:
-	int score;
+	float score;
 	sf::RenderWindow* window;
 };
 
