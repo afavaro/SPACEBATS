@@ -3,11 +3,12 @@
 
 #include "HUDComponent.h"
 #include "Framework.h"
+#include "Shader.h"
 
 class Scoreboard : public HUDComponent{
 
 public:
-	Scoreboard(sf::RenderWindow* window);
+	Scoreboard(sf::RenderWindow* window, Shader* shader);
 	~Scoreboard();
 	void render();
 	
@@ -19,6 +20,7 @@ public:
 private:
 	float score;
 	sf::RenderWindow* window;
+	Shader* shader;
 };
 
 #endif // scoreboard.h

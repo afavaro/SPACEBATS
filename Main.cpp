@@ -38,7 +38,7 @@ GLfloat accum = 0.0;
 // It automatically manages resources for you, and frees them when the program
 // exits.
 Assimp::Importer importer;
-Shader *blurShader, *bgShader;
+Shader *blurShader, *bgShader, *barShader;
 
 sf::Image background;
 
@@ -81,10 +81,10 @@ int main(int argc, char** argv) {
 	world->setGravity(btVector3(0, 0, 0));
 	
 	spaceship.setWorld(world);
-	
+	loadAssets();
 	
 	hud = new HUD(&spaceship);
-	Scoreboard* scoreboard = new Scoreboard(&window);
+	Scoreboard* scoreboard = new Scoreboard(&window, barShader);
 	hud->addComponent(scoreboard);
 	Gate::setScoreboard(scoreboard);
 	
@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
 	
 	spaceship.setScoreboard(scoreboard);
 	
-	loadAssets();
+
 	
 	motionBlur = new MotionBlur(NUM_MOTION_BLUR_FRAMES, window.GetWidth(), window.GetHeight());
 	glClear(GL_ACCUM_BUFFER_BIT);
@@ -160,6 +160,7 @@ void initOpenGL() {
 void loadAssets() {
 	blurShader = new Shader("shaders/blur");
 	bgShader = new Shader("shaders/background");
+	barShader = new Shader("shaders/bar");
 	
 	bodyEmitter = new BodyEmitter(world);
 	bodyEmitter->loadModels();
@@ -315,5 +316,7 @@ void renderFrame() {
 	bodyEmitter->drawBodies(FINAL_PASS);
 	spaceship.model.render(FINAL_PASS);
 
-	//	hud->render();	
+
+	hud->render();	
+	
 }
