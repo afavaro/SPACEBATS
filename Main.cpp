@@ -43,12 +43,7 @@ sf::Image background;
 
 Model mars;
 
-Camera camera(
-			  btVector3(0.0, 0.0, 50.0),
-			  btMatrix3x3(
-						  1.0, 0.0, 0.0,
-						  0.0, 1.0, 0.0,
-						  0.0, 0.0, -1.0));
+Camera camera(btVector3(0.0, 0.0, 50.0));
 
 Ship spaceship(btVector3(0.0, 0.0, 0.0), &camera);
 BodyEmitter *bodyEmitter;
@@ -165,7 +160,7 @@ void loadAssets() {
 	normalsBuffer = new Framebuffer(window.GetWidth(), window.GetHeight());
 	Model::setNormalsBuffer(normalsBuffer);
 	
-	background.LoadFromFile("models/Space-Background.jpg");
+	background.LoadFromFile("models/space2.jpg");
 	
 	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
 	spaceship.model.setScaleFactor(0.5);
@@ -173,15 +168,15 @@ void loadAssets() {
 
 
 void handleInput() {
-    //////////////////////////////////////////////////////////////////////////
-    // TODO: ADD YOUR INPUT HANDLING HERE. 
-    //////////////////////////////////////////////////////////////////////////
-	
-    // Event loop, for processing user input, etc.  For more info, see:
-    // http://www.sfml-dev.org/tutorials/1.6/window-events.php
-    sf::Event evt;
-    while (window.GetEvent(evt)) {
-        switch (evt.Type) {
+	//////////////////////////////////////////////////////////////////////////
+	// TODO: ADD YOUR INPUT HANDLING HERE. 
+	//////////////////////////////////////////////////////////////////////////
+
+	// Event loop, for processing user input, etc.  For more info, see:
+	// http://www.sfml-dev.org/tutorials/1.6/window-events.php
+	sf::Event evt;
+	while (window.GetEvent(evt)) {
+		switch (evt.Type) {
 			case sf::Event::Closed: 
 				// Close the window.  This will cause the game loop to exit,
 				// because the IsOpened() function will no longer return true.
@@ -192,27 +187,37 @@ void handleInput() {
 				// transformation and viewport
 				glViewport(0, 0, evt.Size.Width, evt.Size.Height);
 				break;
-			default: 
-				// If you hit the escape key, well close the program
-				if(evt.Key.Code == sf::Key::Escape){
-					window.Close();
-					break;
-				}
-				if(evt.Key.Code == sf::Key::B){
-					useMotionBlur = !useMotionBlur;
-					bodyEmitter->setBoostMode(useMotionBlur);
-					if(useMotionBlur){
+			case sf::Event::KeyPressed:
+				switch (evt.Key.Code) {
+					case sf::Key::Escape:
+						window.Close();
+						break;
+					case sf::Key::Space:
+						useMotionBlur = true;
+						bodyEmitter->setBoostMode(true);
 						bodyEmitter->boostSpeed();
-					}else{
-						bodyEmitter->resetSpeed();
-					}
+						break;
+					default:
+						break;
 				}
-				
-				for (unsigned i = 0; i < inputListeners.size(); i++)
-					inputListeners[i]->handleEvent(evt, window.GetInput());
 				break;
-        }
-    }
+			case sf::Event::KeyReleased:
+				switch (evt.Key.Code) {
+					case sf::Key::Space:
+						useMotionBlur = false;
+						bodyEmitter->setBoostMode(false);
+						bodyEmitter->resetSpeed();
+						break;
+					default:
+						break;
+				}
+				break;
+			default: 
+				break;
+		}
+		for (unsigned i = 0; i < inputListeners.size(); i++)
+			inputListeners[i]->handleEvent(evt, window.GetInput());
+	}
 }
 
 
@@ -263,7 +268,7 @@ void clearNormalsBuffer()
 
 
 void renderFrame() {
-	glViewport(0,0,1000,650);
+	glViewport(0, 0, window.GetWidth(), window.GetHeight());
 
 	clearNormalsBuffer();
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
@@ -293,11 +298,11 @@ void renderFrame() {
 		motionBlur->render(blurShader);
 	} else {
 		renderBackground();	
-		glClear(GL_DEPTH_BUFFER_BIT);
 	}
 	motionBlur->update();
 	
 	glClear(GL_DEPTH_BUFFER_BIT);	
+
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	setupLights();
 	bodyEmitter->drawBodies(FINAL_PASS);

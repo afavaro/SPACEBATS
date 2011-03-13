@@ -11,7 +11,7 @@
 
 class Camera : public InputListener {
 public:
-	Camera(btVector3 pos, btMatrix3x3 basis);
+	Camera(btVector3 pos);
 	~Camera();
 
 	void setProjectionAndView(float aspectRatio);
@@ -19,7 +19,7 @@ public:
 	
 private:
 	btVector3 pos;
-	btMatrix3x3 basis;
+	btQuaternion quat;
 		
 	bool mousePressed;
 	int mouseX, mouseY;

@@ -34,10 +34,12 @@ public:
 	
 	Rotation *curRot;
 	Model model;
+
 	btVector3 pos;
 	btVector3 velocity;
 	btVector3 acceleration;
 	btQuaternion quat;
+
 	bool isStopping;
 	
 	void setWorld(btDiscreteDynamicsWorld* world);
@@ -77,6 +79,9 @@ private:
 	btQuaternion maxRollRight;
 	btQuaternion maxPitchUp;
 	btQuaternion maxPitchDown;
+
+	bool boostMode;
+
 };
 
 #endif

@@ -68,6 +68,7 @@ Ship::Ship(btVector3 pos, Camera* c) {
 	quat = neutral;
 	curRot = NULL;
 	isStopping = false;
+	boostMode = false;
 	
 	spaceshipShape = new btSphereShape(6);
 	spaceshipCollider = new btCollisionObject();
@@ -149,7 +150,16 @@ void Ship::setRotation(btQuaternion rot) {
 void Ship::handleEvent(sf::Event &event, const sf::Input &input) {
 	switch (event.Type) {
 		case sf::Event::KeyPressed: 
+			if (boostMode) break;
 			switch(event.Key.Code){
+				case sf::Key::Space:
+					boostMode = true;
+					if (velocity.length() > 0) {
+						isStopping = true;
+						acceleration = -DRAG * velocity.normalized();
+					}
+					setRotation(btQuaternion(0, 0, 0, 1));
+					break;
 				case sf::Key::A:
 					if ((curRot == NULL && quat != maxRollLeft) || curRot->end == neutral)
 						setRotation(maxRollLeft);
@@ -180,6 +190,9 @@ void Ship::handleEvent(sf::Event &event, const sf::Input &input) {
 			break;
 		case sf::Event::KeyReleased: 
 			switch(event.Key.Code){
+				case sf::Key::Space:
+					boostMode = false;
+					break;
 				case sf::Key::A:
 				case sf::Key::S:
 				case sf::Key::W:
