@@ -182,7 +182,7 @@ void Ship::updatePosition(float tstep) {
 		isStopping = false;
 	}
 
-	cam->setTarget(btVector3(0.2 * pos.x(), 0.2 * pos.y(), pos.z()));
+	cam->setTarget(btVector3(0.1 * pos.x(), 0.1 * pos.y(), pos.z()));
 }
 
 void Ship::update(float tstep) {
