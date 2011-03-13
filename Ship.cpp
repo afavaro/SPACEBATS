@@ -2,6 +2,7 @@
 #include "Ship.h"
 #include <iostream>
 #include <math.h>
+#include "Body.h"
 
 #define DURATION 0.2
 #define THRUST 150.0
@@ -33,12 +34,26 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 											  const btCollisionObject* colObj1, int partId1, int index1){
 	
 	if(spaceship->lastCollision == colObj0 || 
-	   spaceship->lastCollision == colObj1) return 0;
+	   spaceship->lastCollision == colObj1) {
+		return 0;
+	}
+	if(colObj0 == spaceship->spaceshipCollider){
+		spaceship->lastCollision = (btCollisionObject*)colObj1;
+	}
 	
-	if(colObj0 == spaceship->spaceshipCollider) spaceship->lastCollision = (btCollisionObject*)colObj1;
-	if(colObj1 == spaceship->spaceshipCollider) spaceship->lastCollision = (btCollisionObject*)colObj0;
+	if(colObj1 == spaceship->spaceshipCollider){
+		spaceship->lastCollision = (btCollisionObject*)colObj0;
 	
-	printf("SPACESHIP COLLISION\n");
+	}
+	
+	Body* body = (Body*) spaceship->lastCollision;
+//	if(body->getType() == GATE){
+//		printf("GATE COMPLETED!\n");
+//	}else {
+//		printf("ASTEROID COLLISION\n");
+//	}
+	body->printType();
+	
 	return 0;
 }
 

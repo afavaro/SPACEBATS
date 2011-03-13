@@ -23,7 +23,12 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 	collisionShapes[EROS] = new btSphereShape(5);
 	collisionShapes[GOLEVKA] = new btSphereShape(5);
 	collisionShapes[JUNO] = new btSphereShape(5);
-	collisionShapes[GATE] = new btSphereShape(5);
+	
+	
+	//collisionShapes[GATE] = new btSphereShape(5);
+	collisionShapes[GATE] = new btCylinderShapeZ( btVector3(2,2,2) );
+	
+	
 	collisionShapes[SPACEBAT] = new btSphereShape(5);
 	
 	btScalar mass = 4.0;
@@ -149,8 +154,7 @@ void BodyEmitter::emitBodies(float tstep) {
 		btRigidBody::btRigidBodyConstructionInfo
 			constructionInfo(mass, motionState, collisionShapes[type]);
 		
-		Body* newBody = new Body(&models[type], constructionInfo);
-		
+		Body* newBody = new Body(&models[type], constructionInfo, BodyType(type));
 
 		newBody->setLinearVelocity(getLinearVelocityForType(BodyType(type)));
 		newBody->setAngularVelocity(getAngularVelocityForType(BodyType(type)));
@@ -182,6 +186,7 @@ void BodyEmitter::loadModels() {
 	models[GATE].setScaleFactor(0.1);
 	
 	models[SPACEBAT].loadFromFile("models/spacebat", "spacebat.obj", importers[SPACEBAT]);
+	models[SPACEBAT].setScaleFactor(0.5);
 
 }
 

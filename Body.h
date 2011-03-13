@@ -10,15 +10,30 @@
 
 #include <btBulletDynamicsCommon.h>
 
+
+enum BodyType {
+	MARS,
+	ASTEROID,
+	EROS,
+	GOLEVKA,
+	JUNO,
+	GATE,
+	SPACEBAT,
+	NUM_BODY_TYPES
+};
+
 class Body: public btRigidBody {
 	public:
-		Body(Model *model, btRigidBody::btRigidBodyConstructionInfo &btInfo);
+		Body(Model *model, btRigidBody::btRigidBodyConstructionInfo &btInfo, BodyType ty);
 		~Body();
 
 		void draw(RenderPass pass);
+		BodyType getType();
+		void printType();
 
 	private:
 		Model *model;
+		BodyType type;
 };
 
 #endif

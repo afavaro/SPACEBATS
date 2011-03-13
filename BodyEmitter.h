@@ -7,17 +7,6 @@
 #include <list>
 #include "btBulletDynamicsCommon.h"
 
-enum BodyType {
-	MARS,
-	ASTEROID,
-	EROS,
-	GOLEVKA,
-	JUNO,
-	GATE,
-	SPACEBAT,
-	NUM_BODY_TYPES
-};
-
 class BodyEmitter {
 	public:
 		BodyEmitter(btDiscreteDynamicsWorld *world);
@@ -46,7 +35,7 @@ class BodyEmitter {
 
 		btVector3 getAngularVelocityForType(BodyType type);
 		btVector3 getPositionForType(BodyType type);
-	btVector3 getLinearVelocityForType(BodyType type);
+		btVector3 getLinearVelocityForType(BodyType type);
 		void setSpeed(float speed);
 	
 	
