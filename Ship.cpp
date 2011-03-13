@@ -4,6 +4,7 @@
 #include <math.h>
 
 #define DURATION 0.2
+#define SHAKE_DURATION 0.5
 #define THRUST 150.0
 #define DRAG 200.0
 
@@ -24,9 +25,34 @@ using namespace std;
 Ship::ShipContactCallback::ShipContactCallback(Ship* ship)
 : btCollisionWorld::ContactResultCallback(), spaceship(ship)
 {
-
 }
 
+void Ship::shiverMeTimbers(){
+	//if(!curShake) return;
+	delete curShake;
+	curShake = new Shake();
+	
+	curShake->position = pos;
+	curShake->time = 0.0;
+	curShake->duration = SHAKE_DURATION;
+}
+
+void Ship::updateShake(float tstep){
+	if (curShake) {
+		curShake->time += tstep;
+		if (curShake->time > curShake->duration) {
+			delete curShake; curShake = NULL;
+		}
+		else {
+			//float t = curRot->time / curRot->duration;
+			float randPos = rand()%10*0.1;
+			if(rand()%2) randPos *= -1.0; //curRot->start.slerp(curRot->end, EASE(t));
+			pos.m_floats[0] = curShake->position.x() + randPos;
+			pos.m_floats[1] = curShake->position.y() + randPos;
+			pos.m_floats[2] = curShake->position.z() + randPos;
+		}
+	}
+}
 
 btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 											  const btCollisionObject* colObj0, int partId0, int index0,
@@ -39,6 +65,7 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 	if(colObj1 == spaceship->spaceshipCollider) spaceship->lastCollision = (btCollisionObject*)colObj0;
 	
 	printf("SPACESHIP COLLISION\n");
+	spaceship->shiverMeTimbers();
 	return 0;
 }
 
@@ -69,6 +96,8 @@ Ship::Ship(btVector3 pos, Camera* c) {
 	curRot = NULL;
 	isStopping = false;
 	boostMode = false;
+	
+	curShake = NULL;
 	
 	spaceshipShape = new btSphereShape(6);
 	spaceshipCollider = new btCollisionObject();
@@ -131,7 +160,7 @@ void Ship::updatePosition(float tstep) {
 void Ship::update(float tstep) {
 	updateRotation(tstep);
 	updatePosition(tstep);
-
+	updateShake(tstep);
 	btTransform transform(quat, pos);
 	model.setTransformation(transform);
 }

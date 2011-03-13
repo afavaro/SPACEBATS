@@ -274,7 +274,6 @@ void renderFrame() {
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	spaceship.model.render(NORMALS_PASS);
 	bodyEmitter->drawBodies(NORMALS_PASS);
-
 	
 	if (motionBlur->shouldRenderFrame()) {	
 		motionBlur->bind();
@@ -300,7 +299,7 @@ void renderFrame() {
 		renderBackground();	
 	}
 	motionBlur->update();
-	
+
 	glClear(GL_DEPTH_BUFFER_BIT);	
 
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
