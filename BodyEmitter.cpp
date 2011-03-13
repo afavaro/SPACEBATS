@@ -6,7 +6,7 @@
 #define BOUNDARY_Y 44.0
 #define BOUNDARY_Z -250.0
 
-#define EMIT_STEP 0.3
+#define EMIT_STEP 0.25
 
 const float NORMAL_SPEED = 100.0;
 const float BOOST_SPEED = 200.0;
@@ -17,6 +17,7 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 	this->world = world;
 	accum = 0.0;
 	boostMode = false;
+	counter = 0;
 
 	collisionShapes[MARS] = new btSphereShape(5);
 	collisionShapes[ASTEROID] = new btSphereShape(5);
@@ -101,7 +102,10 @@ btVector3 BodyEmitter::getAngularVelocityForType(BodyType type){
 btVector3 BodyEmitter::getPositionForType(BodyType type){
 	switch (type) {
 		case GATE:
-			return btVector3(0,0, BOUNDARY_Z);
+			return btVector3(
+							 ((float)rand() / RAND_MAX * 2.0 * BOUNDARY_X - BOUNDARY_X) / 4.0,
+							 ((float)rand() / RAND_MAX * 2.0 * BOUNDARY_Y - BOUNDARY_Y) / 4.0,
+							 BOUNDARY_Z );
 		default:
 			return btVector3(
 							 (float)rand() / RAND_MAX * 2.0 * BOUNDARY_X - BOUNDARY_X,
@@ -135,6 +139,8 @@ void BodyEmitter::emitBodies(float tstep) {
 		//printf("z: %f\n", trans.getOrigin().getZ());
 	}
 	//printf("--\n");
+	counter++;
+	
 	
 	if (accum > EMIT_STEP) {
 		accum = 0.0;
@@ -142,8 +148,9 @@ void BodyEmitter::emitBodies(float tstep) {
 
 
 		
-		int type = rand() % NUM_BODY_TYPES;
-	
+		int type = rand() % NUM_BODY_TYPES;	
+
+		
 		btVector3 pos = getPositionForType(BodyType(type));
 		btDefaultMotionState *motionState =
 			new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), pos));

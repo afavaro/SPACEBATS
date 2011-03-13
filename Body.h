@@ -31,7 +31,7 @@ class Body: public btRigidBody {
 		BodyType getType();
 		void printType();
 
-	private:
+	protected:
 		Model *model;
 		BodyType type;
 };

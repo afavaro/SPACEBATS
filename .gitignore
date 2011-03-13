@@ -5,3 +5,4 @@ xcode/*
 *DS_Store
 *.o
 main
+music/*

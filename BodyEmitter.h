@@ -22,6 +22,7 @@ class BodyEmitter {
 		void setBoostMode(bool boost);	
 
 	private:
+		int counter;
 		struct ContactCallback : public btCollisionWorld::ContactResultCallback {
 			BodyEmitter *bodyEmitter;
 

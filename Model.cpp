@@ -30,6 +30,11 @@ void Model::setScaleFactor(float f){
 	scaleFactor = f;
 }
 
+void Model::setDiffuseImage(sf::Image* img){
+	diffuse = img;
+}
+
+
 
 void Model::loadShaders() {
 	normalShader = new Shader("shaders/normal");
