@@ -35,6 +35,10 @@ class BodyEmitter {
 		void setBoostMode(bool boost);	
 
 	private:
+		btVector3 getAngularVelocityForType(BodyType type);
+
+	
+	
 		btDiscreteDynamicsWorld *world;
 		std::list<Body*> bodies;
 
