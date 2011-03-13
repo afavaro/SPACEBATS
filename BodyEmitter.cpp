@@ -7,10 +7,10 @@
 #define BOUNDARY_Y 44.0
 #define BOUNDARY_Z -100.0
 
-#define EMIT_STEP 1.0
+#define EMIT_STEP 0.3
 
-const float NORMAL_SPEED = 5.0;
-const float BOOST_SPEED = 105.0;
+const float NORMAL_SPEED = 100.0;
+const float BOOST_SPEED = 200.0;
 
 using namespace std;
 
@@ -121,7 +121,7 @@ void BodyEmitter::emitBodies(float tstep) {
 //		newBody->setLinearVelocity(btVector3(RandomFloat(-4,4),RandomFloat(-4,4),RandomFloat(-10,10)));
 		
 		float speed = boostMode ? BOOST_SPEED : NORMAL_SPEED;
-		newBody->setLinearVelocity(btVector3(RandomFloat(-4,4),RandomFloat(-4,4),speed));
+		newBody->setLinearVelocity(btVector3(RandomFloat(-1,1),RandomFloat(-1,1),speed));
 		newBody->setAngularVelocity(getAngularVelocityForType(BodyType(type)));
 		//		newBody->setAngularVelocity(btVector3(RandomFloat(-1,1), RandomFloat(-1,1), RandomFloat(-1,1)));
 		world->addRigidBody(newBody);
@@ -138,6 +138,7 @@ void BodyEmitter::drawBodies(RenderPass pass) {
 void BodyEmitter::loadModels() {
 	models[MARS].loadFromFile("models/mars", "mars.3ds", importers[MARS]);
 	models[ASTEROID].loadFromFile("models/aster", "asteroid.3ds", importers[ASTEROID]);
+	models[ASTEROID].setScaleFactor(0.1);
 	models[EROS].loadFromFile("models/eros", "eros.3ds", importers[EROS]);
 //	models[GOLEVKA].loadFromFile("models/golevka", "golevka.3ds", importers[GOLEVKA]);
 //	models[JUNO].loadFromFile("models/juno", "juno.3ds", importers[JUNO]);
