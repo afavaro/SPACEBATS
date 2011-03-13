@@ -1,6 +1,5 @@
 
 #include "BodyEmitter.h"
-#include "ObjectMotionState.h"
 #include "Camera.h"
 
 #define BOUNDARY_X 50.0
@@ -19,12 +18,11 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 	accum = 0.0;
 	boostMode = false;
 
-	collisionShapes[MARS] = new btSphereShape(10);
-	collisionShapes[SPACEBAT] = new btSphereShape(10);
-	collisionShapes[TECHNI] = new btSphereShape(10);
-	//collisionShapes[ASTEROID] = new btSphereShape(10);
-	collisionShapes[GATE] = new btSphereShape(10);
-	collisionShapes[EROS] = new btSphereShape(10);
+	collisionShapes[MARS] = new btSphereShape(1);
+	collisionShapes[ASTEROID] = new btSphereShape(1);
+	collisionShapes[EROS] = new btSphereShape(1);
+	collisionShapes[GOLEVKA] = new btSphereShape(1);
+	collisionShapes[JUNO] = new btSphereShape(1);
 	
 	btScalar mass = 4.0;
 	btVector3 inertia(0,0,0);
@@ -33,15 +31,13 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 		shape->calculateLocalInertia(mass, inertia);
 	}
 
-	wallShape = new btStaticPlaneShape(btVector3(0, 0, -1), 5);
+	wallShape = new btStaticPlaneShape(btVector3(0, 0, -1), -20);
 	wall = new btCollisionObject();
 	wall->setCollisionShape(wallShape);
 
 	contactCallback = new ContactCallback(this);
 
 // These models were good... but a little too big?
-//	collisionShapes[GOLEVKA] = new btSphereShape(1);
-//	collisionShapes[JUNO] = new btSphereShape(1);
 }
 
 BodyEmitter::~BodyEmitter() {	
@@ -146,15 +142,16 @@ void BodyEmitter::drawBodies(RenderPass pass) {
 
 void BodyEmitter::loadModels() {
 	models[MARS].loadFromFile("models/mars", "mars.3ds", importers[MARS]);
-	//models[ASTEROID].loadFromFile("models/aster", "asteroid.obj", importers[ASTEROID]);
-	//models[ASTEROID].setScaleFactor(0.1);
-	models[TECHNI].loadFromFile("models/techni", "techni.obj", importers[TECHNI]);
-	models[TECHNI].setScaleFactor(4.0);
-	models[SPACEBAT].loadFromFile("models/spacebat", "BatMessWings.obj", importers[SPACEBAT]);
+	models[ASTEROID].loadFromFile("models/aster", "asteroid.obj", importers[ASTEROID]);
+	models[ASTEROID].setScaleFactor(0.1);
 	models[GATE].loadFromFile("models/aster", "roid.obj", importers[GATE]);
 	models[EROS].loadFromFile("models/eros", "eros.3ds", importers[EROS]);
-//	models[GOLEVKA].loadFromFile("models/golevka", "golevka.3ds", importers[GOLEVKA]);
-//	models[JUNO].loadFromFile("models/juno", "juno.3ds", importers[JUNO]);
+	models[EROS].setScaleFactor(0.7);
+	models[GOLEVKA].loadFromFile("models/golevka", "golevka.3ds", importers[GOLEVKA]);
+	models[GOLEVKA].setScaleFactor(0.05);
+	models[JUNO].loadFromFile("models/juno", "juno.3ds", importers[JUNO]);
+	models[JUNO].setScaleFactor(0.05);
+
 }
 
 BodyEmitter::ContactCallback::ContactCallback(BodyEmitter *bodyEmitter)
