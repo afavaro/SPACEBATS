@@ -34,11 +34,19 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 
 	btVector3 point;
 	//if(colObj0 == &
+	//printf("ADD SINGLE RESULT\n");
+	
+	if(colObj0 == spaceship->spaceshipCollider || 
+	   colObj1 == spaceship->spaceshipCollider){
+		printf("SPACESHIP COLLISION\n");
+	}
 	return 0;
 }
 
 void Ship::testCollision(){
 	//printf("Called ship test collision\n");
+	spaceshipCollider->setWorldTransform(btTransform(quat, pos));
+	world->contactTest(spaceshipCollider, *callback);
 }
 
 
@@ -62,7 +70,7 @@ Ship::Ship(btVector3 pos, Camera* c) {
 	curRot = NULL;
 	isStopping = false;
 	
-	spaceshipShape = new btSphereShape(30);
+	spaceshipShape = new btSphereShape(0.001);
 	spaceshipCollider = new btCollisionObject();
 	spaceshipCollider->setWorldTransform(btTransform(quat, pos));
 	spaceshipCollider->setCollisionShape(spaceshipShape);
