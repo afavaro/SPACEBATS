@@ -10,8 +10,8 @@
 enum BodyType {
 	MARS,
 	ASTEROID,
-	TECHNI,
-	SPACEBAT,
+	//TECHNI,
+	//SPACEBAT,
 	EROS,
 	GOLEVKA,
 	JUNO,
