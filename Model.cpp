@@ -17,6 +17,7 @@ Model::Model() {
 	diffuse = specular = NULL;
 	indexBuffer = NULL;
 	transformation = btTransform::getIdentity();
+	scaleFactor = 1.0;
 }
 
 Model::~Model() {
@@ -24,6 +25,11 @@ Model::~Model() {
 	delete specular;
 	delete[] indexBuffer;
 }
+
+void Model::setScaleFactor(float f){
+	scaleFactor = f;
+}
+
 
 void Model::loadShaders() {
 	normalShader = new Shader("shaders/normal");
@@ -177,6 +183,8 @@ void Model::render(RenderPass pass) {
 	GLfloat glmat[16];
 	transformation.getOpenGLMatrix(glmat);
 	glMultMatrixf(glmat);
+	
+	glScalef(scaleFactor, scaleFactor, scaleFactor);
 
 	aiMesh *mesh = scene->mMeshes[0];
 

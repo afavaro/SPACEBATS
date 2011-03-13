@@ -40,9 +40,31 @@ public:
 	btQuaternion quat;
 	bool isStopping;
 	
+	void setWorld(btDiscreteDynamicsWorld* world);
+	void testCollision();
+	
+	btCollisionShape* spaceshipShape; 
+	btCollisionObject* spaceshipCollider;	
+	
+	
 	Camera* cam;	
 
 private:
+	
+	struct ShipContactCallback : public btCollisionWorld::ContactResultCallback {
+		Ship* spaceship;
+		
+		ShipContactCallback(Ship* ship);
+		virtual btScalar addSingleResult(btManifoldPoint & cp,
+			const btCollisionObject* colObj0, int partId0, int index0,
+			const btCollisionObject* colObj1, int partId1, int index1);
+	};
+	
+	friend struct ShipContactCallback;
+	
+	btDiscreteDynamicsWorld *world;
+	ShipContactCallback* callback;
+	
 	void updatePosition(float tstep);
 	void updateRotation(float tstep);
 
