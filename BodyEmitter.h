@@ -17,9 +17,6 @@ enum BodyType {
 	NUM_BODY_TYPES
 };
 
-//GOLEVKA,
-//JUNO,
-
 class BodyEmitter {
 	public:
 		BodyEmitter(btDiscreteDynamicsWorld *world);
@@ -35,6 +32,17 @@ class BodyEmitter {
 		void setBoostMode(bool boost);	
 
 	private:
+		struct ContactCallback : public btCollisionWorld::ContactResultCallback {
+			BodyEmitter *bodyEmitter;
+
+			ContactCallback(BodyEmitter *bodyEmitter);
+			btScalar addSingleResult(btManifoldPoint &cp,
+					const btCollisionObject *colObj0, int partId0, int index0,
+					const btCollisionObject *colObj1, int partId1, int index1);
+		};
+		friend struct ContactCallback;
+		ContactCallback *contactCallback;
+
 		btVector3 getAngularVelocityForType(BodyType type);
 		void setSpeed(float speed);
 	
@@ -48,6 +56,9 @@ class BodyEmitter {
 		Assimp::Importer importers[NUM_BODY_TYPES];
 
 		btCollisionShape *collisionShapes[NUM_BODY_TYPES];
+
+		btCollisionObject *wall;
+		btCollisionShape *wallShape;
 	
 		bool boostMode;
 };

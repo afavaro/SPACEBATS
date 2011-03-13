@@ -136,8 +136,6 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
-
-
 void initOpenGL() {
     // Initialize GLEW on Windows, to make sure that OpenGL 2.0 is loaded
 #ifdef FRAMEWORK_USE_GLEW
@@ -157,7 +155,7 @@ void initOpenGL() {
     glClearDepth(1.0f);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glEnable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D);
+		glEnable(GL_TEXTURE_2D);
     glViewport(0, 0, window.GetWidth(), window.GetHeight());
 }
 
@@ -181,8 +179,6 @@ void loadAssets() {
 	
 	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
 }
-
-
 
 
 void handleInput() {
@@ -310,11 +306,13 @@ void renderFrame() {
 	//Render this frame to motion blur
 	if(motionBlur->shouldRenderFrame()){
 		motionBlur->bind();
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.18, 0.18, 0.18, 1.0);
+
 		camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 		setupLights();
-		//spaceship.model.render(FINAL_PASS);
+
 		bodyEmitter->drawBodies(FINAL_PASS);
 		motionBlur->unbind();
 	}
@@ -334,8 +332,9 @@ void renderFrame() {
 	
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	setupLights();
+
 	//if(!useMotionBlur){
-	bodyEmitter->drawBodies(FINAL_PASS);
+		bodyEmitter->drawBodies(FINAL_PASS);
 	//}
 	spaceship.model.render(FINAL_PASS);
 

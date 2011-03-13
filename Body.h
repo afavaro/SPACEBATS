@@ -6,6 +6,8 @@
 #include "Model.h"
 #include "Framebuffer.h"
 
+#include <list>
+
 #include <btBulletDynamicsCommon.h>
 
 class Body: public btRigidBody {

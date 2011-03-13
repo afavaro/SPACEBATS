@@ -5,7 +5,7 @@
 
 #define BOUNDARY_X 50.0
 #define BOUNDARY_Y 44.0
-#define BOUNDARY_Z -100.0
+#define BOUNDARY_Z -250.0
 
 #define EMIT_STEP 0.3
 
@@ -30,6 +30,12 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 		shape->calculateLocalInertia(mass, inertia);
 	}
 
+	wallShape = new btStaticPlaneShape(btVector3(0, 0, -1), 5);
+	wall = new btCollisionObject();
+	wall->setCollisionShape(wallShape);
+
+	contactCallback = new ContactCallback(this);
+
 // These models were good... but a little too big?
 //	collisionShapes[GOLEVKA] = new btSphereShape(1);
 //	collisionShapes[JUNO] = new btSphereShape(1);
@@ -39,6 +45,9 @@ BodyEmitter::~BodyEmitter() {
 	for(int i = 0; i < NUM_BODY_TYPES; i++){
 		delete collisionShapes[i];
 	}
+	delete wall;
+	delete wallShape;
+	delete contactCallback;
 }
 
 void BodyEmitter::setSpeed(float speed){
@@ -82,6 +91,7 @@ btVector3 BodyEmitter::getAngularVelocityForType(BodyType type){
 
 void BodyEmitter::emitBodies(float tstep) {
 	accum += tstep;
+	world->contactTest(wall, *contactCallback);
 	
 	list<Body*>::iterator it;
 	for(it = bodies.begin(); it != bodies.end(); it++){
@@ -96,19 +106,12 @@ void BodyEmitter::emitBodies(float tstep) {
 	if (accum > EMIT_STEP) {
 		accum = 0.0;
 		
-		//if(bodies.size() > 10) return;
-
-		printf("%d\n", (int)bodies.size());
-		
 		btVector3 pos(
 				(float)rand() / RAND_MAX * 2.0 * BOUNDARY_X - BOUNDARY_X,
 				(float)rand() / RAND_MAX * 2.0 * BOUNDARY_Y - BOUNDARY_Y,
-				-250);
+				BOUNDARY_Z);
 		btDefaultMotionState *motionState =
 			new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), pos));
-		
-		//ObjectMotionState *motionState =
-		//	new ObjectMotionState(btTransform(btQuaternion(0, 0, 0, 1), pos));
 		
 		int type = rand() % NUM_BODY_TYPES;
 		
@@ -118,12 +121,11 @@ void BodyEmitter::emitBodies(float tstep) {
 			constructionInfo(mass, motionState, collisionShapes[type]);
 		
 		Body* newBody = new Body(&models[type], constructionInfo);
-//		newBody->setLinearVelocity(btVector3(RandomFloat(-4,4),RandomFloat(-4,4),RandomFloat(-10,10)));
 		
 		float speed = boostMode ? BOOST_SPEED : NORMAL_SPEED;
 		newBody->setLinearVelocity(btVector3(RandomFloat(-1,1),RandomFloat(-1,1),speed));
 		newBody->setAngularVelocity(getAngularVelocityForType(BodyType(type)));
-		//		newBody->setAngularVelocity(btVector3(RandomFloat(-1,1), RandomFloat(-1,1), RandomFloat(-1,1)));
+
 		world->addRigidBody(newBody);
 		bodies.push_back(newBody);
 	}
@@ -142,4 +144,23 @@ void BodyEmitter::loadModels() {
 	models[EROS].loadFromFile("models/eros", "eros.3ds", importers[EROS]);
 //	models[GOLEVKA].loadFromFile("models/golevka", "golevka.3ds", importers[GOLEVKA]);
 //	models[JUNO].loadFromFile("models/juno", "juno.3ds", importers[JUNO]);
+}
+
+BodyEmitter::ContactCallback::ContactCallback(BodyEmitter *bodyEmitter)
+	: btCollisionWorld::ContactResultCallback(), bodyEmitter(bodyEmitter) {}
+
+btScalar BodyEmitter::ContactCallback::addSingleResult(btManifoldPoint &cp,
+		const btCollisionObject *colObj0, int partId0, int index0,
+		const btCollisionObject *colObj1, int partId1, int index1) {
+	Body *body = (colObj0 == bodyEmitter->wall)? (Body *)colObj1 : (Body *)colObj0;
+	bodyEmitter->world->removeRigidBody(body);
+	list<Body*>::iterator it;
+	for (it = bodyEmitter->bodies.begin(); it != bodyEmitter->bodies.end(); it++) {
+		if (*it == body) {
+			bodyEmitter->bodies.erase(it);
+			delete body;
+			break;
+		}
+	}
+	return 0.0;
 }
