@@ -17,8 +17,6 @@ class Body: public btRigidBody {
 
 		void draw(RenderPass pass);
 
-		std::list<Body*>::iterator iter;
-
 	private:
 		Model *model;
 };

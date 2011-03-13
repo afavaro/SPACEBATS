@@ -60,6 +60,7 @@ Framebuffer *normalsBuffer = NULL;
 static int frameCounter = 0;
 const int NUM_MOTION_BLUR_FRAMES = 4;
 MotionBlur* motionBlur;
+bool useMotionBlur = false;
 
 void initOpenGL();
 void loadAssets();
@@ -79,6 +80,16 @@ int main(int argc, char** argv) {
 	btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
 	world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfig);
 	world->setGravity(btVector3(0, 0, 0));
+	
+	///Add back wall for object collision detection and removal
+	btCollisionShape* wallShape = new btStaticPlaneShape(btVector3(0,0,5), 1);
+	
+	btDefaultMotionState* wallMotionState = 
+	new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1), btVector3(0,0,-10)));
+	btRigidBody::btRigidBodyConstructionInfo
+	wallRigidBodyCI(40, wallMotionState, wallShape, btVector3(0,0,0));
+	btRigidBody* wallBody = new btRigidBody(wallRigidBodyCI);
+	world->addRigidBody(wallBody);
 	
 	loadAssets();
 	
@@ -120,8 +131,6 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
-
-
 void initOpenGL() {
     // Initialize GLEW on Windows, to make sure that OpenGL 2.0 is loaded
 #ifdef FRAMEWORK_USE_GLEW
@@ -141,7 +150,7 @@ void initOpenGL() {
     glClearDepth(1.0f);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glEnable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D);
+		glEnable(GL_TEXTURE_2D);
     glViewport(0, 0, window.GetWidth(), window.GetHeight());
 }
 
@@ -165,8 +174,6 @@ void loadAssets() {
 	
 	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
 }
-
-
 
 
 void handleInput() {
@@ -194,6 +201,15 @@ void handleInput() {
 				if(evt.Key.Code == sf::Key::Escape){
 					window.Close();
 					break;
+				}
+				if(evt.Key.Code == sf::Key::B){
+					useMotionBlur = !useMotionBlur;
+					bodyEmitter->setBoostMode(useMotionBlur);
+					if(useMotionBlur){
+						bodyEmitter->boostSpeed();
+					}else{
+						bodyEmitter->resetSpeed();
+					}
 				}
 				
 				for (unsigned i = 0; i < inputListeners.size(); i++)
@@ -285,26 +301,36 @@ void renderFrame() {
 	//Render this frame to motion blur
 	if(motionBlur->shouldRenderFrame()){
 		motionBlur->bind();
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(0.18, 0.18, 0.18, 1.0);
+
 		camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 		setupLights();
-		spaceship.model.render(FINAL_PASS);
+
 		bodyEmitter->drawBodies(FINAL_PASS);
 		motionBlur->unbind();
 	}
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(1,1,1,1);
-	motionBlur->render(blurShader);
+	//glClearColor(1,1,1,1);
+	glClearColor(0.18, 0.18, 0.18, 1.0);
+	if(useMotionBlur){
+		motionBlur->render(blurShader);
+	}
 	motionBlur->update();
-
+	
 	
 	//renderBackground();
 	
-	//glClear(GL_DEPTH_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
 	
-	// camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
-	// setupLights();
-	// spaceship.model.render(FINAL_PASS);
-	// bodyEmitter->drawBodies(FINAL_PASS);
+	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
+	setupLights();
+
+	//if(!useMotionBlur){
+		bodyEmitter->drawBodies(FINAL_PASS);
+	//}
+	spaceship.model.render(FINAL_PASS);
+
 }
