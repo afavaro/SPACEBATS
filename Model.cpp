@@ -16,6 +16,7 @@ Model::Model() {
 	scene = NULL;
 	diffuse = specular = NULL;
 	indexBuffer = NULL;
+	collisionShape = NULL;
 	transformation = btTransform::getIdentity();
 	scaleFactor = 1.0;
 }
@@ -23,11 +24,13 @@ Model::Model() {
 Model::~Model() {
 	delete diffuse;
 	delete specular;
+	delete collisionShape;
 	delete[] indexBuffer;
 }
 
 void Model::setScaleFactor(float f){
 	scaleFactor = f;
+	collisionShape->setLocalScaling(btVector3(f, f, f));
 }
 
 void Model::setDiffuseImage(sf::Image* img){
@@ -45,6 +48,10 @@ void Model::loadShaders() {
 
 void Model::setNormalsBuffer(Framebuffer *fb) {
 	normalsBuffer = fb;
+}
+
+btCollisionShape *Model::getCollisionShape() {
+	return collisionShape;
 }
 
 void Model::loadFromFile(const string &dir, const string &filename, Assimp::Importer &importer) {
@@ -72,6 +79,11 @@ void Model::loadFromFile(const string &dir, const string &filename, Assimp::Impo
 			indexBuffer[3 * i + j] = mesh->mFaces[i].mIndices[j];
 		}
 	}
+
+	collisionShape = new btConvexHullShape(
+			(btScalar *)mesh->mVertices, mesh->mNumVertices, sizeof(aiVector3D));
+	btVector3 inertia(0, 0, 0);
+	collisionShape->calculateLocalInertia(4.0, inertia);
 
 	struct stat info;
 	string dpath = dir + "/diffuse.jpg";
@@ -118,41 +130,22 @@ static void setMaterial(aiMaterial *mat, Shader *shader)
 	mat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
 	glUniform3f(diffuse, color.r, color.g, color.b);
 
-	GLint specular = glGetUniformLocation(shader->programID(), "Ks");
-	mat->Get(AI_MATKEY_COLOR_SPECULAR, color);
-	glUniform3f(specular, color.r, color.g, color.b);
-
 	GLint ambient = glGetUniformLocation(shader->programID(), "Ka");
 	mat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
 	glUniform3f(ambient, color.r, color.g, color.b);
-
-	GLint shininess = glGetUniformLocation(shader->programID(), "alpha");
-	float value;
-	if (mat->Get(AI_MATKEY_SHININESS, value) == AI_SUCCESS)
-		glUniform1f(shininess, value);
-	else
-		glUniform1f(shininess, 1.0f);
-
 }
 
 static void setTextures(Image *diffuse, Image *specular, Shader *shader, Framebuffer *normalsBuffer)
 {
-	glSecondaryColor3f(0.0,0.0,0.0);
 	GLint diff = glGetUniformLocation(shader->programID(), "diffuseMap");
 	glUniform1i(diff, 1);
 	glActiveTexture(GL_TEXTURE1);
 	if (diffuse) diffuse->Bind();
 	else Model::white.Bind();
 
-	GLint spec = glGetUniformLocation(shader->programID(), "specularMap");
-	glUniform1i(spec, 2);
-	glActiveTexture(GL_TEXTURE2);
-	if (specular) specular->Bind();
-	else Model::white.Bind();
-
 	GLint norm = glGetUniformLocation(shader->programID(), "normalMap");
-	glUniform1i(norm, 3);
-	glActiveTexture(GL_TEXTURE3);
+	glUniform1i(norm, 2);
+	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, normalsBuffer->colorTextureId());
 }
 

@@ -1,6 +1,8 @@
 #include "Scoreboard.h"
 #include "Framework.h"
 
+#include <cstdio>
+
 const float Scoreboard::MAX_SCORE = 200;
 
 const float MAX_HEIGHT = 300;

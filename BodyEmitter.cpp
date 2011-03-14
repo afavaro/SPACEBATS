@@ -18,28 +18,7 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 	this->world = world;
 	accum = 0.0;
 	boostMode = false;
-	counter = 0;
-
-	collisionShapes[MARS] = new btSphereShape(5);
-	collisionShapes[ASTEROID] = new btSphereShape(5);
-	collisionShapes[EROS] = new btSphereShape(5);
-	collisionShapes[GOLEVKA] = new btSphereShape(5);
-	collisionShapes[JUNO] = new btSphereShape(5);
 	
-	
-	//collisionShapes[GATE] = new btSphereShape(5);
-	collisionShapes[GATE] = new btCylinderShapeZ( btVector3(1,1,0.1) );
-	
-	
-	collisionShapes[SPACEBAT] = new btSphereShape(5);
-	
-	btScalar mass = 4.0;
-	btVector3 inertia(0,0,0);
-	for(int i = 0; i < NUM_BODY_TYPES; i++){
-		btCollisionShape* shape = collisionShapes[i];
-		shape->calculateLocalInertia(mass, inertia);
-	}
-
 	wallShape = new btStaticPlaneShape(btVector3(0, 0, -1), -20);
 	wall = new btCollisionObject();
 	wall->setCollisionShape(wallShape);
@@ -50,9 +29,6 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 }
 
 BodyEmitter::~BodyEmitter() {	
-	for(int i = 0; i < NUM_BODY_TYPES; i++){
-		delete collisionShapes[i];
-	}
 	delete wall;
 	delete wallShape;
 	delete contactCallback;
@@ -140,7 +116,6 @@ void BodyEmitter::emitBodies(float tstep) {
 		//printf("z: %f\n", trans.getOrigin().getZ());
 	}
 	//printf("--\n");
-	counter++;
 	
 	
 	if (accum > EMIT_STEP) {
@@ -158,7 +133,7 @@ void BodyEmitter::emitBodies(float tstep) {
 		btScalar mass = 4.0;
 		
 		btRigidBody::btRigidBodyConstructionInfo
-			constructionInfo(mass, motionState, collisionShapes[type]);
+			constructionInfo(mass, motionState, models[type].getCollisionShape());
 		
 		
 		Body* newBody;
