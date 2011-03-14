@@ -89,6 +89,7 @@ int main(int argc, char** argv) {
 	scoreboard = new Scoreboard(&window, barShader);
 	healthbar = new Scoreboard(&window, barShader);
 	healthbar->setXLocation(70);
+	healthbar->setScore(Scoreboard::MAX_SCORE);
 	
 	hud->addComponent(scoreboard);
 	hud->addComponent(healthbar);

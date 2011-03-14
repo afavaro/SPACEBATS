@@ -5,6 +5,8 @@
 #include "Framework.h"
 #include "Shader.h"
 
+
+
 class Scoreboard : public HUDComponent{
 
 public:
@@ -18,6 +20,8 @@ public:
 	void add(float s);
 	void subtract(float s);
 	void print();
+	
+	static const float MAX_SCORE;
 
 	float score;
 private:

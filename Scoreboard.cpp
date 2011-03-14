@@ -1,7 +1,8 @@
 #include "Scoreboard.h"
 #include "Framework.h"
 
-const float MAX_SCORE = 200;
+const float Scoreboard::MAX_SCORE = 200;
+
 const float MAX_HEIGHT = 400;
 
 Scoreboard::Scoreboard(sf::RenderWindow* window, Shader* shader){
