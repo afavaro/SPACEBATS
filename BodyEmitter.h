@@ -6,6 +6,7 @@
 #include "Model.h"
 #include <list>
 #include "btBulletDynamicsCommon.h"
+#include "Level.h"
 
 class BodyEmitter {
 	public:
@@ -14,10 +15,10 @@ class BodyEmitter {
 
 		void loadModels();
 
-		void emitBodies(float tstep);
+		void emitBodies(float tstep, Level* level);
 		void drawBodies(RenderPass pass);
 	
-	void emit(BodyType type);
+		void emit(BodyType type);
 	
 		void boostSpeed();
 		void resetSpeed();

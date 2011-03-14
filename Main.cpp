@@ -172,7 +172,7 @@ int main(int argc, char** argv) {
 				//bodyEmitter->emit(landmarkType);
 			}
 			
-			bodyEmitter->emitBodies(TIMESTEP);
+			bodyEmitter->emitBodies(TIMESTEP, levels.current());
 			camera.update(TIMESTEP);
 			accum -= TIMESTEP;
 		}

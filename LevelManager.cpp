@@ -5,6 +5,7 @@ LevelManager::LevelManager(int numLevels){
 	this->currentLevel = 0;
 	for(int i = 0; i < numLevels; i++){
 		levels.push_back(new Level(i));
+		levels[i]->print();
 	}
 }
 

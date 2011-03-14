@@ -6,9 +6,24 @@
  * for the level is of the following form.
  *
  * BACKGROUND IMAGE FILE PATH
- * GATE LIST
- * X1, Y1, Z1
- * X2, Y2, Z2
+ * NUM MODELS
+ * LIST OF MODELS TO USE (MODEL #)
+ * NUM GATES
+ * LIST OF GATE TIME, GATE NUM
+ *
+ *
+ * EXAMPLE
+ * 
+ * models/space2.jpg
+ * 2		// 2 models
+ * 4			//use model # 4
+ * 0			//use model # 0
+ * 4		// 4 landmarks
+ * 10 0
+ * 25 0
+ * 40 0
+ * 55 0
+ *
  */
 
 #include "Framework.h"
@@ -34,6 +49,8 @@ public:
 	Level(int level);
 	~Level();
 	
+	void print();
+	
 	void renderBackground();
 	BodyType firstLandmark();
 	
@@ -41,11 +58,13 @@ public:
 	
 	static Shader* bgShader;
 	static void loadShaders();
+	vector<BodyType> levelTypes;
 	
 private:
 	int level;
 	
 	queue<Landmark> landmarks;
+
 	sf::Image* background;
 };
 

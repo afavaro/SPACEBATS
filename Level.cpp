@@ -4,6 +4,8 @@
 
 Shader* Level::bgShader;
 
+
+
 Level::Level(int level){
 	this->level = level;
 	
@@ -19,6 +21,17 @@ Level::Level(int level){
 	background = new sf::Image();
 	background->LoadFromFile(bgFile);
 	
+	int numTypes;
+	levelFile >> numTypes;
+	
+	int type;
+	for(int i = 0; i < numTypes; i++){
+		levelFile >> type;
+		levelTypes.push_back(BodyType(type));
+		
+	}
+	
+	
 	int numModels;
 	levelFile >> numModels;
 	
@@ -28,7 +41,7 @@ Level::Level(int level){
 		levelFile >> time;
 		levelFile >> landmark;
 		
-		Landmark lm = {time, BodyType(NUM_BODY_TYPES - NUM_LANDMARKS + landmark)};
+		Landmark lm = {time, BodyType(landmark)};
 		lm.print();
 		landmarks.push(lm);
 	}
@@ -41,6 +54,18 @@ Level::Level(int level){
 Level::~Level(){
 
 }
+
+
+void Level::print(){
+	cout << "============" << endl;
+	cout << "Level " << level << endl;
+	for(unsigned i = 0; i < levelTypes.size(); i++){
+		cout << "ModelType #" << levelTypes[i] << endl;
+	}
+	cout << "============" << endl;
+}
+
+
 
 BodyType Level::firstLandmark(){
 	BodyType saved = landmarks.front().type;

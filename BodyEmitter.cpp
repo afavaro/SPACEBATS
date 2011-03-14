@@ -158,38 +158,44 @@ btScalar BodyEmitter::getMassForType(BodyType type){
 }
 
 
-void BodyEmitter::emitBodies(float tstep) {
+void BodyEmitter::emitBodies(float tstep, Level* level) {
 	accum += tstep;
 	world->contactTest(wall, *contactCallback);
 	
 	if (accum > EMIT_STEP) {
 		accum = 0.0;
 		
-		btVector3 gatePos = getPositionForType(GATE);
+		int index = rand() % level->levelTypes.size();
+		BodyType type = level->levelTypes[index];
+		emit(type);
 		
-		float radius = 60;
+//		emit(GATE);
 		
-		vector<btVector3> bodyPositions;
-		while(bodyPositions.size() < BODIES_TO_EMIT){
-			btVector3 pos = getPositionForType(ASTEROID);
-			
-			if(pos.distance(gatePos) > radius) {
-				bodyPositions.push_back(pos);
-			}
-		}
-		
-		btDefaultMotionState *gateMS =
-		new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), gatePos));
-		
-		btRigidBody::btRigidBodyConstructionInfo
-		gateCI(4, gateMS, models[GATE].getCollisionShape());
-		
-		Body* gate = new Gate(&models[GATE], gateCI, GATE);
-		gate->setLinearVelocity(getLinearVelocityForType(GATE));
-		gate->setAngularVelocity(getAngularVelocityForType(GATE));
-		
-		world->addRigidBody(gate);
-		bodies.push_back(gate);
+//		btVector3 gatePos = getPositionForType(GATE);
+//		
+//		float radius = 60;
+//		
+//		vector<btVector3> bodyPositions;
+//		while(bodyPositions.size() < BODIES_TO_EMIT){
+//			btVector3 pos = getPositionForType(ASTEROID);
+//			
+//			if(pos.distance(gatePos) > radius) {
+//				bodyPositions.push_back(pos);
+//			}
+//		}
+//		
+//		btDefaultMotionState *gateMS =
+//		new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), gatePos));
+//		
+//		btRigidBody::btRigidBodyConstructionInfo
+//		gateCI(4, gateMS, models[GATE].getCollisionShape());
+//		
+//		Body* gate = new Gate(&models[GATE], gateCI, GATE);
+//		gate->setLinearVelocity(getLinearVelocityForType(GATE));
+//		gate->setAngularVelocity(getAngularVelocityForType(GATE));
+//		
+//		world->addRigidBody(gate);
+//		bodies.push_back(gate);
 		
 //		for(unsigned int i = 0; i < bodyPositions.size(); i++){
 //			BodyType type = ASTEROID; //BodyType(rand() % (NUM_BODY_TYPES - NUM_LANDMARKS));	
