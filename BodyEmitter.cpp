@@ -90,6 +90,8 @@ float RandomFloat(float min, float max){
 
 btVector3 BodyEmitter::getAngularVelocityForType(BodyType type){
 	switch (type){
+		case PEPSI:
+			return btVector3(RandomFloat(2,4), RandomFloat(1,2), RandomFloat(2,4));
 		case MARS:
 		case APPLE:
 			return btVector3(0,1,0);
@@ -109,6 +111,7 @@ btVector3 BodyEmitter::getPositionForType(BodyType type){
 	switch (type) {
 		case GATE:
 		case APPLE:
+		case PEPSI:
 			return btVector3(
 							 ((float)rand() / RAND_MAX * 2.0 * BOUNDARY_X - BOUNDARY_X) / 4.0,
 							 ((float)rand() / RAND_MAX * 2.0 * BOUNDARY_Y - BOUNDARY_Y) / 4.0,
@@ -129,6 +132,7 @@ btVector3 BodyEmitter::getLinearVelocityForType(BodyType type){
 			return btVector3(0,0, 20);
 		//case VENUS:
 		case APPLE:
+		case PEPSI:
 			return btVector3(0,0, 25);
 		case LUSH:
 			return btVector3(0.2,0.02, 0.03);
@@ -208,7 +212,7 @@ void BodyEmitter::loadModels() {
 	
 	
 	models[GATE].loadFromFile("models/gate", "gate.obj", importers[GATE]);
-	//models[GATE].setScaleFactor(0.07);
+	models[GATE].setScaleFactor(0.07);
 	
 	models[SPACEBAT].loadFromFile("models/spacebat", "spacebat.obj", importers[SPACEBAT]);
 	models[SPACEBAT].setScaleFactor(0.5);
@@ -221,6 +225,13 @@ void BodyEmitter::loadModels() {
 
 	models[APPLE].loadFromFile("models/apple", "apple.obj", importers[APPLE]);
 	models[APPLE].setScaleFactor(7);
+	
+	models[JUPITER].loadFromFile("models/jupiter", "jupiter.3ds", importers[JUPITER]);
+	models[JUPITER].setScaleFactor(8);
+	
+	models[PEPSI].loadFromFile("models/pepsi", "pepsi.3ds", importers[PEPSI]);
+	models[PEPSI].setScaleFactor(4);
+	
 }
 
 BodyEmitter::ContactCallback::ContactCallback(BodyEmitter *bodyEmitter)

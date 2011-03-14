@@ -42,7 +42,7 @@ void Ship::setStatusText(StatusText *st) {
 }
 
 void Ship::shiverMeTimbers(BodyType type){
-	if(type == APPLE){
+	if(type == APPLE || type == PEPSI){
 		pEngine->addEmitter(&this->pos, EXPLOSION, false, true, 2);	
 		return;
 	}else{
@@ -99,7 +99,7 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 		Gate* gate = (Gate*)body;
 		gate->setCompleted();
 		spaceship->statusText->addScore(10);
-	} else if(body->getType() == APPLE){
+	} else if(body->getType() == APPLE || body->getType() == PEPSI ){
 		printf("GOT APPLE\n");
 		spaceship->healthBar->add(15);
 		spaceship->shiverMeTimbers(body->getType());
