@@ -10,7 +10,7 @@
 
 #include <btBulletDynamicsCommon.h>
 
-const int NUM_LANDMARKS = 2;
+const int NUM_LANDMARKS = 1;
 
 enum BodyType {
 	MARS,
@@ -20,7 +20,6 @@ enum BodyType {
 	JUNO,
 	GATE,
 	SPACEBAT,
-	VENUS,
 	LUSH,
 	NUM_BODY_TYPES
 };

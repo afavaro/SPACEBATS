@@ -36,6 +36,28 @@ BodyEmitter::~BodyEmitter() {
 
 void BodyEmitter::emit(BodyType type){
 	printf("Now emitting body type %d\n", type);
+	
+	btVector3 pos = getPositionForType(type);
+	btDefaultMotionState *motionState =
+	new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), pos));
+
+	btScalar mass = getMassForType(type);
+	
+	btRigidBody::btRigidBodyConstructionInfo
+	constructionInfo(mass, motionState, models[type].getCollisionShape());
+
+	Body* newBody;
+	
+	if(type == GATE){
+		newBody = new Gate(&models[type], constructionInfo, type);
+	}else{
+		newBody = new Body(&models[type], constructionInfo, type);
+	}
+	newBody->setLinearVelocity(getLinearVelocityForType(type));
+	newBody->setAngularVelocity(getAngularVelocityForType(type));
+	
+	world->addRigidBody(newBody);
+	bodies.push_back(newBody);
 }
 
 
@@ -75,6 +97,9 @@ btVector3 BodyEmitter::getAngularVelocityForType(BodyType type){
 		case GATE:
 		case SPACEBAT:
 			return btVector3(0,0,0);
+		//case VENUS:
+		case LUSH:
+			return btVector3(0,0.1,0);
 		default:
 			return btVector3(RandomFloat(-1,1), RandomFloat(-1,1), RandomFloat(-1,1));
 	}
@@ -102,9 +127,9 @@ btVector3 BodyEmitter::getLinearVelocityForType(BodyType type){
 	switch(type){
 		case GATE:
 			return btVector3(0,0, 20);
-		case VENUS:
+		//case VENUS:
 		case LUSH:
-			return btVector3(0,0, 0.01);
+			return btVector3(0.2,0.02, 0.03);
 		default:
 			return btVector3(RandomFloat(-1,1),RandomFloat(-1,1),speed);
 	}
@@ -115,7 +140,7 @@ btScalar BodyEmitter::getMassForType(BodyType type){
 	switch(type){
 		case GATE:
 			return 10;
-		case VENUS:
+		//case VENUS:
 		case LUSH:
 			return 1000;
 		default:
@@ -187,8 +212,8 @@ void BodyEmitter::loadModels() {
 	models[SPACEBAT].setScaleFactor(0.5);
 	
 	
-	models[VENUS].loadFromFile("models/venus", "venus.3ds", importers[VENUS]);
-	models[VENUS].setScaleFactor(0.5);
+	//models[VENUS].loadFromFile("models/venus", "venus.3ds", importers[VENUS]);
+	//models[VENUS].setScaleFactor(0.5);
 	
 	models[LUSH].loadFromFile("models/lush", "lush.3DS", importers[LUSH]);
 
