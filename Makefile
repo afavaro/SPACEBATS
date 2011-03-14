@@ -10,6 +10,7 @@ ifeq ($(OS), Darwin)
 		-framework sfml-window \
 		-framework sfml-graphics \
 		-framework sfml-system \
+		-framework sfml-audio \
 		-lassimp \
 		-framework OpenGL \
 		-framework GLUT	

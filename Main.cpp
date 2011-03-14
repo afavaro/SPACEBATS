@@ -18,6 +18,8 @@
 #include <cstdlib>
 #include <ctime>
 
+#include <SFML/Audio.hpp>
+
 #define TIMESTEP (1.0 / 60.0)
 
 using namespace std;
@@ -105,6 +107,18 @@ int main(int argc, char** argv) {
 	
 	inputListeners.push_back(&camera);
 	inputListeners.push_back(&spaceship);
+	
+	
+	sf::Music music;
+	if(!music.OpenFromFile("music/change.wav")){
+		printf("Error with music.\n");
+		return 0;
+	}else{
+		printf("Music loaded.\n");
+	}
+	   
+	music.Play();
+	
 	
 	
 	// Put your game loop here (i.e., render with OpenGL, update animation)
