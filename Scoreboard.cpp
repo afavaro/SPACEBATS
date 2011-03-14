@@ -1,6 +1,8 @@
 #include "Scoreboard.h"
 #include "Framework.h"
 
+#include <cstdio>
+
 Scoreboard::Scoreboard(sf::RenderWindow* window){
 	this->window = window;
 }

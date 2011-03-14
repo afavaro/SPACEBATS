@@ -26,6 +26,8 @@ class Model {
 	
 		void setScaleFactor(float f);
 
+		btCollisionShape *getCollisionShape();
+
 		static sf::Image white;
 
 		static Shader *normalShader, *toonShader;
@@ -45,9 +47,12 @@ class Model {
 
 		sf::Image *diffuse, *specular;
 
+		unsigned *indexBuffer;
+
+		btCollisionShape *collisionShape;
+
 		void setMeshData(aiMesh *mesh, Shader *shader, RenderPass pass);
 
-		unsigned *indexBuffer;
 };
 
 #endif
