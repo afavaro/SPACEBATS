@@ -21,6 +21,14 @@ Level::Level(int level){
 	background = new sf::Image();
 	background->LoadFromFile(bgFile);
 	
+	string dummy;
+	///READ SPEED
+	levelFile >> dummy;
+	levelFile >> speed;
+	
+	///READ MODEL TYPES
+	levelFile >> dummy;
+	
 	int numTypes;
 	levelFile >> numTypes;
 	
@@ -31,6 +39,8 @@ Level::Level(int level){
 		
 	}
 	
+	//READ LANDMARKS
+	levelFile >> dummy;
 	
 	int numModels;
 	levelFile >> numModels;
@@ -59,6 +69,7 @@ Level::~Level(){
 void Level::print(){
 	cout << "============" << endl;
 	cout << "Level " << level << endl;
+	cout << "Speed: " << speed << endl;
 	for(unsigned i = 0; i < levelTypes.size(); i++){
 		cout << "ModelType #" << levelTypes[i] << endl;
 	}

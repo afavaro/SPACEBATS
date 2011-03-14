@@ -8,7 +8,8 @@
 #define BOUNDARY_Y 44.0
 #define BOUNDARY_Z -1000.0
 
-#define EMIT_STEP 1.0
+
+
 
 const int BODIES_TO_EMIT = 15;
 
@@ -24,6 +25,8 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 	wall->setCollisionShape(wallShape);
 
 	contactCallback = new ContactCallback(this);
+	
+	emitSpeed = 1;
 
 // These models were good... but a little too big?
 }
@@ -162,7 +165,7 @@ void BodyEmitter::emitBodies(float tstep, Level* level) {
 	accum += tstep;
 	world->contactTest(wall, *contactCallback);
 	
-	if (accum > EMIT_STEP) {
+	if (accum > emitSpeed) {
 		accum = 0.0;
 		
 		int index = rand() % level->levelTypes.size();

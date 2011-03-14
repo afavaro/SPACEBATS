@@ -62,6 +62,7 @@ public:
 	
 private:
 	int level;
+	float speed;
 	
 	queue<Landmark> landmarks;
 

@@ -1,9 +1,10 @@
 models/outerspace.jpg
-3
+LEVELSPEED 1.0
+NUMMODELS 3
 6
 0
 3
-3
+NUMLANDMARKS 3
 13 0
 15 0
 20 0

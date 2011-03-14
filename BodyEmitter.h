@@ -25,6 +25,8 @@ class BodyEmitter {
 		void setBoostMode(bool boost);	
 
 	private:
+		float emitSpeed;
+	
 		struct ContactCallback : public btCollisionWorld::ContactResultCallback {
 			BodyEmitter *bodyEmitter;
 
