@@ -17,8 +17,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
-
-#include <SFML/Audio.hpp>
+#include "MusicManager.h"
 
 #define TIMESTEP (1.0 / 60.0)
 
@@ -65,6 +64,8 @@ HUD* hud;
 StatusBar* boostbar;
 StatusBar* healthbar;
 
+MusicManager music;
+
 void initOpenGL();
 void loadAssets();
 void handleInput();
@@ -109,17 +110,16 @@ int main(int argc, char** argv) {
 	inputListeners.push_back(&spaceship);
 	
 	
-	sf::Music music;
-	if(!music.OpenFromFile("music/change.wav")){
-		printf("Error with music.\n");
-		return 0;
-	}else{
-		printf("Music loaded.\n");
-	}
-	   
-	music.Play();
-	
-	
+	music.playSound(BACKGROUND);
+//	sf::Music music;
+//	if(!music.OpenFromFile("music/change.wav")){
+//		printf("Error with music.\n");
+//		return 0;
+//	}else{
+//		printf("Music loaded.\n");
+//	}
+//	   
+//	music.Play();
 	
 	// Put your game loop here (i.e., render with OpenGL, update animation)
 	while (window.IsOpened()) {	
@@ -135,7 +135,7 @@ int main(int argc, char** argv) {
 			camera.update(TIMESTEP);
 			accum -= TIMESTEP;
 		}
-		
+				
 		renderFrame();
 		window.Display();
 	}
@@ -223,6 +223,7 @@ void handleInput() {
 					case sf::Key::Space:
 						if(boostbar->getValue() <= 0) return;
 						
+						music.playSound(POWERUP);
 						useMotionBlur = true;
 						bodyEmitter->setBoostMode(true);
 						bodyEmitter->boostSpeed();
@@ -234,6 +235,8 @@ void handleInput() {
 			case sf::Event::KeyReleased:
 				switch (evt.Key.Code) {
 					case sf::Key::Space:
+						
+						music.stopSound(POWERUP);
 						useMotionBlur = false;
 						bodyEmitter->setBoostMode(false);
 						bodyEmitter->resetSpeed();

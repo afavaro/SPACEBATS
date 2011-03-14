@@ -1,6 +1,6 @@
 OS:=$(shell uname)
 
-OBJS = Main.o Shader.o Model.o Camera.o Framebuffer.o MotionBlur.o Ship.o Body.o BodyEmitter.o HUD.o HUDComponent.o StatusBar.o Gate.o
+OBJS = Main.o Shader.o Model.o Camera.o Framebuffer.o MotionBlur.o Ship.o Body.o BodyEmitter.o HUD.o HUDComponent.o StatusBar.o Gate.o MusicManager.o
 
 ifeq ($(OS), Darwin)
 	CXXFLAGS = -g -Wall -Ilinux/include -I/usr/local/include/bullet
@@ -30,6 +30,7 @@ else
 		-lsfml-window \
 		-lsfml-graphics \
 		-lsfml-system \
+		-lsfml-audio \
 		-lassimp \
 		-lGLU \
 		-lGLEW
