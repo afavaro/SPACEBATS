@@ -238,6 +238,8 @@ void handleInput() {
 			case sf::Event::KeyReleased:
 				switch (evt.Key.Code) {
 					case sf::Key::Space:
+						
+						music.stopSound(POWERUP);
 						useMotionBlur = false;
 						bodyEmitter->setBoostMode(false);
 						bodyEmitter->resetSpeed();

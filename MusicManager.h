@@ -23,6 +23,8 @@ public:
 	MusicManager();
 	~MusicManager();
 	void playSound(SoundType sound);
+	void pauseSound(SoundType sound);
+	void stopSound(SoundType sound);
 	
 private:
 	
