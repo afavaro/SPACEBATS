@@ -11,22 +11,34 @@
 
 using namespace std;
 
+enum EmitterType {
+	SMOKE,
+	FIRE,
+	PLASMA,
+	NUM_EMITTER_TYPES
+};
+
 class ParticleEmitter{
 public:
-	//ParticleEmitter(Ship* ship, Shader* particleShader, sf::Image* tex);
-	ParticleEmitter(btVector3* pos,  Shader* particleShader, sf::Image* tex, int width);
+	ParticleEmitter(btVector3* pos,  Shader* particleShader, sf::Image* tex, 
+					int width, bool fast, EmitterType ty);
 	void updateEmitter(float tstep, bool fast);
 	void spawnParticles(); 
-	void renderParticles();
+	void renderParticles(bool fast);
 	
-	//Class Vars
+private:
+	
+	int chooseZOffset();
 	vector<Particle> particles;
+	
 	btVector3* position;
-	//Ship* spaceship;
-	//int type;
+	
 	sf::Image* particleImage;
 	Shader* particleShader;
+	
 	int screenWidth;
+	bool onlyWhenFast;
+	EmitterType type;
 };
 
 #endif

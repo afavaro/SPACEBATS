@@ -26,6 +26,8 @@ class Model {
 	
 		void setScaleFactor(float f);
 
+		btCollisionShape *getCollisionShape();
+
 		static sf::Image white;
 
 		static Shader *normalShader, *toonShader;
@@ -33,6 +35,9 @@ class Model {
 
 		static Framebuffer *normalsBuffer;
 		static void setNormalsBuffer(Framebuffer *fb);
+	
+		void setDiffuseImage(sf::Image* img);
+		sf::Image* getDiffuseImage();
 
 	btTransform transformation;
 	
@@ -46,9 +51,12 @@ class Model {
 
 		sf::Image *diffuse, *specular;
 
+		unsigned *indexBuffer;
+
+		btCollisionShape *collisionShape;
+
 		void setMeshData(aiMesh *mesh, Shader *shader, RenderPass pass);
 
-		unsigned *indexBuffer;
 };
 
 #endif

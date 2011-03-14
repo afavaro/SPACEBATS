@@ -47,8 +47,6 @@ class BodyEmitter {
 		Model models[NUM_BODY_TYPES];
 		Assimp::Importer importers[NUM_BODY_TYPES];
 
-		btCollisionShape *collisionShapes[NUM_BODY_TYPES];
-
 		btCollisionObject *wall;
 		btCollisionShape *wallShape;
 	

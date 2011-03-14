@@ -1,12 +1,13 @@
 
 #include "BodyEmitter.h"
 #include "Camera.h"
+#include "Gate.h"
 
 #define BOUNDARY_X 50.0
 #define BOUNDARY_Y 44.0
 #define BOUNDARY_Z -250.0
 
-#define EMIT_STEP 0.3
+#define EMIT_STEP 0.25
 
 const float NORMAL_SPEED = 100.0;
 const float BOOST_SPEED = 200.0;
@@ -17,27 +18,7 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 	this->world = world;
 	accum = 0.0;
 	boostMode = false;
-
-	collisionShapes[MARS] = new btSphereShape(5);
-	collisionShapes[ASTEROID] = new btSphereShape(5);
-	collisionShapes[EROS] = new btSphereShape(5);
-	collisionShapes[GOLEVKA] = new btSphereShape(5);
-	collisionShapes[JUNO] = new btSphereShape(5);
 	
-	
-	//collisionShapes[GATE] = new btSphereShape(5);
-	collisionShapes[GATE] = new btCylinderShapeZ( btVector3(2,2,2) );
-	
-	
-	collisionShapes[SPACEBAT] = new btSphereShape(5);
-	
-	btScalar mass = 4.0;
-	btVector3 inertia(0,0,0);
-	for(int i = 0; i < NUM_BODY_TYPES; i++){
-		btCollisionShape* shape = collisionShapes[i];
-		shape->calculateLocalInertia(mass, inertia);
-	}
-
 	wallShape = new btStaticPlaneShape(btVector3(0, 0, -1), -20);
 	wall = new btCollisionObject();
 	wall->setCollisionShape(wallShape);
@@ -48,9 +29,6 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 }
 
 BodyEmitter::~BodyEmitter() {	
-	for(int i = 0; i < NUM_BODY_TYPES; i++){
-		delete collisionShapes[i];
-	}
 	delete wall;
 	delete wallShape;
 	delete contactCallback;
@@ -101,7 +79,10 @@ btVector3 BodyEmitter::getAngularVelocityForType(BodyType type){
 btVector3 BodyEmitter::getPositionForType(BodyType type){
 	switch (type) {
 		case GATE:
-			return btVector3(0,0, BOUNDARY_Z);
+			return btVector3(
+							 ((float)rand() / RAND_MAX * 2.0 * BOUNDARY_X - BOUNDARY_X) / 4.0,
+							 ((float)rand() / RAND_MAX * 2.0 * BOUNDARY_Y - BOUNDARY_Y) / 4.0,
+							 BOUNDARY_Z );
 		default:
 			return btVector3(
 							 (float)rand() / RAND_MAX * 2.0 * BOUNDARY_X - BOUNDARY_X,
@@ -136,15 +117,15 @@ void BodyEmitter::emitBodies(float tstep) {
 	}
 	//printf("--\n");
 	
+	
 	if (accum > EMIT_STEP) {
 		accum = 0.0;
 		
 
+		BodyType type = BodyType(rand() % NUM_BODY_TYPES);	
 
 		
-		int type = rand() % NUM_BODY_TYPES;
-	
-		btVector3 pos = getPositionForType(BodyType(type));
+		btVector3 pos = getPositionForType(type);
 		btDefaultMotionState *motionState =
 			new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), pos));
 
@@ -152,12 +133,18 @@ void BodyEmitter::emitBodies(float tstep) {
 		btScalar mass = 4.0;
 		
 		btRigidBody::btRigidBodyConstructionInfo
-			constructionInfo(mass, motionState, collisionShapes[type]);
+			constructionInfo(mass, motionState, models[type].getCollisionShape());
 		
-		Body* newBody = new Body(&models[type], constructionInfo, BodyType(type));
-
-		newBody->setLinearVelocity(getLinearVelocityForType(BodyType(type)));
-		newBody->setAngularVelocity(getAngularVelocityForType(BodyType(type)));
+		
+		Body* newBody;
+		
+		if(type == GATE){
+			newBody = new Gate(&models[type], constructionInfo, type);
+		}else{
+			newBody = new Body(&models[type], constructionInfo, type);
+		}
+		newBody->setLinearVelocity(getLinearVelocityForType(type));
+		newBody->setAngularVelocity(getAngularVelocityForType(type));
 
 		world->addRigidBody(newBody);
 		bodies.push_back(newBody);
@@ -184,7 +171,7 @@ void BodyEmitter::loadModels() {
 	
 	
 	models[GATE].loadFromFile("models/gate", "gate.obj", importers[GATE]);
-	models[GATE].setScaleFactor(0.1);
+	models[GATE].setScaleFactor(0.07);
 	
 	models[SPACEBAT].loadFromFile("models/spacebat", "spacebat.obj", importers[SPACEBAT]);
 	models[SPACEBAT].setScaleFactor(0.5);

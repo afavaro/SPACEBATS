@@ -1,14 +1,11 @@
-uniform sampler2D diffuseMap;
-uniform sampler2D specularMap;
 
+uniform sampler2D diffuseMap;
 uniform sampler2D normalMap;
 
 uniform vec2 pixelSize;
 
 uniform vec3 Kd;
-uniform vec3 Ks;
 uniform vec3 Ka;
-uniform float alpha;
 
 varying vec2 texcoord;
 varying vec3 normal;
@@ -69,7 +66,6 @@ void main() {
 
 	vec3 N = normalize(normal);
 	vec3 L = normalize(gl_LightSource[0].position.xyz);
-	vec3 V = normalize(-eyePosition);
 
 	float Rd;
 	if (dot(L, N) > 0.0) Rd = 1.0;
@@ -78,13 +74,6 @@ void main() {
 
 	vec3 diffuse = Rd * Kd * Td * gl_LightSource[0].diffuse.rgb;
 	vec3 ambient = Ka * Td * gl_LightSource[0].ambient.rgb;
-
-	vec3 R = reflect(-L, N);
-	float Rs = pow(max(0.0, dot(V, R)), alpha);
-	if (Rs > 0.1) Rs = 1.0;
-	else Rs = 0.0;
-	vec3 Ts = texture2D(specularMap, texcoord).rgb;
-	vec3 specular = Rs * Ks * Ts * gl_LightSource[0].specular.rgb;
 
 	vec2 normcoord = 0.5 * (clipPosition.xy / clipPosition.w) + vec2(0.5, 0.5);
 	float border = 1.0 - outline(normcoord);

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <math.h>
 #include "Body.h"
+#include "Gate.h"
 
 #define DURATION 0.2
 #define SHAKE_DURATION 0.5
@@ -14,8 +15,8 @@
 #define PITCH_ROTATION	M_PI/15.0
 #define ROLL_ROTATION	M_PI/6.0
 
-#define BOUNDARY_X 25.0
-#define BOUNDARY_Y 22.0
+#define BOUNDARY_X 35.0
+#define BOUNDARY_Y 25.0
 #define DELTA 0.01
 
 #define STOP_THRESHOLD 2
@@ -26,6 +27,18 @@ using namespace std;
 Ship::ShipContactCallback::ShipContactCallback(Ship* ship)
 : btCollisionWorld::ContactResultCallback(), spaceship(ship)
 {
+}
+
+void Ship::setBoostBar(Scoreboard* s){
+	boostBar = s;
+}
+
+void Ship::setHealthBar(Scoreboard* s){
+	healthBar = s;
+}
+
+void Ship::setScoreboard(Scoreboard* s){
+	scoreboard = s;
 }
 
 void Ship::shiverMeTimbers(){
@@ -75,19 +88,28 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 	Body* body = (Body*) spaceship->lastCollision;
 	body->printType();
 	if(body->getType() == GATE){
-		printf("GATE COMPLETED!\n");
+		Gate* gate = (Gate*)body;
+		gate->setCompleted();
+		spaceship->healthBar->add(10);
+		spaceship->scoreboard->add(10);
 	}else {
 		spaceship->shiverMeTimbers();
-		printf("COLLISION\n");
+		spaceship->healthBar->subtract(25);
 	}
 	
-
+	printf("Healthbar: ");
+	spaceship->healthBar->print();
+	
+	printf("Score: ");
+	spaceship->scoreboard->print();
+	
 	return 0;
 }
 
 void Ship::testCollision(){
 	//printf("Called ship test collision\n");
 	spaceshipCollider->setWorldTransform(btTransform(quat, pos));
+	spaceshipCollider->setCollisionShape(model.getCollisionShape());
 	world->contactTest(spaceshipCollider, *callback);
 }
 
@@ -115,10 +137,8 @@ Ship::Ship(btVector3 pos, Camera* c) {
 	
 	curShake = NULL;
 	
-	spaceshipShape = new btSphereShape(6);
 	spaceshipCollider = new btCollisionObject();
 	spaceshipCollider->setWorldTransform(btTransform(quat, pos));
-	spaceshipCollider->setCollisionShape(spaceshipShape);
 	
 	world = NULL;
 	callback = new ShipContactCallback(this);
@@ -142,7 +162,6 @@ void Ship::updateRotation(float tstep) {
 		}
 	}
 }
-
 
 void Ship::updatePosition(float tstep) {
 	pos += velocity * tstep;
@@ -173,6 +192,8 @@ void Ship::updatePosition(float tstep) {
 		velocity = acceleration = btVector3(0, 0, 0);
 		isStopping = false;
 	}
+
+	cam->setTarget(btVector3(0.1 * pos.x(), 0.1 * pos.y(), pos.z()));
 }
 
 void Ship::update(float tstep) {
@@ -181,6 +202,13 @@ void Ship::update(float tstep) {
 	//updateShake(tstep);
 	btTransform transform(quat, pos);
 	model.setTransformation(transform);
+	
+	
+	if(boostMode){
+		boostBar->subtract(1);
+	}else{
+		boostBar->add(0.05);
+	}
 }
 
 void Ship::setRotation(btQuaternion rot) {
@@ -191,7 +219,6 @@ void Ship::setRotation(btQuaternion rot) {
 	curRot->time = 0.0;
 	curRot->duration = DURATION;
 }
-
 
 
 void Ship::handleEvent(sf::Event &event, const sf::Input &input) {

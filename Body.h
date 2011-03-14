@@ -27,11 +27,11 @@ class Body: public btRigidBody {
 		Body(Model *model, btRigidBody::btRigidBodyConstructionInfo &btInfo, BodyType ty);
 		~Body();
 
-		void draw(RenderPass pass);
+		virtual void draw(RenderPass pass);
 		BodyType getType();
 		void printType();
 
-	private:
+	protected:
 		Model *model;
 		BodyType type;
 };

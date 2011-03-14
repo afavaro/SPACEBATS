@@ -13,9 +13,8 @@ using namespace std;
 
 class ParticleEngine{
 public:
-	ParticleEngine(int width); 
-	//void addEmitter(Ship* ship, int particleType);
-	void addEmitter(btVector3* pos, int particleType);
+	ParticleEngine(int width);
+	void addEmitter(btVector3* pos, EmitterType type, bool onlyActiveWhenFast);
 	void updateEmitters(double tstep, bool fast); 
 	void renderEmitters(bool fast);
 private:

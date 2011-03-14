@@ -11,6 +11,7 @@
 #include "HUD.h"
 #include "Scoreboard.h"
 #include "ParticleEngine.h"
+#include "Gate.h"
 
 #include <btBulletDynamicsCommon.h>
 
@@ -26,7 +27,7 @@ using namespace std;
 // and using rendering settings
 // http://www.sfml-dev.org/tutorials/1.6/window-window.php
 sf::WindowSettings settings(24, 8, 2);
-sf::RenderWindow window(sf::VideoMode(1200, 800), "sPaCEbaTS", sf::Style::Close, settings);
+sf::RenderWindow window(sf::VideoMode(1000, 650), "sPaCEbaTS", sf::Style::Close, settings);
 
 // This is a clock you can use to control animation.  For more info, see:
 // http://www.sfml-dev.org/tutorials/1.6/window-time.php
@@ -38,7 +39,7 @@ GLfloat accum = 0.0;
 // It automatically manages resources for you, and frees them when the program
 // exits.
 Assimp::Importer importer;
-Shader *blurShader, *bgShader;
+Shader *blurShader, *bgShader, *barShader;
 
 sf::Image background;
 
@@ -62,6 +63,9 @@ MotionBlur* motionBlur;
 bool useMotionBlur = false;
 
 HUD* hud;
+Scoreboard* boostbar;
+Scoreboard* healthbar;
+Scoreboard* scoreboard;
 
 void initOpenGL();
 void loadAssets();
@@ -85,12 +89,24 @@ int main(int argc, char** argv) {
 	world->setGravity(btVector3(0, 0, 0));
 	
 	spaceship.setWorld(world);
+	loadAssets();
 	
 	hud = new HUD(&spaceship);
-	hud->addComponent(new Scoreboard(&window));
-
+	boostbar = new Scoreboard(&window, barShader);
+	healthbar = new Scoreboard(&window, barShader);
+	scoreboard = new Scoreboard(&window, barShader);
+	healthbar->setXLocation(70);
+	healthbar->setScore(Scoreboard::MAX_SCORE);
 	
-	loadAssets();
+	hud->addComponent(boostbar);
+	hud->addComponent(healthbar);
+	
+	Gate::setScoreboard(healthbar);
+	Gate::loadChangeImage();
+	
+	spaceship.setBoostBar(boostbar);
+	spaceship.setHealthBar(healthbar);
+	spaceship.setScoreboard(scoreboard);
 	
 	motionBlur = new MotionBlur(NUM_MOTION_BLUR_FRAMES, window.GetWidth(), window.GetHeight());
 	glClear(GL_ACCUM_BUFFER_BIT);
@@ -99,8 +115,9 @@ int main(int argc, char** argv) {
 	inputListeners.push_back(&spaceship);
 	
 	pEngine = new ParticleEngine(window.GetWidth());
-	pEngine->addEmitter(&spaceship.pos, 0);
-	pEngine->addEmitter(&spaceship.pos, 1);
+	pEngine->addEmitter(&spaceship.pos, FIRE, false);
+	pEngine->addEmitter(&spaceship.pos, SMOKE, false);
+	pEngine->addEmitter(&spaceship.pos, PLASMA, true);
 	
 	// Put your game loop here (i.e., render with OpenGL, update animation)
 	while (window.IsOpened()) {	
@@ -111,9 +128,12 @@ int main(int argc, char** argv) {
 		while (accum > TIMESTEP) {
 			spaceship.update(TIMESTEP);
 			world->stepSimulation(TIMESTEP);
+
 			spaceship.testCollision();
 			pEngine->updateEmitters(TIMESTEP, useMotionBlur);
+
 			bodyEmitter->emitBodies(TIMESTEP);
+			camera.update(TIMESTEP);
 			accum -= TIMESTEP;
 		}
 		
@@ -160,6 +180,7 @@ void initOpenGL() {
 void loadAssets() {
 	blurShader = new Shader("shaders/blur");
 	bgShader = new Shader("shaders/background");
+	barShader = new Shader("shaders/bar");
 	
 	bodyEmitter = new BodyEmitter(world);
 	bodyEmitter->loadModels();
@@ -201,6 +222,8 @@ void handleInput() {
 						window.Close();
 						break;
 					case sf::Key::Space:
+						if(boostbar->score <= 0) return;
+						
 						useMotionBlur = true;
 						bodyEmitter->setBoostMode(true);
 						bodyEmitter->boostSpeed();
@@ -234,7 +257,7 @@ void setupLights()
 	GLfloat pos[] = { 0.0, 1.0, 0.0, 0.0 };
 	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat ambient[] = { 0.7, 0.7, 0.7, 1.0 };
+	GLfloat ambient[] = { 0.3, 0.3, 0.3, 1.0 };
 	
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
@@ -299,7 +322,13 @@ void renderFrame() {
 	}	
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
+	
+	if(useMotionBlur && boostbar->score <= 0){
+		useMotionBlur = false;
+		bodyEmitter->setBoostMode(false);
+		bodyEmitter->resetSpeed();
+	}
+	
 	if(useMotionBlur){
 		motionBlur->render(blurShader);
 	} else {
@@ -314,9 +343,11 @@ void renderFrame() {
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	setupLights();
 	bodyEmitter->drawBodies(FINAL_PASS);
+	glSecondaryColor3f(0.0,0.0,0.0);
 	spaceship.model.render(FINAL_PASS);
 	//cout << "Ship at: " << spaceship.pos.x() << "::" << spaceship.pos.y() << "::" << spaceship.pos.z() << endl;
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	pEngine->renderEmitters(useMotionBlur);
 
+	hud->render();	
 }
