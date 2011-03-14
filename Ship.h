@@ -14,10 +14,14 @@
 #include "Model.h"
 #include "Camera.h"
 #include "StatusBar.h"
+#include "StatusText.h"
 
 #include "btBulletDynamicsCommon.h"
 
 #include <cmath>
+
+#define NORMAL_SPEED 100.0
+#define BOOST_SPEED 200.0
 
 struct Rotation {
 	btQuaternion start;
@@ -40,6 +44,7 @@ public:
 	
 	void setBoostBar(StatusBar* s);
 	void setHealthBar(StatusBar* s);
+	void setStatusText(StatusText *st);
 	
 	Rotation *curRot;
 	Model model;
@@ -83,6 +88,7 @@ private:
 	
 	StatusBar* boostBar;
 	StatusBar* healthBar;
+	StatusText *statusText;
 	
 	void updatePosition(float tstep);
 	void updateRotation(float tstep);
