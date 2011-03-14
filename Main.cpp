@@ -44,13 +44,12 @@ Shader *blurShader, *bgShader, *barShader;
 
 sf::Image background;
 
-Model mars;
-
-ParticleEngine* pEngine;
+ParticleEngine pEngine;
 
 Camera camera(btVector3(0.0, 0.0, 50.0));
 
-Ship spaceship(btVector3(0.0, 0.0, 0.0), &camera);
+Ship spaceship(btVector3(0.0, 0.0, 0.0), &camera, &pEngine);
+
 BodyEmitter *bodyEmitter;
 
 btDiscreteDynamicsWorld *world;
@@ -102,7 +101,6 @@ int main(int argc, char** argv) {
 	hud->addComponent(boostbar);
 	hud->addComponent(healthbar);
 	
-	//Gate::setScoreboard(healthbar);
 	Gate::loadChangeImage();
 	
 	spaceship.setBoostBar(boostbar);
@@ -114,12 +112,12 @@ int main(int argc, char** argv) {
 	inputListeners.push_back(&camera);
 	inputListeners.push_back(&spaceship);
 	
-	pEngine = new ParticleEngine(window.GetWidth());
-	pEngine->addEmitter(&spaceship.pos, FIRE, false);
-	pEngine->addEmitter(&spaceship.pos, SMOKE, false);
-	pEngine->addEmitter(&spaceship.pos, PLASMA, true);
+	pEngine.setWindow(window.GetWidth());
+	pEngine.addEmitter(&spaceship.pos, FIRE, false);
+	pEngine.addEmitter(&spaceship.pos, SMOKE, false);
+	pEngine.addEmitter(&spaceship.pos, PLASMA, true);
 	
-	music.playSound(BACKGROUND);
+	//music.playSound(BACKGROUND);
 //	sf::Music music;
 //	if(!music.OpenFromFile("music/change.wav")){
 //		printf("Error with music.\n");
@@ -141,7 +139,7 @@ int main(int argc, char** argv) {
 			world->stepSimulation(TIMESTEP);
 
 			spaceship.testCollision();
-			pEngine->updateEmitters(TIMESTEP, useMotionBlur);
+			pEngine.updateEmitters(TIMESTEP, useMotionBlur);
 
 			bodyEmitter->emitBodies(TIMESTEP);
 			camera.update(TIMESTEP);
@@ -153,9 +151,7 @@ int main(int argc, char** argv) {
 	}
 	
 	delete blurShader;
-	
 	delete normalsBuffer;
-	delete pEngine;
 	delete world;
 	delete solver;
 	delete dispatcher;
@@ -361,7 +357,7 @@ void renderFrame() {
 	spaceship.model.render(FINAL_PASS);
 	//cout << "Ship at: " << spaceship.pos.x() << "::" << spaceship.pos.y() << "::" << spaceship.pos.z() << endl;
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
-	pEngine->renderEmitters(useMotionBlur);
+	pEngine.renderEmitters(useMotionBlur);
 
 	hud->render();	
 }

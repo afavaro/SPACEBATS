@@ -6,6 +6,9 @@
  *  Copyright 2011 Stanford University. All rights reserved.
  */
 
+class ParticleEngine;
+class ParticleEmitter;
+
 #ifndef SHIP_H
 #define SHIP_H
 
@@ -14,10 +17,13 @@
 #include "Model.h"
 #include "Camera.h"
 #include "StatusBar.h"
+#include "ParticleEngine.h"
 
 #include "btBulletDynamicsCommon.h"
 
 #include <cmath>
+
+using namespace std;
 
 struct Rotation {
 	btQuaternion start;
@@ -32,7 +38,7 @@ struct Shake {
 
 class Ship : public InputListener {
 public:
-	Ship(btVector3 pos, Camera* c);
+	Ship(btVector3 pos, Camera* c, ParticleEngine* pE);
 	~Ship();
 	
 	void handleEvent(sf::Event &event, const sf::Input &input);
@@ -51,15 +57,13 @@ public:
 
 	bool isStopping;
 	
+	Camera* cam;
+	
 	void setWorld(btDiscreteDynamicsWorld* world);
 	void testCollision();
 	
 	btCollisionShape* spaceshipShape; 
 	btCollisionObject* spaceshipCollider;	
-	
-	
-	Camera* cam;
-	btVector3 burnerPos;
 	
 	aiMesh* GetMesh();
 
@@ -100,7 +104,8 @@ private:
 	btQuaternion maxPitchDown;
 
 	bool boostMode;
-
+	
+	ParticleEngine* pEngine;
 };
 
 #endif

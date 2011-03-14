@@ -38,13 +38,14 @@ void Ship::setHealthBar(StatusBar* s){
 }
 
 void Ship::shiverMeTimbers(){
-	//if(!curShake) return;
 	delete curShake;
 	curShake = new Shake();
 	
 	curShake->position = pos;
 	curShake->time = 0.0;
 	curShake->duration = SHAKE_DURATION;
+	
+	pEngine->addEmitter(&this->pos, EXPLOSION, false, true);
 }
 
 void Ship::updateShake(float tstep){
@@ -55,7 +56,7 @@ void Ship::updateShake(float tstep){
 		}
 		else {
 			//float t = curRot->time / curRot->duration;
-			float randPos = rand()%10*0.1;
+			float randPos = rand()%10*0.135;
 			if(rand()%2) randPos *= -1.0; //curRot->start.slerp(curRot->end, EASE(t));
 			pos.m_floats[0] = curShake->position.x() + randPos;
 			pos.m_floats[1] = curShake->position.y() + randPos;
@@ -114,7 +115,7 @@ void Ship::setWorld(btDiscreteDynamicsWorld* world){
 }
 
 
-Ship::Ship(btVector3 pos, Camera* c) {
+Ship::Ship(btVector3 pos, Camera* c, ParticleEngine* pE) {
 	btQuaternion adjust(btVector3(1, 0, 0), -M_PI / 2.0);
 	neutral = btQuaternion(btVector3(0, 1, 0), -M_PI / 2.0) * adjust;
 	maxRollLeft = btQuaternion(btVector3(0, 0, -1), -ROLL_ROTATION);
@@ -122,9 +123,10 @@ Ship::Ship(btVector3 pos, Camera* c) {
 	maxPitchUp = btQuaternion(btVector3(1, 0, 0), PITCH_ROTATION);
 	maxPitchDown = btQuaternion(btVector3(1, 0, 0), -PITCH_ROTATION);
 
+	this->cam = c;
 	this->pos = pos;
 	acceleration = velocity = btVector3(0, 0, 0);
-	this->cam = c;
+	this->pEngine = pE;
 	quat = neutral;
 	curRot = NULL;
 	isStopping = false;
@@ -194,10 +196,9 @@ void Ship::updatePosition(float tstep) {
 void Ship::update(float tstep) {
 	updateRotation(tstep);
 	updatePosition(tstep);
-	//updateShake(tstep);
+	updateShake(tstep);
 	btTransform transform(quat, pos);
 	model.setTransformation(transform);
-	
 	
 	if(boostMode){
 		boostBar->subtract(1);
