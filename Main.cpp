@@ -10,6 +10,7 @@
 #include "BodyEmitter.h"
 #include "HUD.h"
 #include "Scoreboard.h"
+#include "ParticleEngine.h"
 
 #include <btBulletDynamicsCommon.h>
 
@@ -43,6 +44,8 @@ sf::Image background;
 
 Model mars;
 
+ParticleEngine* pEngine;
+
 Camera camera(btVector3(0.0, 0.0, 50.0));
 
 Ship spaceship(btVector3(0.0, 0.0, 0.0), &camera);
@@ -65,6 +68,8 @@ void loadAssets();
 void handleInput();
 void renderFrame();
 void renderBackground();
+
+btVector3 flame(0.0,0.0,0.0);
 
 int main(int argc, char** argv) {
 	
@@ -93,6 +98,9 @@ int main(int argc, char** argv) {
 	inputListeners.push_back(&camera);
 	inputListeners.push_back(&spaceship);
 	
+	pEngine = new ParticleEngine(window.GetWidth());
+	pEngine->addEmitter(&spaceship.pos, 0);
+	pEngine->addEmitter(&spaceship.pos, 1);
 	
 	// Put your game loop here (i.e., render with OpenGL, update animation)
 	while (window.IsOpened()) {	
@@ -104,7 +112,7 @@ int main(int argc, char** argv) {
 			spaceship.update(TIMESTEP);
 			world->stepSimulation(TIMESTEP);
 			spaceship.testCollision();
-			
+			pEngine->updateEmitters(TIMESTEP, useMotionBlur);
 			bodyEmitter->emitBodies(TIMESTEP);
 			accum -= TIMESTEP;
 		}
@@ -116,7 +124,7 @@ int main(int argc, char** argv) {
 	delete blurShader;
 	
 	delete normalsBuffer;
-	
+	delete pEngine;
 	delete world;
 	delete solver;
 	delete dispatcher;
@@ -266,7 +274,6 @@ void clearNormalsBuffer()
 	normalsBuffer->unbind();
 }
 
-
 void renderFrame() {
 	glViewport(0, 0, window.GetWidth(), window.GetHeight());
 
@@ -299,13 +306,17 @@ void renderFrame() {
 		renderBackground();	
 	}
 	motionBlur->update();
-
+	
 	glClear(GL_DEPTH_BUFFER_BIT);	
 
+
+	
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	setupLights();
 	bodyEmitter->drawBodies(FINAL_PASS);
 	spaceship.model.render(FINAL_PASS);
+	//cout << "Ship at: " << spaceship.pos.x() << "::" << spaceship.pos.y() << "::" << spaceship.pos.z() << endl;
+	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
+	pEngine->renderEmitters(useMotionBlur);
 
-	//	hud->render();	
 }

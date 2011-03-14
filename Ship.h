@@ -54,7 +54,10 @@ public:
 	btCollisionObject* spaceshipCollider;	
 	
 	
-	Camera* cam;	
+	Camera* cam;
+	btVector3 burnerPos;
+	
+	aiMesh* GetMesh();
 
 private:
 	

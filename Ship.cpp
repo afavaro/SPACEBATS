@@ -123,6 +123,8 @@ Ship::Ship(btVector3 pos, Camera* c) {
 	world = NULL;
 	callback = new ShipContactCallback(this);
 	lastCollision = NULL;
+	
+	//burnerPos = btVector3(pos.x(),pos.y(),pos.z());
 }
 
 Ship::~Ship() {}
@@ -176,7 +178,7 @@ void Ship::updatePosition(float tstep) {
 void Ship::update(float tstep) {
 	updateRotation(tstep);
 	updatePosition(tstep);
-	updateShake(tstep);
+	//updateShake(tstep);
 	btTransform transform(quat, pos);
 	model.setTransformation(transform);
 }
@@ -229,6 +231,11 @@ void Ship::handleEvent(sf::Event &event, const sf::Input &input) {
 					isStopping = false;
 					acceleration = btVector3(0, -THRUST, 0);
 					break;
+				case sf::Key::T:
+					pos.m_floats[2] -= 0.3;
+					break;
+				case sf::Key::B:
+					cout << "X: " << pos.m_floats[0] << " Y: " << pos.m_floats[1] << " Z: " << pos.m_floats[2] << endl;
 				default:
 					break;
 			}
@@ -255,3 +262,8 @@ void Ship::handleEvent(sf::Event &event, const sf::Input &input) {
 			break;
 	}
 }
+
+aiMesh* Ship::GetMesh(){
+	return this->model.scene->mMeshes[0];
+}
+

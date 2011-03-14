@@ -1,11 +1,3 @@
-/*
- *  Shader.cpp
- *  CS248-Final-Project
- *
- *  Created by Matthew Fichman on 1/25/11.
- *  Copyright 2011 __MyCompanyName__. All rights reserved.
- *
- */
 
 #include "Shader.h"
 #include <fstream>

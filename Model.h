@@ -34,11 +34,15 @@ class Model {
 		static Framebuffer *normalsBuffer;
 		static void setNormalsBuffer(Framebuffer *fb);
 
-	private:
-		btTransform transformation;
-		const aiScene *scene;
+	btTransform transformation;
 	
-		float scaleFactor;
+	const aiScene *scene;
+	float scaleFactor;
+	private:
+//		btTransform transformation;
+//		
+//		const aiScene *scene;
+//		float scaleFactor;
 
 		sf::Image *diffuse, *specular;
 

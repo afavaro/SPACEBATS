@@ -2,6 +2,7 @@ attribute vec2 positionIn;
 attribute vec2 texCoordIn;
 
 varying vec4 clipPosition;
+varying vec3 eyePosition;
 
 void main() {
 
