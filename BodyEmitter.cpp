@@ -233,6 +233,7 @@ void BodyEmitter::loadModels() {
 	
 	
 	models[GATE].loadFromFile("models/gayte", "gate.obj", importers[GATE]);
+	models[GATE].setScaleFactor(0.5);
 	
 	models[SPACEBAT].loadFromFile("models/spacebat", "spacebat.obj", importers[SPACEBAT]);
 	models[SPACEBAT].setScaleFactor(0.5);
