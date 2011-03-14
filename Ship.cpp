@@ -194,7 +194,7 @@ void Ship::updatePosition(float tstep) {
 void Ship::update(float tstep) {
 	updateRotation(tstep);
 	updatePosition(tstep);
-	//updateShake(tstep);
+	updateShake(tstep);
 	btTransform transform(quat, pos);
 	model.setTransformation(transform);
 	

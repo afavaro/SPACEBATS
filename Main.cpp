@@ -12,6 +12,8 @@
 #include "ParticleEngine.h"
 #include "StatusBar.h"
 #include "Gate.h"
+#include "LevelManager.h"
+#include "Level.h"
 
 #include <btBulletDynamicsCommon.h>
 
@@ -68,6 +70,7 @@ StatusBar* boostbar;
 StatusBar* healthbar;
 
 MusicManager music;
+LevelManager levels(2);
 
 void initOpenGL();
 void loadAssets();
@@ -113,6 +116,7 @@ int main(int argc, char** argv) {
 	
 	inputListeners.push_back(&camera);
 	inputListeners.push_back(&spaceship);
+	inputListeners.push_back(&levels);
 	
 	pEngine = new ParticleEngine(window.GetWidth());
 	pEngine->addEmitter(&spaceship.pos, FIRE, false);
@@ -120,15 +124,6 @@ int main(int argc, char** argv) {
 	pEngine->addEmitter(&spaceship.pos, PLASMA, true);
 	
 	music.playSound(BACKGROUND);
-//	sf::Music music;
-//	if(!music.OpenFromFile("music/change.wav")){
-//		printf("Error with music.\n");
-//		return 0;
-//	}else{
-//		printf("Music loaded.\n");
-//	}
-//	   
-//	music.Play();
 	
 	// Put your game loop here (i.e., render with OpenGL, update animation)
 	while (window.IsOpened()) {	
@@ -192,6 +187,8 @@ void loadAssets() {
 	blurShader = new Shader("shaders/blur");
 	bgShader = new Shader("shaders/background");
 	barShader = new Shader("shaders/bar");
+	
+	Level::loadShaders();
 	
 	bodyEmitter = new BodyEmitter(world);
 	bodyEmitter->loadModels();
@@ -324,7 +321,8 @@ void renderFrame() {
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		renderBackground();	
+		levels.getCurrentLevel()->renderBackground();
+		//renderBackground();	
 
 		glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -346,7 +344,8 @@ void renderFrame() {
 	if(useMotionBlur){
 		motionBlur->render(blurShader);
 	} else {
-		renderBackground();	
+		levels.getCurrentLevel()->renderBackground();
+		//renderBackground();	
 	}
 	motionBlur->update();
 	
