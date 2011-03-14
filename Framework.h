@@ -24,4 +24,15 @@
 #include <memory>
 #include <iostream>
 
+#include <assert.h>
+
+#define	GL_CHECK	 {\
+GLenum error = glGetError();\
+if (GL_NO_ERROR != error) {\
+printf("%s", gluErrorString(error));\
+assert(false);\
+}\
+}
+
+
 #endif
