@@ -60,8 +60,9 @@ MotionBlur* motionBlur;
 bool useMotionBlur = false;
 
 HUD* hud;
-Scoreboard* scoreboard;
+Scoreboard* boostbar;
 Scoreboard* healthbar;
+Scoreboard* scoreboard;
 
 void initOpenGL();
 void loadAssets();
@@ -86,20 +87,21 @@ int main(int argc, char** argv) {
 	loadAssets();
 	
 	hud = new HUD(&spaceship);
-	scoreboard = new Scoreboard(&window, barShader);
+	boostbar = new Scoreboard(&window, barShader);
 	healthbar = new Scoreboard(&window, barShader);
+	scoreboard = new Scoreboard(&window, barShader);
 	healthbar->setXLocation(70);
 	healthbar->setScore(Scoreboard::MAX_SCORE);
 	
-	hud->addComponent(scoreboard);
+	hud->addComponent(boostbar);
 	hud->addComponent(healthbar);
 	
 	Gate::setScoreboard(healthbar);
 	Gate::loadChangeImage();
 	
-	spaceship.setBoostBar(scoreboard);
+	spaceship.setBoostBar(boostbar);
 	spaceship.setHealthBar(healthbar);
-
+	spaceship.setScoreboard(scoreboard);
 	
 	motionBlur = new MotionBlur(NUM_MOTION_BLUR_FRAMES, window.GetWidth(), window.GetHeight());
 	glClear(GL_ACCUM_BUFFER_BIT);
@@ -208,7 +210,7 @@ void handleInput() {
 						window.Close();
 						break;
 					case sf::Key::Space:
-						if(scoreboard->score <= 0) return;
+						if(boostbar->score <= 0) return;
 						
 						useMotionBlur = true;
 						bodyEmitter->setBoostMode(true);
@@ -310,7 +312,7 @@ void renderFrame() {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	if(useMotionBlur && scoreboard->score <= 0){
+	if(useMotionBlur && boostbar->score <= 0){
 		useMotionBlur = false;
 		bodyEmitter->setBoostMode(false);
 		bodyEmitter->resetSpeed();

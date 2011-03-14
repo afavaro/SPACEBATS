@@ -40,7 +40,7 @@ public:
 	
 	void setBoostBar(Scoreboard* s);
 	void setHealthBar(Scoreboard* s);
-	
+	void setScoreboard(Scoreboard* s);
 	
 	Rotation *curRot;
 	Model model;
@@ -81,6 +81,7 @@ private:
 	
 	Scoreboard* boostBar;
 	Scoreboard* healthBar;
+	Scoreboard* scoreboard;
 	
 	void updatePosition(float tstep);
 	void updateRotation(float tstep);

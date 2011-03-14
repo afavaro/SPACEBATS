@@ -37,6 +37,10 @@ void Ship::setHealthBar(Scoreboard* s){
 	healthBar = s;
 }
 
+void Ship::setScoreboard(Scoreboard* s){
+	scoreboard = s;
+}
+
 void Ship::shiverMeTimbers(){
 	//if(!curShake) return;
 	delete curShake;
@@ -87,6 +91,7 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 		Gate* gate = (Gate*)body;
 		gate->setCompleted();
 		spaceship->healthBar->add(10);
+		spaceship->scoreboard->add(10);
 	}else {
 		spaceship->shiverMeTimbers();
 		spaceship->healthBar->subtract(25);
@@ -94,6 +99,9 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 	
 	printf("Healthbar: ");
 	spaceship->healthBar->print();
+	
+	printf("Score: ");
+	spaceship->scoreboard->print();
 	
 	return 0;
 }
