@@ -92,7 +92,7 @@ btVector3 BodyEmitter::getAngularVelocityForType(BodyType type){
 	switch (type){
 		case PEPSI:
 			return btVector3(RandomFloat(2,4), RandomFloat(1,2), RandomFloat(2,4));
-		case MARS:
+		//case MARS:
 		case APPLE:
 			return btVector3(0,1,0);
 		case GATE:
@@ -199,7 +199,7 @@ void BodyEmitter::drawBodies(RenderPass pass) {
 }
 
 void BodyEmitter::loadModels() {
-	models[MARS].loadFromFile("models/mars", "mars.3ds", importers[MARS]);
+	//models[MARS].loadFromFile("models/mars", "mars.3ds", importers[MARS]);
 	models[ASTEROID].loadFromFile("models/aster", "asteroid.3ds", importers[ASTEROID]);
 	models[ASTEROID].setScaleFactor(0.1);
 	//models[GATE].loadFromFile("models/aster", "roid.obj", importers[GATE]);
@@ -232,6 +232,14 @@ void BodyEmitter::loadModels() {
 	models[PEPSI].loadFromFile("models/pepsi", "pepsi.3ds", importers[PEPSI]);
 	models[PEPSI].setScaleFactor(4);
 	
+//	models[BEER].loadFromFile("models/beer", "beer.3ds", importers[BEER]);
+//	models[BEER].setScaleFactor(5);
+
+//	models[BURGER].loadFromFile("models/burger", "burger.obj", importers[BURGER]);
+//	models[BURGER].setScaleFactor(5);
+
+	models[PIZZA].loadFromFile("models/pizza", "pizza.3ds", importers[PIZZA]);
+	models[PIZZA].setScaleFactor(10);	
 }
 
 BodyEmitter::ContactCallback::ContactCallback(BodyEmitter *bodyEmitter)
