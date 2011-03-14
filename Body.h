@@ -20,6 +20,7 @@ enum BodyType {
 	JUNO,
 	GATE,
 	SPACEBAT,
+	APPLE,
 	LUSH,
 	NUM_BODY_TYPES
 };
