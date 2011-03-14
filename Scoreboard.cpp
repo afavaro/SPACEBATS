@@ -28,7 +28,11 @@ void Scoreboard::render(){
 //	scoreString.SetColor(sf::Color(200, 0,0));
 //	scoreString.SetPosition(50.f, 580.f);
 //	window->Draw(scoreString);
+	glEnable(GL_BLEND); //GL_CHECK
+	glDepthMask(GL_FALSE); //GL_CHECK
 	
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //GL_CHECK
+//	glBlendFunc(GL_SRC_ALPHA, GL_ONE); GL_CHECK
 	
 	float height = MAX_HEIGHT * score / MAX_SCORE;
 	if(height < 5) height = 5;
@@ -51,6 +55,9 @@ void Scoreboard::render(){
 	glVertexAttrib2f(pos, 1.0, 1.0);
 	glVertexAttrib2f(pos, -1.0, 1.0);
 	glEnd();	
+	
+	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
 }
 
 void Scoreboard::print(){
