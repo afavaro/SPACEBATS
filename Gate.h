@@ -21,6 +21,8 @@ public:
 	//static Scoreboard* scoreboard;
 	//static void setScoreboard(Scoreboard* s);
 	
+	void setRadius(float r);
+	float getRadius();
 	
 private:	
 	bool completed;

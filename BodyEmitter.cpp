@@ -6,9 +6,11 @@
 
 #define BOUNDARY_X 50.0
 #define BOUNDARY_Y 44.0
-#define BOUNDARY_Z -250.0
+#define BOUNDARY_Z -1000.0
 
-#define EMIT_STEP 0.25
+#define EMIT_STEP 2.0
+
+const int BODIES_TO_EMIT = 15;
 
 using namespace std;
 
@@ -93,8 +95,8 @@ btVector3 BodyEmitter::getAngularVelocityForType(BodyType type){
 		case PEPSI:
 			return btVector3(RandomFloat(2,4), RandomFloat(1,2), RandomFloat(2,4));
 		//case MARS:
-		case APPLE:
-			return btVector3(0,1,0);
+		//case APPLE:
+		//	return btVector3(0,1,0);
 		case GATE:
 		case SPACEBAT:
 			return btVector3(0,0,0);
@@ -110,11 +112,11 @@ btVector3 BodyEmitter::getAngularVelocityForType(BodyType type){
 btVector3 BodyEmitter::getPositionForType(BodyType type){
 	switch (type) {
 		case GATE:
-		case APPLE:
+		//case APPLE:
 		case PEPSI:
 			return btVector3(
-							 ((float)rand() / RAND_MAX * 2.0 * BOUNDARY_X - BOUNDARY_X) / 4.0,
-							 ((float)rand() / RAND_MAX * 2.0 * BOUNDARY_Y - BOUNDARY_Y) / 4.0,
+							 ((float)rand() / RAND_MAX * 2.0 * BOUNDARY_X - BOUNDARY_X) / 2.0,
+							 ((float)rand() / RAND_MAX * 2.0 * BOUNDARY_Y - BOUNDARY_Y) / 2.0,
 							 BOUNDARY_Z );
 		default:
 			return btVector3(
@@ -129,15 +131,16 @@ btVector3 BodyEmitter::getLinearVelocityForType(BodyType type){
 	float speed = boostMode ? BOOST_SPEED : NORMAL_SPEED;
 	switch(type){
 		case GATE:
-			return btVector3(0,0, 20);
+			return btVector3(0,0, speed);
 		//case VENUS:
-		case APPLE:
+		//case APPLE:
 		case PEPSI:
 			return btVector3(0,0, 25);
 		case LUSH:
 			return btVector3(0.2,0.02, 0.03);
 		default:
-			return btVector3(RandomFloat(-1,1),RandomFloat(-1,1),speed);
+		//	return btVector3(RandomFloat(-1,1),RandomFloat(-1,1),speed);
+			return btVector3(0,0, speed);
 	}
 }
 
@@ -162,33 +165,51 @@ void BodyEmitter::emitBodies(float tstep) {
 	if (accum > EMIT_STEP) {
 		accum = 0.0;
 		
-
-		BodyType type = BodyType(rand() % (NUM_BODY_TYPES - NUM_LANDMARKS));	
-
+		btVector3 gatePos = getPositionForType(GATE);
 		
-		btVector3 pos = getPositionForType(type);
-		btDefaultMotionState *motionState =
-			new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), pos));
-
+		float radius = 60;
 		
-		btScalar mass = getMassForType(type);
+		vector<btVector3> bodyPositions;
+		while(bodyPositions.size() < BODIES_TO_EMIT){
+			btVector3 pos = getPositionForType(ASTEROID);
+			
+			if(pos.distance(gatePos) > radius) {
+				bodyPositions.push_back(pos);
+			}
+		}
+		
+		btDefaultMotionState *gateMS =
+		new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), gatePos));
 		
 		btRigidBody::btRigidBodyConstructionInfo
-			constructionInfo(mass, motionState, models[type].getCollisionShape());
+		gateCI(4, gateMS, models[GATE].getCollisionShape());
 		
+		Body* gate = new Gate(&models[GATE], gateCI, GATE);
+		gate->setLinearVelocity(getLinearVelocityForType(GATE));
+		gate->setAngularVelocity(getAngularVelocityForType(GATE));
 		
-		Body* newBody;
+		world->addRigidBody(gate);
+		bodies.push_back(gate);
 		
-		if(type == GATE){
-			newBody = new Gate(&models[type], constructionInfo, type);
-		}else{
-			newBody = new Body(&models[type], constructionInfo, type);
-		}
-		newBody->setLinearVelocity(getLinearVelocityForType(type));
-		newBody->setAngularVelocity(getAngularVelocityForType(type));
-
-		world->addRigidBody(newBody);
-		bodies.push_back(newBody);
+//		for(unsigned int i = 0; i < bodyPositions.size(); i++){
+//			BodyType type = ASTEROID; //BodyType(rand() % (NUM_BODY_TYPES - NUM_LANDMARKS));	
+//			
+//			btVector3 pos = bodyPositions[i];
+//			btDefaultMotionState *motionState =
+//			new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), pos));
+//			
+//			btScalar mass = getMassForType(type);
+//			
+//			btRigidBody::btRigidBodyConstructionInfo
+//			constructionInfo(mass, motionState, models[type].getCollisionShape());
+//			
+//			Body* newBody = new Body(&models[type], constructionInfo, type);
+//			newBody->setLinearVelocity(getLinearVelocityForType(type));
+//			newBody->setAngularVelocity(getAngularVelocityForType(type));
+//			
+//			world->addRigidBody(newBody);
+//			bodies.push_back(newBody);
+//		}
 	}
 }
 
@@ -201,7 +222,7 @@ void BodyEmitter::drawBodies(RenderPass pass) {
 void BodyEmitter::loadModels() {
 	//models[MARS].loadFromFile("models/mars", "mars.3ds", importers[MARS]);
 	models[ASTEROID].loadFromFile("models/aster", "asteroid.3ds", importers[ASTEROID]);
-	models[ASTEROID].setScaleFactor(0.1);
+	models[ASTEROID].setScaleFactor(0.4);
 	//models[GATE].loadFromFile("models/aster", "roid.obj", importers[GATE]);
 	models[EROS].loadFromFile("models/eros", "eros.3ds", importers[EROS]);
 	models[EROS].setScaleFactor(0.7);
@@ -222,8 +243,8 @@ void BodyEmitter::loadModels() {
 	
 	models[LUSH].loadFromFile("models/lush", "lush.3DS", importers[LUSH]);
 
-	models[APPLE].loadFromFile("models/apple", "apple.obj", importers[APPLE]);
-	models[APPLE].setScaleFactor(7);
+//	models[APPLE].loadFromFile("models/apple", "apple.obj", importers[APPLE]);
+//	models[APPLE].setScaleFactor(7);
 	
 	models[JUPITER].loadFromFile("models/jupiter", "jupiter.3ds", importers[JUPITER]);
 	models[JUPITER].setScaleFactor(8);
@@ -237,8 +258,8 @@ void BodyEmitter::loadModels() {
 //	models[BURGER].loadFromFile("models/burger", "burger.obj", importers[BURGER]);
 //	models[BURGER].setScaleFactor(5);
 
-	models[PIZZA].loadFromFile("models/pizza", "pizza.3ds", importers[PIZZA]);
-	models[PIZZA].setScaleFactor(10);	
+//	models[PIZZA].loadFromFile("models/pizza", "pizza.3ds", importers[PIZZA]);
+//	models[PIZZA].setScaleFactor(10);	
 }
 
 BodyEmitter::ContactCallback::ContactCallback(BodyEmitter *bodyEmitter)

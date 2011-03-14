@@ -25,6 +25,14 @@ void Gate::loadChangeImage(){
 	printf("Loaded gate image\n");
 }
 
+float Gate::getRadius(){
+	return radius;
+}
+
+void Gate::setRadius(float r){
+	radius = r;
+}
+
 
 Gate::~Gate() {}
 
