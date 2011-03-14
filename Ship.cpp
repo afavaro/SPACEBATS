@@ -37,6 +37,10 @@ void Ship::setHealthBar(StatusBar* s){
 	healthBar = s;
 }
 
+void Ship::setStatusText(StatusText *st) {
+	statusText = st;
+}
+
 void Ship::shiverMeTimbers(){
 	delete curShake;
 	curShake = new Shake();
@@ -87,7 +91,7 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 	if(body->getType() == GATE){
 		Gate* gate = (Gate*)body;
 		gate->setCompleted();
-		spaceship->healthBar->add(10);
+		spaceship->statusText->addScore(10);
 	} else {
 		spaceship->shiverMeTimbers();
 		spaceship->healthBar->subtract(25);
@@ -205,6 +209,8 @@ void Ship::update(float tstep) {
 	}else{
 		boostBar->add(0.1);
 	}
+
+	statusText->updateTime(tstep);
 }
 
 void Ship::setRotation(btQuaternion rot) {

@@ -12,6 +12,7 @@
 #include "ParticleEngine.h"
 #include "StatusBar.h"
 #include "Gate.h"
+#include "StatusText.h"
 
 #include <btBulletDynamicsCommon.h>
 
@@ -40,7 +41,7 @@ GLfloat accum = 0.0;
 // It automatically manages resources for you, and frees them when the program
 // exits.
 Assimp::Importer importer;
-Shader *blurShader, *bgShader, *barShader;
+Shader *blurShader, *bgShader;
 
 sf::Image background;
 
@@ -65,6 +66,7 @@ bool useMotionBlur = false;
 HUD* hud;
 StatusBar* boostbar;
 StatusBar* healthbar;
+StatusText *statusText;
 
 MusicManager music;
 
@@ -90,21 +92,27 @@ int main(int argc, char** argv) {
 	world->setGravity(btVector3(0, 0, 0));
 	
 	spaceship.setWorld(world);
+
+	statusText = new StatusText(&window, btVector4(-1.0, -0.73, 0.5, 0.25));
+
 	loadAssets();
 	
 	hud = new HUD(&spaceship);
-	boostbar = new StatusBar(barShader, btVector4(0.90, -0.9, 0.05, 1.0));
-	healthbar = new StatusBar(barShader, btVector4(-0.95, -0.9, 0.05, 1.0));
+	boostbar = new StatusBar(btVector4(0.85, -0.95, 0.05, 1.0));
+	healthbar = new StatusBar(btVector4(0.92, -0.95, 0.05, 1.0));
 	healthbar->setTopColor(btVector4(0, 1, 0, 0.5));
 	healthbar->setBottomColor(btVector4(1, 0, 0, 0.5));
 	
 	hud->addComponent(boostbar);
 	hud->addComponent(healthbar);
+	hud->addComponent(statusText);
+
 	
 	Gate::loadChangeImage();
 	
 	spaceship.setBoostBar(boostbar);
 	spaceship.setHealthBar(healthbar);
+	spaceship.setStatusText(statusText);
 	
 	motionBlur = new MotionBlur(NUM_MOTION_BLUR_FRAMES, window.GetWidth(), window.GetHeight());
 	glClear(GL_ACCUM_BUFFER_BIT);
@@ -187,7 +195,8 @@ void initOpenGL() {
 void loadAssets() {
 	blurShader = new Shader("shaders/blur");
 	bgShader = new Shader("shaders/background");
-	barShader = new Shader("shaders/bar");
+
+	StatusBar::loadShader();
 	
 	bodyEmitter = new BodyEmitter(world);
 	bodyEmitter->loadModels();
@@ -200,6 +209,8 @@ void loadAssets() {
 	
 	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
 	spaceship.model.setScaleFactor(0.5);
+
+	statusText->loadFont("fonts/Spaceship Bullet.ttf");
 }
 
 
