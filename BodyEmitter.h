@@ -2,6 +2,7 @@
 #define BODY_EMITTER_H
 
 #include "Framework.h"
+#include "ParticleEngine.h"
 #include "Body.h"
 #include "Model.h"
 #include <list>
@@ -14,10 +15,10 @@ class BodyEmitter {
 
 		void loadModels();
 
-		void emitBodies(float tstep);
+		void emitBodies(float tstep, ParticleEngine* pEngine);
 		void drawBodies(RenderPass pass);
 	
-	void emit(BodyType type);
+	void emit(BodyType type, ParticleEngine* pEngine);
 	
 		void boostSpeed();
 		void resetSpeed();

@@ -159,10 +159,10 @@ int main(int argc, char** argv) {
 			if(levels.current()->shouldEmitLandmark(timeElapsed)){
 				printf("should emit body\n");
 				BodyType landmarkType = levels.current()->firstLandmark();
-				bodyEmitter->emit(landmarkType);
+				bodyEmitter->emit(landmarkType, &pEngine);
 			}
 			
-			bodyEmitter->emitBodies(TIMESTEP);
+			bodyEmitter->emitBodies(TIMESTEP, &pEngine);
 			camera.update(TIMESTEP);
 			accum -= TIMESTEP;
 		}

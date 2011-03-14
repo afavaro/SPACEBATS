@@ -13,9 +13,9 @@ sf::Image* Gate::changed;
 //Scoreboard* Gate::scoreboard;
 
 
-Gate::Gate(Model *model, btRigidBody::btRigidBodyConstructionInfo &btInfo, BodyType ty)
+Gate::Gate(Model *model, btRigidBody::btRigidBodyConstructionInfo &btInfo, BodyType ty, ParticleEngine* pEngine)
 : Body(model, btInfo, ty){
-	
+	particleEngine = pEngine;
 	completed = false;
 }
 
@@ -30,15 +30,10 @@ Gate::~Gate(){
 	
 }
 
-/*
-void Gate::setScoreboard(Scoreboard* s){
-	scoreboard = s;
-}
-*/
-
 
 void Gate::setCompleted(){
 	completed = true;
+	//particleEngine->addEmitter();
 }
 
 void Gate::draw(RenderPass pass){

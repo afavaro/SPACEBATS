@@ -13,6 +13,7 @@ enum SoundType {
 	POWERUP, 
 	SPACESHIP, 
 	BACKGROUND, 
+	CRASH,
 	NUM_SOUNDS
 };
 

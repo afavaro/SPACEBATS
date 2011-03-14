@@ -32,7 +32,7 @@ BodyEmitter::~BodyEmitter() {
 	delete contactCallback;
 }
 
-void BodyEmitter::emit(BodyType type){
+void BodyEmitter::emit(BodyType type, ParticleEngine* pEngine){
 	printf("Now emitting body type %d\n", type);
 	
 	btVector3 pos = getPositionForType(type);
@@ -47,7 +47,7 @@ void BodyEmitter::emit(BodyType type){
 	Body* newBody;
 	
 	if(type == GATE){
-		newBody = new Gate(&models[type], constructionInfo, type);
+		newBody = new Gate(&models[type], constructionInfo, type, pEngine );
 	}else{
 		newBody = new Body(&models[type], constructionInfo, type);
 	}
@@ -147,7 +147,7 @@ btScalar BodyEmitter::getMassForType(BodyType type){
 }
 
 
-void BodyEmitter::emitBodies(float tstep) {
+void BodyEmitter::emitBodies(float tstep, ParticleEngine* pEngine) {
 	accum += tstep;
 	world->contactTest(wall, *contactCallback);
 	
@@ -172,7 +172,7 @@ void BodyEmitter::emitBodies(float tstep) {
 		Body* newBody;
 		
 		if(type == GATE){
-			newBody = new Gate(&models[type], constructionInfo, type);
+			newBody = new Gate(&models[type], constructionInfo, type, pEngine);
 		}else{
 			newBody = new Body(&models[type], constructionInfo, type);
 		}
@@ -202,9 +202,8 @@ void BodyEmitter::loadModels() {
 	models[JUNO].loadFromFile("models/juno", "juno.3ds", importers[JUNO]);
 	models[JUNO].setScaleFactor(0.05);
 	
-	
-	models[GATE].loadFromFile("models/gate", "gate.obj", importers[GATE]);
-	models[GATE].setScaleFactor(0.07);
+	models[GATE].loadFromFile("models/gayte", "gate.obj", importers[GATE]);
+	models[GATE].setScaleFactor(0.7);
 	
 	models[SPACEBAT].loadFromFile("models/spacebat", "spacebat.obj", importers[SPACEBAT]);
 	models[SPACEBAT].setScaleFactor(0.5);
