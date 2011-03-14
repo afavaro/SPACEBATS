@@ -43,7 +43,7 @@ ParticleEmitter::ParticleEmitter(btVector3* pos, Shader* particleShader, sf::Ima
 
 
 int ParticleEmitter::chooseZOffset(){
-	return 7;
+	return 15;
 //	switch(this->type){
 //		case SMOKE:
 //			return 7;
@@ -147,7 +147,7 @@ void ParticleEmitter::renderParticles(bool fast){
 		float value;
 		glGetFloatv(GL_POINT_SIZE, &value);
 		float size = rand()%20;
-		size /= 10.0;
+		size /= 5.0;
 		if(type == EXPLOSION) size*=3.5;
 		glUniform1f(base, value*size);
 		

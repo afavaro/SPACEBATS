@@ -15,8 +15,8 @@
 #define PITCH_ROTATION	M_PI/15.0
 #define ROLL_ROTATION	M_PI/6.0
 
-#define BOUNDARY_X 35.0
-#define BOUNDARY_Y 25.0
+#define BOUNDARY_X 55.0
+#define BOUNDARY_Y 40.0
 #define DELTA 0.01
 
 #define STOP_THRESHOLD 2
@@ -205,8 +205,8 @@ void Ship::update(float tstep) {
 	model.setTransformation(transform);
 	
 	if(boostMode){
-		boostBar->subtract(1);
-	}else{
+		boostBar->subtract(0.5);
+	} else{
 		boostBar->add(0.1);
 	}
 

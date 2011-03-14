@@ -17,7 +17,7 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 	accum = 0.0;
 	boostMode = false;
 	
-	wallShape = new btStaticPlaneShape(btVector3(0, 0, -1), -20);
+	wallShape = new btStaticPlaneShape(btVector3(0, 0, -1), -80);
 	wall = new btCollisionObject();
 	wall->setCollisionShape(wallShape);
 
@@ -203,8 +203,7 @@ void BodyEmitter::loadModels() {
 	models[JUNO].setScaleFactor(0.05);
 	
 	
-	models[GATE].loadFromFile("models/gate", "gate.obj", importers[GATE]);
-	models[GATE].setScaleFactor(0.07);
+	models[GATE].loadFromFile("models/gayte", "gate.obj", importers[GATE]);
 	
 	models[SPACEBAT].loadFromFile("models/spacebat", "spacebat.obj", importers[SPACEBAT]);
 	models[SPACEBAT].setScaleFactor(0.5);

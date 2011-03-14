@@ -5,18 +5,18 @@
 #include "Framework.h"
 #include "Model.h"
 
+#include <cmath>
+
 using namespace sf;
 
 
 sf::Image* Gate::changed;
 
-//Scoreboard* Gate::scoreboard;
-
-
 Gate::Gate(Model *model, btRigidBody::btRigidBodyConstructionInfo &btInfo, BodyType ty)
 : Body(model, btInfo, ty){
 	
 	completed = false;
+	radius = 5.0;
 }
 
 void Gate::loadChangeImage(){
@@ -26,35 +26,41 @@ void Gate::loadChangeImage(){
 }
 
 
-Gate::~Gate(){
-	
-}
-
-/*
-void Gate::setScoreboard(Scoreboard* s){
-	scoreboard = s;
-}
-*/
-
+Gate::~Gate() {}
 
 void Gate::setCompleted(){
 	completed = true;
 }
 
 void Gate::draw(RenderPass pass){
-	btTransform transform;
-	this->getMotionState()->getWorldTransform(transform);
-	model->setTransformation(transform);
+	btTransform gateTransform;
+	this->getMotionState()->getWorldTransform(gateTransform);
 	
+	/*
+	for (int i = 0; i < 6; i++) {
+		float t = (float)i * M_PI / 3.0;
+		btVector3 translation(-radius * sin(t), radius * cos(t), 0);
+		translation += gateTransform.getOrigin();
+
+		btQuaternion rotation(btVector3(0, 0, 1), t);
+		btTransform transform(rotation, translation);
+
+		model->setTransformation(transform);
+		model->render(pass);
+	}*/
+	model->setTransformation(gateTransform);
+	model->render(pass);
+	
+	/*
 	sf::Image* saved = NULL;
 	if(completed){
 		saved = model->getDiffuseImage();
 		model->setDiffuseImage(changed);
 	}
+	*/	
 	
-	model->render(pass);
-	
+	/*
 	if(completed){
 		model->setDiffuseImage(saved);
-	}
+	}*/
 }

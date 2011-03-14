@@ -22,9 +22,9 @@ public:
 	//static void setScoreboard(Scoreboard* s);
 	
 	
-private:
-	
+private:	
 	bool completed;
+	float radius;
 };
 
 #endif // Gate.h

@@ -7,7 +7,7 @@
 #include "btBulletDynamicsCommon.h"
 
 #define Z_NEAR 0.1
-#define Z_FAR 300.0
+#define Z_FAR 500.0
 
 struct Zoom {
 	btVector3 startPos, endPos;
@@ -17,7 +17,7 @@ struct Zoom {
 class Camera : public InputListener {
 public:
 
-	Camera(btVector3 pos);
+	Camera();
 	~Camera();
 
 	void setProjectionAndView(float aspectRatio);
