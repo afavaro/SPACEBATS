@@ -17,6 +17,8 @@ class BodyEmitter {
 		void emitBodies(float tstep);
 		void drawBodies(RenderPass pass);
 	
+	void emit(BodyType type);
+	
 		void boostSpeed();
 		void resetSpeed();
 		void setBoostMode(bool boost);	
@@ -36,6 +38,7 @@ class BodyEmitter {
 		btVector3 getAngularVelocityForType(BodyType type);
 		btVector3 getPositionForType(BodyType type);
 		btVector3 getLinearVelocityForType(BodyType type);
+		btScalar getMassForType(BodyType type);
 		void setSpeed(float speed);
 	
 	

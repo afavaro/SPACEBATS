@@ -34,6 +34,11 @@ BodyEmitter::~BodyEmitter() {
 	delete contactCallback;
 }
 
+void BodyEmitter::emit(BodyType type){
+	printf("Now emitting body type %d\n", type);
+}
+
+
 void BodyEmitter::setSpeed(float speed){
 	list<Body*>::iterator it;
 	for(it = bodies.begin(); it != bodies.end(); it++){
@@ -97,8 +102,24 @@ btVector3 BodyEmitter::getLinearVelocityForType(BodyType type){
 	switch(type){
 		case GATE:
 			return btVector3(0,0, 20);
+		case VENUS:
+		case LUSH:
+			return btVector3(0,0, 0.01);
 		default:
 			return btVector3(RandomFloat(-1,1),RandomFloat(-1,1),speed);
+	}
+}
+
+
+btScalar BodyEmitter::getMassForType(BodyType type){
+	switch(type){
+		case GATE:
+			return 10;
+		case VENUS:
+		case LUSH:
+			return 1000;
+		default:
+			return 4;
 	}
 }
 
@@ -107,22 +128,11 @@ void BodyEmitter::emitBodies(float tstep) {
 	accum += tstep;
 	world->contactTest(wall, *contactCallback);
 	
-	list<Body*>::iterator it;
-	for(it = bodies.begin(); it != bodies.end(); it++){
-		Body* b = (*it);
-		btTransform trans;
-		b->getMotionState()->getWorldTransform(trans);
-		
-		//printf("z: %f\n", trans.getOrigin().getZ());
-	}
-	//printf("--\n");
-	
-	
 	if (accum > EMIT_STEP) {
 		accum = 0.0;
 		
 
-		BodyType type = BodyType(rand() % NUM_BODY_TYPES);	
+		BodyType type = BodyType(rand() % (NUM_BODY_TYPES - NUM_LANDMARKS));	
 
 		
 		btVector3 pos = getPositionForType(type);
@@ -130,7 +140,7 @@ void BodyEmitter::emitBodies(float tstep) {
 			new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), pos));
 
 		
-		btScalar mass = 4.0;
+		btScalar mass = getMassForType(type);
 		
 		btRigidBody::btRigidBodyConstructionInfo
 			constructionInfo(mass, motionState, models[type].getCollisionShape());
@@ -175,6 +185,12 @@ void BodyEmitter::loadModels() {
 	
 	models[SPACEBAT].loadFromFile("models/spacebat", "spacebat.obj", importers[SPACEBAT]);
 	models[SPACEBAT].setScaleFactor(0.5);
+	
+	
+	models[VENUS].loadFromFile("models/venus", "venus.3ds", importers[VENUS]);
+	models[VENUS].setScaleFactor(0.5);
+	
+	models[LUSH].loadFromFile("models/lush", "lush.3DS", importers[LUSH]);
 
 }
 

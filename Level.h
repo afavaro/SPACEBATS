@@ -13,8 +13,20 @@
 
 #include "Framework.h"
 #include "Shader.h"
+#include "Body.h"
+#include <queue>
 
 using namespace std;
+
+struct Landmark{
+	float time;
+	BodyType type;
+	
+	void print(){
+		printf("T: %f : %d\n", time, type);
+	}
+};
+
 
 class Level{
 
@@ -23,6 +35,9 @@ public:
 	~Level();
 	
 	void renderBackground();
+	BodyType firstLandmark();
+	
+	bool shouldEmitLandmark(float timeElapsed);
 	
 	static Shader* bgShader;
 	static void loadShaders();
@@ -30,6 +45,7 @@ public:
 private:
 	int level;
 	
+	queue<Landmark> landmarks;
 	sf::Image* background;
 };
 

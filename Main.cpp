@@ -37,12 +37,13 @@ sf::RenderWindow window(sf::VideoMode(1000, 650), "sPaCEbaTS", sf::Style::Close,
 sf::Clock clck;
 
 GLfloat accum = 0.0;
+GLfloat timeElapsed = 0.0;
 
 // This creates an asset importer using the Open Asset Import library.
 // It automatically manages resources for you, and frees them when the program
 // exits.
 Assimp::Importer importer;
-Shader *blurShader, *bgShader, *barShader;
+Shader *blurShader, *barShader;
 
 sf::Image background;
 
@@ -76,7 +77,6 @@ void initOpenGL();
 void loadAssets();
 void handleInput();
 void renderFrame();
-void renderBackground();
 
 btVector3 flame(0.0,0.0,0.0);
 
@@ -125,11 +125,20 @@ int main(int argc, char** argv) {
 	
 	music.playSound(BACKGROUND);
 	
+	int counter = 0;
+	
 	// Put your game loop here (i.e., render with OpenGL, update animation)
 	while (window.IsOpened()) {	
 		handleInput();
 		
-		accum += clck.GetElapsedTime();
+		float elapsed = clck.GetElapsedTime();
+		accum += elapsed;
+		timeElapsed += elapsed;
+		
+		counter++;
+		
+		if(counter % 20 == 0)
+			printf("Elapsed time: %f\n", timeElapsed);
 		clck.Reset();
 		while (accum > TIMESTEP) {
 			spaceship.update(TIMESTEP);
@@ -138,6 +147,15 @@ int main(int argc, char** argv) {
 			spaceship.testCollision();
 			pEngine->updateEmitters(TIMESTEP, useMotionBlur);
 
+			
+			/// if the elapsed time is greater than the first landmark on the level
+			/// pop it and emit that kind of body
+			if(levels.current()->shouldEmitLandmark(timeElapsed)){
+				printf("should emit body\n");
+				BodyType landmarkType = levels.current()->firstLandmark();
+				//bodyEmitter->emit(levels->current()->firstLandmark());
+			}
+			
 			bodyEmitter->emitBodies(TIMESTEP);
 			camera.update(TIMESTEP);
 			accum -= TIMESTEP;
@@ -156,6 +174,11 @@ int main(int argc, char** argv) {
 	delete dispatcher;
 	delete collisionConfig;
 	delete broadphase;
+	
+	delete motionBlur;
+	delete boostbar;
+	delete healthbar;
+	delete hud;
 	
 	return 0;
 }
@@ -185,7 +208,6 @@ void initOpenGL() {
 
 void loadAssets() {
 	blurShader = new Shader("shaders/blur");
-	bgShader = new Shader("shaders/background");
 	barShader = new Shader("shaders/bar");
 	
 	Level::loadShaders();
@@ -276,30 +298,7 @@ void setupLights()
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
 }
 
-void renderBackground()
-{
-	glUseProgram(bgShader->programID());
-	
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(-1.0, 1.0, -1.0, 1.0);
-	
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
 
-	GLint tex = glGetUniformLocation(bgShader->programID(), "texture");
-	glUniform1i(tex, 0);
-	glActiveTexture(GL_TEXTURE0);
-	background.Bind();
-	
-	GLint pos = glGetAttribLocation(bgShader->programID(), "positionIn");
-	glBegin(GL_QUADS);
-	glVertexAttrib2f(pos, -1.0, -1.0);
-	glVertexAttrib2f(pos, 1.0, -1.0);
-	glVertexAttrib2f(pos, 1.0, 1.0);
-	glVertexAttrib2f(pos, -1.0, 1.0);
-	glEnd();
-}
 
 void clearNormalsBuffer()
 {
@@ -321,8 +320,7 @@ void renderFrame() {
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		levels.getCurrentLevel()->renderBackground();
-		//renderBackground();	
+		levels.current()->renderBackground();
 
 		glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -344,8 +342,7 @@ void renderFrame() {
 	if(useMotionBlur){
 		motionBlur->render(blurShader);
 	} else {
-		levels.getCurrentLevel()->renderBackground();
-		//renderBackground();	
+		levels.current()->renderBackground();
 	}
 	motionBlur->update();
 	

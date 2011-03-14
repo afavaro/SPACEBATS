@@ -18,11 +18,41 @@ Level::Level(int level){
 	
 	background = new sf::Image();
 	background->LoadFromFile(bgFile);
+	
+	int numModels;
+	levelFile >> numModels;
+	
+	float time;
+	int landmark;
+	for(int i = 0; i < numModels; i++){
+		levelFile >> time;
+		levelFile >> landmark;
+		
+		Landmark lm = {time, BodyType(NUM_BODY_TYPES - NUM_LANDMARKS + landmark)};
+		lm.print();
+		landmarks.push(lm);
+	}
+	
+	levelFile.close();
 }
+
+
 
 Level::~Level(){
 
 }
+
+BodyType Level::firstLandmark(){
+	BodyType saved = landmarks.front().type;
+	landmarks.pop();
+	return saved;
+}
+
+bool Level::shouldEmitLandmark(float timeElapsed){
+	if(landmarks.size() == 0) return false;
+	return timeElapsed > landmarks.front().time;
+}
+
 
 void Level::loadShaders(){
 	bgShader = new Shader("shaders/background");
