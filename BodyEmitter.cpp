@@ -8,7 +8,7 @@
 #define BOUNDARY_Y 44.0
 #define BOUNDARY_Z -1000.0
 
-#define EMIT_STEP 2.0
+#define EMIT_STEP 1.0
 
 const int BODIES_TO_EMIT = 15;
 

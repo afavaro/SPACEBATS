@@ -25,8 +25,8 @@ class ParticleEmitter;
 
 using namespace std;
 
-#define NORMAL_SPEED 100.0
-#define BOOST_SPEED 200.0
+#define NORMAL_SPEED 150.0
+#define BOOST_SPEED 250.0
 
 struct Rotation {
 	btQuaternion start;
