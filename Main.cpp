@@ -9,7 +9,7 @@
 #include "Ship.h"
 #include "BodyEmitter.h"
 #include "HUD.h"
-#include "Scoreboard.h"
+#include "StatusBar.h"
 #include "Gate.h"
 
 #include <btBulletDynamicsCommon.h>
@@ -60,9 +60,8 @@ MotionBlur* motionBlur;
 bool useMotionBlur = false;
 
 HUD* hud;
-Scoreboard* boostbar;
-Scoreboard* healthbar;
-Scoreboard* scoreboard;
+StatusBar* boostbar;
+StatusBar* healthbar;
 
 void initOpenGL();
 void loadAssets();
@@ -87,21 +86,19 @@ int main(int argc, char** argv) {
 	loadAssets();
 	
 	hud = new HUD(&spaceship);
-	boostbar = new Scoreboard(&window, barShader);
-	healthbar = new Scoreboard(&window, barShader);
-	scoreboard = new Scoreboard(&window, barShader);
-	healthbar->setXLocation(70);
-	healthbar->setScore(Scoreboard::MAX_SCORE);
+	boostbar = new StatusBar(barShader, btVector4(0.90, -0.9, 0.05, 1.0));
+	healthbar = new StatusBar(barShader, btVector4(-0.95, -0.9, 0.05, 1.0));
+	healthbar->setTopColor(btVector4(0, 1, 0, 0.5));
+	healthbar->setBottomColor(btVector4(1, 0, 0, 0.5));
 	
 	hud->addComponent(boostbar);
 	hud->addComponent(healthbar);
 	
-	Gate::setScoreboard(healthbar);
+	//Gate::setScoreboard(healthbar);
 	Gate::loadChangeImage();
 	
 	spaceship.setBoostBar(boostbar);
 	spaceship.setHealthBar(healthbar);
-	spaceship.setScoreboard(scoreboard);
 	
 	motionBlur = new MotionBlur(NUM_MOTION_BLUR_FRAMES, window.GetWidth(), window.GetHeight());
 	glClear(GL_ACCUM_BUFFER_BIT);
@@ -210,7 +207,7 @@ void handleInput() {
 						window.Close();
 						break;
 					case sf::Key::Space:
-						if(boostbar->score <= 0) return;
+						if(boostbar->getValue() <= 0) return;
 						
 						useMotionBlur = true;
 						bodyEmitter->setBoostMode(true);
@@ -312,7 +309,7 @@ void renderFrame() {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	if(useMotionBlur && boostbar->score <= 0){
+	if(useMotionBlur && boostbar->getValue() <= 0){
 		useMotionBlur = false;
 		bodyEmitter->setBoostMode(false);
 		bodyEmitter->resetSpeed();
