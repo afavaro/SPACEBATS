@@ -38,7 +38,7 @@ GLfloat accum = 0.0;
 // It automatically manages resources for you, and frees them when the program
 // exits.
 Assimp::Importer importer;
-Shader *blurShader, *bgShader;
+Shader *blurShader, *bgShader, *barShader;
 
 sf::Image background;
 
@@ -60,6 +60,9 @@ MotionBlur* motionBlur;
 bool useMotionBlur = false;
 
 HUD* hud;
+Scoreboard* boostbar;
+Scoreboard* healthbar;
+Scoreboard* scoreboard;
 
 void initOpenGL();
 void loadAssets();
@@ -81,19 +84,24 @@ int main(int argc, char** argv) {
 	world->setGravity(btVector3(0, 0, 0));
 	
 	spaceship.setWorld(world);
-	
+	loadAssets();
 	
 	hud = new HUD(&spaceship);
-	Scoreboard* scoreboard = new Scoreboard(&window);
-	hud->addComponent(scoreboard);
-	Gate::setScoreboard(scoreboard);
+	boostbar = new Scoreboard(&window, barShader);
+	healthbar = new Scoreboard(&window, barShader);
+	scoreboard = new Scoreboard(&window, barShader);
+	healthbar->setXLocation(70);
+	healthbar->setScore(Scoreboard::MAX_SCORE);
 	
+	hud->addComponent(boostbar);
+	hud->addComponent(healthbar);
+	
+	Gate::setScoreboard(healthbar);
 	Gate::loadChangeImage();
 	
-	
+	spaceship.setBoostBar(boostbar);
+	spaceship.setHealthBar(healthbar);
 	spaceship.setScoreboard(scoreboard);
-	
-	loadAssets();
 	
 	motionBlur = new MotionBlur(NUM_MOTION_BLUR_FRAMES, window.GetWidth(), window.GetHeight());
 	glClear(GL_ACCUM_BUFFER_BIT);
@@ -160,6 +168,7 @@ void initOpenGL() {
 void loadAssets() {
 	blurShader = new Shader("shaders/blur");
 	bgShader = new Shader("shaders/background");
+	barShader = new Shader("shaders/bar");
 	
 	bodyEmitter = new BodyEmitter(world);
 	bodyEmitter->loadModels();
@@ -201,6 +210,8 @@ void handleInput() {
 						window.Close();
 						break;
 					case sf::Key::Space:
+						if(boostbar->score <= 0) return;
+						
 						useMotionBlur = true;
 						bodyEmitter->setBoostMode(true);
 						bodyEmitter->boostSpeed();
@@ -300,7 +311,13 @@ void renderFrame() {
 	}	
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
+	
+	if(useMotionBlur && boostbar->score <= 0){
+		useMotionBlur = false;
+		bodyEmitter->setBoostMode(false);
+		bodyEmitter->resetSpeed();
+	}
+	
 	if(useMotionBlur){
 		motionBlur->render(blurShader);
 	} else {
@@ -315,5 +332,7 @@ void renderFrame() {
 	bodyEmitter->drawBodies(FINAL_PASS);
 	spaceship.model.render(FINAL_PASS);
 
-	//	hud->render();	
+
+	hud->render();	
+	
 }

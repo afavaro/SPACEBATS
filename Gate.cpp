@@ -38,8 +38,6 @@ void Gate::setScoreboard(Scoreboard* s){
 
 void Gate::setCompleted(){
 	completed = true;
-	scoreboard->add(10);
-	scoreboard->print();
 }
 
 void Gate::draw(RenderPass pass){

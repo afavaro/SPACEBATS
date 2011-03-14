@@ -29,10 +29,17 @@ Ship::ShipContactCallback::ShipContactCallback(Ship* ship)
 {
 }
 
+void Ship::setBoostBar(Scoreboard* s){
+	boostBar = s;
+}
+
+void Ship::setHealthBar(Scoreboard* s){
+	healthBar = s;
+}
+
 void Ship::setScoreboard(Scoreboard* s){
 	scoreboard = s;
 }
-
 
 void Ship::shiverMeTimbers(){
 	//if(!curShake) return;
@@ -83,16 +90,19 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 	if(body->getType() == GATE){
 		Gate* gate = (Gate*)body;
 		gate->setCompleted();
-		printf("GATE COMPLETED!\n");
+		spaceship->healthBar->add(10);
+		spaceship->scoreboard->add(10);
 	}else {
 		spaceship->shiverMeTimbers();
-		
-		spaceship->scoreboard->subtract(5);
-		spaceship->scoreboard->print();
-		printf("COLLISION\n");
+		spaceship->healthBar->subtract(25);
 	}
 	
-
+	printf("Healthbar: ");
+	spaceship->healthBar->print();
+	
+	printf("Score: ");
+	spaceship->scoreboard->print();
+	
 	return 0;
 }
 
@@ -190,6 +200,13 @@ void Ship::update(float tstep) {
 	updateShake(tstep);
 	btTransform transform(quat, pos);
 	model.setTransformation(transform);
+	
+	
+	if(boostMode){
+		boostBar->subtract(1);
+	}else{
+		boostBar->add(0.05);
+	}
 }
 
 void Ship::setRotation(btQuaternion rot) {
