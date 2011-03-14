@@ -1,7 +1,6 @@
 OS:=$(shell uname)
 
-OBJS = Main.o Shader.o Model.o Camera.o Framebuffer.o MotionBlur.o Ship.o Body.o BodyEmitter.o HUD.o HUDComponent.o Scoreboard.o Gate.o ParticleEngine.o ParticleEmitter.o Particle.o
-
+OBJS = Main.o Shader.o Model.o Camera.o Framebuffer.o MotionBlur.o Ship.o Body.o BodyEmitter.o HUD.o HUDComponent.o StatusBar.o Gate.o MusicManager.o ParticleEngine.o ParticleEmitter.o Particle.o
 
 ifeq ($(OS), Darwin)
 	CXXFLAGS = -g -Wall -Ilinux/include -I/usr/local/include/bullet
@@ -11,6 +10,7 @@ ifeq ($(OS), Darwin)
 		-framework sfml-window \
 		-framework sfml-graphics \
 		-framework sfml-system \
+		-framework sfml-audio \
 		-lassimp \
 		-framework OpenGL \
 		-framework GLUT	
@@ -30,6 +30,7 @@ else
 		-lsfml-window \
 		-lsfml-graphics \
 		-lsfml-system \
+		-lsfml-audio \
 		-lassimp \
 		-lGLU \
 		-lGLEW

@@ -9,8 +9,8 @@
 #include "Ship.h"
 #include "BodyEmitter.h"
 #include "HUD.h"
-#include "Scoreboard.h"
 #include "ParticleEngine.h"
+#include "StatusBar.h"
 #include "Gate.h"
 
 #include <btBulletDynamicsCommon.h>
@@ -18,6 +18,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
+#include "MusicManager.h"
 
 #define TIMESTEP (1.0 / 60.0)
 
@@ -63,9 +64,10 @@ MotionBlur* motionBlur;
 bool useMotionBlur = false;
 
 HUD* hud;
-Scoreboard* boostbar;
-Scoreboard* healthbar;
-Scoreboard* scoreboard;
+StatusBar* boostbar;
+StatusBar* healthbar;
+
+MusicManager music;
 
 void initOpenGL();
 void loadAssets();
@@ -92,21 +94,19 @@ int main(int argc, char** argv) {
 	loadAssets();
 	
 	hud = new HUD(&spaceship);
-	boostbar = new Scoreboard(&window, barShader);
-	healthbar = new Scoreboard(&window, barShader);
-	scoreboard = new Scoreboard(&window, barShader);
-	healthbar->setXLocation(70);
-	healthbar->setScore(Scoreboard::MAX_SCORE);
+	boostbar = new StatusBar(barShader, btVector4(0.90, -0.9, 0.05, 1.0));
+	healthbar = new StatusBar(barShader, btVector4(-0.95, -0.9, 0.05, 1.0));
+	healthbar->setTopColor(btVector4(0, 1, 0, 0.5));
+	healthbar->setBottomColor(btVector4(1, 0, 0, 0.5));
 	
 	hud->addComponent(boostbar);
 	hud->addComponent(healthbar);
 	
-	Gate::setScoreboard(healthbar);
+	//Gate::setScoreboard(healthbar);
 	Gate::loadChangeImage();
 	
 	spaceship.setBoostBar(boostbar);
 	spaceship.setHealthBar(healthbar);
-	spaceship.setScoreboard(scoreboard);
 	
 	motionBlur = new MotionBlur(NUM_MOTION_BLUR_FRAMES, window.GetWidth(), window.GetHeight());
 	glClear(GL_ACCUM_BUFFER_BIT);
@@ -118,6 +118,17 @@ int main(int argc, char** argv) {
 	pEngine->addEmitter(&spaceship.pos, FIRE, false);
 	pEngine->addEmitter(&spaceship.pos, SMOKE, false);
 	pEngine->addEmitter(&spaceship.pos, PLASMA, true);
+	
+	music.playSound(BACKGROUND);
+//	sf::Music music;
+//	if(!music.OpenFromFile("music/change.wav")){
+//		printf("Error with music.\n");
+//		return 0;
+//	}else{
+//		printf("Music loaded.\n");
+//	}
+//	   
+//	music.Play();
 	
 	// Put your game loop here (i.e., render with OpenGL, update animation)
 	while (window.IsOpened()) {	
@@ -136,7 +147,7 @@ int main(int argc, char** argv) {
 			camera.update(TIMESTEP);
 			accum -= TIMESTEP;
 		}
-		
+				
 		renderFrame();
 		window.Display();
 	}
@@ -222,8 +233,9 @@ void handleInput() {
 						window.Close();
 						break;
 					case sf::Key::Space:
-						if(boostbar->score <= 0) return;
+						if(boostbar->getValue() <= 0) return;
 						
+						music.playSound(POWERUP);
 						useMotionBlur = true;
 						bodyEmitter->setBoostMode(true);
 						bodyEmitter->boostSpeed();
@@ -235,6 +247,8 @@ void handleInput() {
 			case sf::Event::KeyReleased:
 				switch (evt.Key.Code) {
 					case sf::Key::Space:
+						
+						music.stopSound(POWERUP);
 						useMotionBlur = false;
 						bodyEmitter->setBoostMode(false);
 						bodyEmitter->resetSpeed();
@@ -323,7 +337,7 @@ void renderFrame() {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	if(useMotionBlur && boostbar->score <= 0){
+	if(useMotionBlur && boostbar->getValue() <= 0){
 		useMotionBlur = false;
 		bodyEmitter->setBoostMode(false);
 		bodyEmitter->resetSpeed();

@@ -1,7 +1,8 @@
-varying vec4 clipPosition;
+
+varying vec4 color;
 
 void main() {
 	
-	gl_FragColor = vec4(0,0.2,0.7,0.5);
+	gl_FragColor = color;
 
 }

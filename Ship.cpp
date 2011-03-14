@@ -29,16 +29,12 @@ Ship::ShipContactCallback::ShipContactCallback(Ship* ship)
 {
 }
 
-void Ship::setBoostBar(Scoreboard* s){
+void Ship::setBoostBar(StatusBar* s){
 	boostBar = s;
 }
 
-void Ship::setHealthBar(Scoreboard* s){
+void Ship::setHealthBar(StatusBar* s){
 	healthBar = s;
-}
-
-void Ship::setScoreboard(Scoreboard* s){
-	scoreboard = s;
 }
 
 void Ship::shiverMeTimbers(){
@@ -91,8 +87,7 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 		Gate* gate = (Gate*)body;
 		gate->setCompleted();
 		spaceship->healthBar->add(10);
-		spaceship->scoreboard->add(10);
-	}else {
+	} else {
 		spaceship->shiverMeTimbers();
 		spaceship->healthBar->subtract(25);
 	}
@@ -100,8 +95,8 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 	printf("Healthbar: ");
 	spaceship->healthBar->print();
 	
-	printf("Score: ");
-	spaceship->scoreboard->print();
+	//printf("Score: ");
+	//spaceship->scoreboard->print();
 	
 	return 0;
 }
@@ -207,7 +202,7 @@ void Ship::update(float tstep) {
 	if(boostMode){
 		boostBar->subtract(1);
 	}else{
-		boostBar->add(0.05);
+		boostBar->add(0.1);
 	}
 }
 

@@ -4,14 +4,13 @@
 #include "Gate.h"
 #include "Framework.h"
 #include "Model.h"
-#include "Scoreboard.h"
 
 using namespace sf;
 
 
 sf::Image* Gate::changed;
 
-Scoreboard* Gate::scoreboard;
+//Scoreboard* Gate::scoreboard;
 
 
 Gate::Gate(Model *model, btRigidBody::btRigidBodyConstructionInfo &btInfo, BodyType ty)
@@ -31,9 +30,11 @@ Gate::~Gate(){
 	
 }
 
+/*
 void Gate::setScoreboard(Scoreboard* s){
 	scoreboard = s;
 }
+*/
 
 
 void Gate::setCompleted(){

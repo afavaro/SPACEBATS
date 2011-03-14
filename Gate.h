@@ -5,7 +5,6 @@
 #include "Body.h"
 #include <btBulletDynamicsCommon.h>
 #include "Model.h"
-#include "Scoreboard.h"
 
 class Gate: public Body{
 
@@ -19,8 +18,8 @@ public:
 	void setCompleted();
 	virtual void draw(RenderPass pass);
 
-	static Scoreboard* scoreboard;
-	static void setScoreboard(Scoreboard* s);
+	//static Scoreboard* scoreboard;
+	//static void setScoreboard(Scoreboard* s);
 	
 	
 private:
