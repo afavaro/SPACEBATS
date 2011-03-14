@@ -57,18 +57,18 @@ void Gate::draw(RenderPass pass){
 		model->render(pass);
 	}*/
 	model->setTransformation(gateTransform);
-	model->render(pass);
+
 	
-	/*
+	
 	sf::Image* saved = NULL;
 	if(completed){
 		saved = model->getDiffuseImage();
 		model->setDiffuseImage(changed);
 	}
-	*/	
 	
-	/*
+	model->render(pass);
+	
 	if(completed){
 		model->setDiffuseImage(saved);
-	}*/
+	}
 }
