@@ -3,7 +3,7 @@
 
 const float Scoreboard::MAX_SCORE = 200;
 
-const float MAX_HEIGHT = 400;
+const float MAX_HEIGHT = 300;
 
 Scoreboard::Scoreboard(sf::RenderWindow* window, Shader* shader){
 	this->window = window;
@@ -32,7 +32,7 @@ void Scoreboard::render(){
 	
 	float height = MAX_HEIGHT * score / MAX_SCORE;
 	if(height < 5) height = 5;
-	if(height > 200) height = MAX_HEIGHT;
+	if(height > MAX_HEIGHT) height = MAX_HEIGHT;
 	glViewport(xLoc,0,50,height);
 	
 	glUseProgram(shader->programID());
