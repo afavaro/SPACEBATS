@@ -21,6 +21,7 @@ class ParticleEmitter;
 #include "StatusText.h"
 #include "btBulletDynamicsCommon.h"
 #include <cmath>
+#include "Body.h"
 
 using namespace std;
 
@@ -97,7 +98,7 @@ private:
 
 	void setRotation(btQuaternion end);
 	
-	void shiverMeTimbers();
+	void shiverMeTimbers(BodyType type);
 	void updateShake(float tstep);
 	Shake* curShake;
 	

@@ -41,7 +41,14 @@ void Ship::setStatusText(StatusText *st) {
 	statusText = st;
 }
 
-void Ship::shiverMeTimbers(){
+void Ship::shiverMeTimbers(BodyType type){
+	if(type == APPLE || type == PEPSI){
+		pEngine->addEmitter(&this->pos, EXPLOSION, false, true, 2);	
+		return;
+	}else{
+		pEngine->addEmitter(&this->pos, EXPLOSION, false, true);	
+	}
+	
 	delete curShake;
 	curShake = new Shake();
 	
@@ -49,7 +56,7 @@ void Ship::shiverMeTimbers(){
 	curShake->time = 0.0;
 	curShake->duration = SHAKE_DURATION;
 	
-	pEngine->addEmitter(&this->pos, EXPLOSION, false, true);
+	
 }
 
 void Ship::updateShake(float tstep){
@@ -92,16 +99,14 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 		Gate* gate = (Gate*)body;
 		gate->setCompleted();
 		spaceship->statusText->addScore(10);
-	} else {
-		spaceship->shiverMeTimbers();
+	} else if(body->getType() == APPLE || body->getType() == PEPSI ){
+		printf("GOT APPLE\n");
+		spaceship->healthBar->add(15);
+		spaceship->shiverMeTimbers(body->getType());
+	}else {
+		spaceship->shiverMeTimbers(body->getType());
 		spaceship->healthBar->subtract(25);
 	}
-	
-	printf("Healthbar: ");
-	spaceship->healthBar->print();
-	
-	//printf("Score: ");
-	//spaceship->scoreboard->print();
 	
 	return 0;
 }

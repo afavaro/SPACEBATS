@@ -13,13 +13,16 @@
 const int NUM_LANDMARKS = 1;
 
 enum BodyType {
-	MARS,
 	ASTEROID,
 	EROS,
 	GOLEVKA,
 	JUNO,
 	GATE,
 	SPACEBAT,
+	APPLE,
+	PEPSI,
+	PIZZA,
+	JUPITER,
 	LUSH,
 	NUM_BODY_TYPES
 };
