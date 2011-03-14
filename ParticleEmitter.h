@@ -1,6 +1,14 @@
 #ifndef PARTICLE_EMITTER_H
 #define PARTICLE_EMITTER_H
 
+enum EmitterType {
+	FIRE,
+	SMOKE,
+	PLASMA,
+	EXPLOSION,
+	NUM_EMITTER_TYPES
+};
+
 #include "Framework.h"
 #include "Shader.h"
 #include "btBulletDynamicsCommon.h"
@@ -11,11 +19,8 @@
 
 using namespace std;
 
-enum EmitterType {
-	SMOKE,
-	FIRE,
-	PLASMA,
-	NUM_EMITTER_TYPES
+struct explosion{
+	GLfloat time, duration;
 };
 
 class ParticleEmitter{
@@ -25,8 +30,12 @@ public:
 	void updateEmitter(float tstep, bool fast);
 	void spawnParticles(); 
 	void renderParticles(bool fast);
-	
+	float age;
+	EmitterType type;
 private:
+	void startExplosion();
+	void updateExplosion(float tstep);
+	void randomizeVelocities(float& x, float& y, float& z);
 	
 	int chooseZOffset();
 	vector<Particle> particles;
@@ -38,7 +47,9 @@ private:
 	
 	int screenWidth;
 	bool onlyWhenFast;
-	EmitterType type;
+	
+	explosion curExplosion;
+	
 };
 
 #endif

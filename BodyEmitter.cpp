@@ -2,15 +2,13 @@
 #include "BodyEmitter.h"
 #include "Camera.h"
 #include "Gate.h"
+#include "Ship.h"
 
 #define BOUNDARY_X 50.0
 #define BOUNDARY_Y 44.0
 #define BOUNDARY_Z -250.0
 
 #define EMIT_STEP 0.25
-
-const float NORMAL_SPEED = 100.0;
-const float BOOST_SPEED = 200.0;
 
 using namespace std;
 

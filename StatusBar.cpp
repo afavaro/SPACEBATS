@@ -6,9 +6,14 @@
 
 #define INSET 0.005
 
-StatusBar::StatusBar(Shader* shader, btVector4 rect){
+Shader *StatusBar::BarShader;
+
+void StatusBar::loadShader() {
+	BarShader = new Shader("shaders/bar");
+}
+
+StatusBar::StatusBar(btVector4 rect){
 	this->rect = rect;
-	this->shader = shader;
 	topColor = bottomColor = btVector4(0.6, 0.81, 0.92, 0.5);
 	value = 100;
 }
@@ -21,7 +26,7 @@ void StatusBar::render(){
 	
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //GL_CHECK
 		
-	glUseProgram(shader->programID());
+	glUseProgram(BarShader->programID());
 	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -30,8 +35,8 @@ void StatusBar::render(){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 		
-	GLint pos = glGetAttribLocation(shader->programID(), "positionIn");
-	GLint col = glGetAttribLocation(shader->programID(), "colorIn");
+	GLint pos = glGetAttribLocation(BarShader->programID(), "positionIn");
+	GLint col = glGetAttribLocation(BarShader->programID(), "colorIn");
 
 	glBegin(GL_LINE_LOOP);
 	glVertexAttrib4f(col, 0.6, 0.81, 0.92, 0.5);

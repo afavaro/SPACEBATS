@@ -1,7 +1,7 @@
 #ifndef HUDCOMPONENT_H
 #define HUDCOMPONENT_H
 
-class HUDComponent{
+class HUDComponent {
 	
 public:
 	HUDComponent();

@@ -13,10 +13,11 @@ using namespace std;
 
 class ParticleEngine{
 public:
-	ParticleEngine(int width);
-	void addEmitter(btVector3* pos, EmitterType type, bool onlyActiveWhenFast);
+	ParticleEngine();
+	void addEmitter(btVector3* pos, EmitterType type, bool onlyActiveWhenFast, bool timed=false);
 	void updateEmitters(double tstep, bool fast); 
 	void renderEmitters(bool fast);
+	void setWindow(int width);
 private:
 	int width;
 	vector<ParticleEmitter> emitters;

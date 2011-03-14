@@ -14,6 +14,7 @@
 #include "Gate.h"
 #include "LevelManager.h"
 #include "Level.h"
+#include "StatusText.h"
 
 #include <btBulletDynamicsCommon.h>
 
@@ -43,17 +44,16 @@ GLfloat timeElapsed = 0.0;
 // It automatically manages resources for you, and frees them when the program
 // exits.
 Assimp::Importer importer;
-Shader *blurShader, *barShader;
+Shader *blurShader;
 
 sf::Image background;
 
-Model mars;
-
-ParticleEngine* pEngine;
+ParticleEngine pEngine;
 
 Camera camera(btVector3(0.0, 0.0, 50.0));
 
-Ship spaceship(btVector3(0.0, 0.0, 0.0), &camera);
+Ship spaceship(btVector3(0.0, 0.0, 0.0), &camera, &pEngine);
+
 BodyEmitter *bodyEmitter;
 
 btDiscreteDynamicsWorld *world;
@@ -69,6 +69,7 @@ bool useMotionBlur = false;
 HUD* hud;
 StatusBar* boostbar;
 StatusBar* healthbar;
+StatusText *statusText;
 
 MusicManager music;
 LevelManager levels(2);
@@ -94,22 +95,27 @@ int main(int argc, char** argv) {
 	world->setGravity(btVector3(0, 0, 0));
 	
 	spaceship.setWorld(world);
+
+	statusText = new StatusText(&window, btVector4(-1.0, -0.73, 0.5, 0.25));
+
 	loadAssets();
 	
 	hud = new HUD(&spaceship);
-	boostbar = new StatusBar(barShader, btVector4(0.90, -0.9, 0.05, 1.0));
-	healthbar = new StatusBar(barShader, btVector4(-0.95, -0.9, 0.05, 1.0));
+	boostbar = new StatusBar(btVector4(0.85, -0.95, 0.05, 1.0));
+	healthbar = new StatusBar(btVector4(0.92, -0.95, 0.05, 1.0));
 	healthbar->setTopColor(btVector4(0, 1, 0, 0.5));
 	healthbar->setBottomColor(btVector4(1, 0, 0, 0.5));
 	
 	hud->addComponent(boostbar);
 	hud->addComponent(healthbar);
+	hud->addComponent(statusText);
+
 	
-	//Gate::setScoreboard(healthbar);
 	Gate::loadChangeImage();
 	
 	spaceship.setBoostBar(boostbar);
 	spaceship.setHealthBar(healthbar);
+	spaceship.setStatusText(statusText);
 	
 	motionBlur = new MotionBlur(NUM_MOTION_BLUR_FRAMES, window.GetWidth(), window.GetHeight());
 	glClear(GL_ACCUM_BUFFER_BIT);
@@ -118,10 +124,10 @@ int main(int argc, char** argv) {
 	inputListeners.push_back(&spaceship);
 	inputListeners.push_back(&levels);
 	
-	pEngine = new ParticleEngine(window.GetWidth());
-	pEngine->addEmitter(&spaceship.pos, FIRE, false);
-	pEngine->addEmitter(&spaceship.pos, SMOKE, false);
-	pEngine->addEmitter(&spaceship.pos, PLASMA, true);
+	pEngine.setWindow(window.GetWidth());
+	pEngine.addEmitter(&spaceship.pos, FIRE, false);
+	pEngine.addEmitter(&spaceship.pos, SMOKE, false);
+	pEngine.addEmitter(&spaceship.pos, PLASMA, true);
 	
 	music.playSound(BACKGROUND);
 	
@@ -145,7 +151,7 @@ int main(int argc, char** argv) {
 			world->stepSimulation(TIMESTEP);
 
 			spaceship.testCollision();
-			pEngine->updateEmitters(TIMESTEP, useMotionBlur);
+			pEngine.updateEmitters(TIMESTEP, useMotionBlur);
 
 			
 			/// if the elapsed time is greater than the first landmark on the level
@@ -166,9 +172,7 @@ int main(int argc, char** argv) {
 	}
 	
 	delete blurShader;
-	
 	delete normalsBuffer;
-	delete pEngine;
 	delete world;
 	delete solver;
 	delete dispatcher;
@@ -208,7 +212,7 @@ void initOpenGL() {
 
 void loadAssets() {
 	blurShader = new Shader("shaders/blur");
-	barShader = new Shader("shaders/bar");
+	StatusBar::loadShader();
 	
 	Level::loadShaders();
 	
@@ -223,6 +227,8 @@ void loadAssets() {
 	
 	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
 	spaceship.model.setScaleFactor(0.5);
+
+	statusText->loadFont("fonts/Spaceship Bullet.ttf");
 }
 
 
@@ -357,7 +363,7 @@ void renderFrame() {
 	spaceship.model.render(FINAL_PASS);
 	//cout << "Ship at: " << spaceship.pos.x() << "::" << spaceship.pos.y() << "::" << spaceship.pos.z() << endl;
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
-	pEngine->renderEmitters(useMotionBlur);
+	pEngine.renderEmitters(useMotionBlur);
 
 	hud->render();	
 }

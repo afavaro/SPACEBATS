@@ -10,7 +10,7 @@
 class StatusBar : public HUDComponent{
 
 public:
-	StatusBar(Shader* shader, btVector4 rect);
+	StatusBar(btVector4 rect);
 	~StatusBar();
 
 	void render();
@@ -25,12 +25,14 @@ public:
 	void setBottomColor(btVector4 color);
 
 	void print();
+
+	static Shader *BarShader;
+	static void loadShader();
 	
 private:
 	float value;
 	btVector4 rect;
 	btVector4 topColor, bottomColor;
-	Shader* shader;
 };
 
 #endif
