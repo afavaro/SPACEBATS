@@ -65,6 +65,8 @@ public:
 	
 	vector<BodyType> levelTypes;
 	
+	int number();
+	
 private:
 	int level;
 	float speed;

@@ -31,6 +31,7 @@ public:
 	void handleEvent(sf::Event &event, const sf::Input &input);
 
 	bool last();
+	bool gameOver();
 
 	
 	void nextLevel();

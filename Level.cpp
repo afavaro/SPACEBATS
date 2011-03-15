@@ -79,6 +79,10 @@ Level::~Level(){
 }
 
 
+int Level::number(){
+	return level;
+}
+
 void Level::print(){
 	cout << "============" << endl;
 	cout << "Level " << level << endl;

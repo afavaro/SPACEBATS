@@ -23,12 +23,12 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 	wallShape = new btStaticPlaneShape(btVector3(0, 0, -1), -80);
 	wall = new btCollisionObject();
 	wall->setCollisionShape(wallShape);
-
+	
 	contactCallback = new ContactCallback(this);
 	
 	emitSpeed = 1;
-
-// These models were good... but a little too big?
+	
+	// These models were good... but a little too big?
 }
 
 BodyEmitter::~BodyEmitter() {	
@@ -45,12 +45,12 @@ void BodyEmitter::emit(BodyType type){
 	printf("EMIT POS: %f %f %f\n", pos.x(), pos.y(), pos.z());
 	btDefaultMotionState *motionState =
 	new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), pos));
-
+	
 	btScalar mass = getMassForType(type);
 	
 	btRigidBody::btRigidBodyConstructionInfo
 	constructionInfo(mass, motionState, models[type].getCollisionShape());
-
+	
 	Body* newBody;
 	
 	if(type == GATE){
@@ -103,14 +103,14 @@ btVector3 BodyEmitter::getAngularVelocityForType(BodyType type){
 	switch (type){
 		case PEPSI:
 			return btVector3(RandomFloat(2,4), RandomFloat(1,2), RandomFloat(2,4));
-		//case MARS:
-		//case APPLE:
-		//	return btVector3(0,1,0);
+			//case MARS:
+			//case APPLE:
+			//	return btVector3(0,1,0);
 		case GATE:
 		case SPACEBAT:
 		case JUPITER:
 			return btVector3(0,0,0);
-		//case VENUS:
+			//case VENUS:
 		case LUSH:
 			return btVector3(0,0.1,0);
 		default:
@@ -125,7 +125,7 @@ btVector3 BodyEmitter::getPositionForType(BodyType type){
 		case END:
 			return btVector3(0,0, BOUNDARY_Z);
 		case GATE:
-		//case APPLE:
+			//case APPLE:
 		case PEPSI:
 			return btVector3(
 							 ((float)rand() / RAND_MAX * 2.0 * BOUNDARY_X - BOUNDARY_X) / 2.0,
@@ -146,14 +146,14 @@ btVector3 BodyEmitter::getLinearVelocityForType(BodyType type){
 		case GATE:
 		case JUPITER:
 			return btVector3(0,0, speed);
-		//case VENUS:
-		//case APPLE:
+			//case VENUS:
+			//case APPLE:
 		case PEPSI:
 			return btVector3(0,0, 25);
 		case LUSH:
 			return btVector3(0.2,0.02, 0.03);
 		default:
-		//	return btVector3(RandomFloat(-1,1),RandomFloat(-1,1),speed);
+			//	return btVector3(RandomFloat(-1,1),RandomFloat(-1,1),speed);
 			return btVector3(0,0, speed);
 	}
 }
@@ -163,7 +163,7 @@ btScalar BodyEmitter::getMassForType(BodyType type){
 	switch(type){
 		case GATE:
 			return 10;
-		//case VENUS:
+			//case VENUS:
 		case LUSH:
 			return 1000;
 		case END:
@@ -181,9 +181,15 @@ void BodyEmitter::emitBodies(float tstep, Level* level) {
 	if (accum > emitSpeed) {
 		accum = 0.0;
 		
-		int index = rand() % level->levelTypes.size();
-		BodyType type = level->levelTypes[index];
-		emit(type);
+		for(int i = 0; i < 3; i++){
+			int index = rand() % level->levelTypes.size();
+			BodyType type = level->levelTypes[index];
+			emit(type);
+		}
+		if(level->number() == 1) emit(GATE);
+		
+		
+		
 	}
 }
 
@@ -217,9 +223,9 @@ void BodyEmitter::loadModels() {
 	//models[VENUS].setScaleFactor(0.5);
 	
 	models[LUSH].loadFromFile("models/lush", "lush.3DS", importers[LUSH]);
-
-//	models[APPLE].loadFromFile("models/apple", "apple.obj", importers[APPLE]);
-//	models[APPLE].setScaleFactor(7);
+	
+	//	models[APPLE].loadFromFile("models/apple", "apple.obj", importers[APPLE]);
+	//	models[APPLE].setScaleFactor(7);
 	
 	models[JUPITER].loadFromFile("models/jupiter", "jupiter.3ds", importers[JUPITER]);
 	models[JUPITER].setScaleFactor(50);
@@ -227,25 +233,25 @@ void BodyEmitter::loadModels() {
 	models[PEPSI].loadFromFile("models/pepsi", "pepsi.3ds", importers[PEPSI]);
 	models[PEPSI].setScaleFactor(4);
 	
-//	models[BEER].loadFromFile("models/beer", "beer.3ds", importers[BEER]);
-//	models[BEER].setScaleFactor(5);
-
-//	models[BURGER].loadFromFile("models/burger", "burger.obj", importers[BURGER]);
-//	models[BURGER].setScaleFactor(5);
-
-//	models[PIZZA].loadFromFile("models/pizza", "pizza.3ds", importers[PIZZA]);
-//	models[PIZZA].setScaleFactor(10);	
+	//	models[BEER].loadFromFile("models/beer", "beer.3ds", importers[BEER]);
+	//	models[BEER].setScaleFactor(5);
+	
+	//	models[BURGER].loadFromFile("models/burger", "burger.obj", importers[BURGER]);
+	//	models[BURGER].setScaleFactor(5);
+	
+	//	models[PIZZA].loadFromFile("models/pizza", "pizza.3ds", importers[PIZZA]);
+	//	models[PIZZA].setScaleFactor(10);	
 	
 	models[END].loadFromFile("models/levelend", "sphere.obj", importers[END]);
 	models[END].setScaleFactor(8);
 }
 
 BodyEmitter::ContactCallback::ContactCallback(BodyEmitter *bodyEmitter)
-	: btCollisionWorld::ContactResultCallback(), bodyEmitter(bodyEmitter) {}
+: btCollisionWorld::ContactResultCallback(), bodyEmitter(bodyEmitter) {}
 
 btScalar BodyEmitter::ContactCallback::addSingleResult(btManifoldPoint &cp,
-		const btCollisionObject *colObj0, int partId0, int index0,
-		const btCollisionObject *colObj1, int partId1, int index1) {
+													   const btCollisionObject *colObj0, int partId0, int index0,
+													   const btCollisionObject *colObj1, int partId1, int index1) {
 	Body *body = (colObj0 == bodyEmitter->wall)? (Body *)colObj1 : (Body *)colObj0;
 	bodyEmitter->world->removeRigidBody(body);
 	list<Body*>::iterator it;
