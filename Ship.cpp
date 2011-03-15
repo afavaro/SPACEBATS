@@ -41,8 +41,8 @@ void Ship::setStatusText(StatusText *st) {
 	statusText = st;
 }
 
-void Ship::shiverMeTimbers(Body* body){
-	if(body->isHealthType()){
+void Ship::shiverMeTimbers(bool goodExplosion){
+	if(goodExplosion){
 		pEngine->addEmitter(&this->pos, EXPLOSION, false, true, 2);	
 		return;
 	}else{
@@ -101,12 +101,23 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 		spaceship->statusText->addScore(10);
 	} else if(body->isHealthType()){
 		spaceship->healthBar->add(15);
-		spaceship->shiverMeTimbers(body);
+		spaceship->shiverMeTimbers(true);
 	} else if(body->getType() == END){
 		cout << "LevelEnd!\n";
 		spaceship->levelManager->nextLevel();
-	} else {
-		spaceship->shiverMeTimbers(body);
+	} else if(body->getType() == SPACEBAT){
+		if(spaceship->boostMode){ // this is good, they get points and a good animation
+			spaceship->healthBar->add(5);
+			spaceship->statusText->addScore(10);
+			spaceship->shiverMeTimbers(true);
+
+		}else{
+			spaceship->healthBar->subtract(5);
+			spaceship->shiverMeTimbers(false);
+		}
+		
+	}else {
+		spaceship->shiverMeTimbers(false);
 		spaceship->healthBar->subtract(5);
 	}
 	

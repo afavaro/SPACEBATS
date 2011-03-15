@@ -3,7 +3,7 @@ OS:=$(shell uname)
 OBJS = Main.o Shader.o Model.o Camera.o Framebuffer.o MotionBlur.o \
 			 Ship.o Body.o BodyEmitter.o HUD.o HUDComponent.o StatusBar.o \
 			 Gate.o MusicManager.o ParticleEngine.o ParticleEmitter.o Particle.o \
-			 StatusText.o Level.o LevelManager.o
+			 StatusText.o Level.o LevelManager.o SpaceBat.o
 
 
 ifeq ($(OS), Darwin)

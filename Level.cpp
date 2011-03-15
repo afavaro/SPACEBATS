@@ -69,6 +69,17 @@ Level::Level(int level){
 		landmarks.push_back(lm);
 	}
 	
+	
+	///READ GATES
+	levelFile >> dummy;
+	string gates;
+	levelFile >> gates;
+	if(gates == "YES"){
+		hasGates = true;
+	}else{
+		hasGates = false;
+	}
+	
 	levelFile.close();
 }
 
@@ -87,6 +98,9 @@ void Level::print(){
 	cout << "============" << endl;
 	cout << "Level " << level << endl;
 	cout << "Speed: " << speed << endl;
+	cout << "Has Gates: ";
+	string val = hasGates ? "YES" : "NO";
+	cout << val << endl;
 	cout << "EndTime: " << endTime << endl;
 	cout << "Splash: " << splashFile << endl;
 	cout << "BG: " << bgFile << endl;
