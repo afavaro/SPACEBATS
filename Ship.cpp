@@ -7,8 +7,8 @@
 
 #define DURATION 0.2
 #define SHAKE_DURATION 0.5
-#define THRUST 150.0
-#define DRAG 200.0
+#define THRUST 50.0
+#define DRAG 125.0
 
 #define EASE(t) ((t) * (t) * (3.0 - 2.0 * (t)))
 
@@ -265,6 +265,31 @@ void Ship::setRotation(btQuaternion rot) {
 
 
 void Ship::handleEvent(sf::Event &event, const sf::Input &input) {
+	if(input.IsKeyDown(sf::Key::A)){
+		if ((curRot == NULL && quat != maxRollLeft) || curRot->end == neutral)
+			setRotation(maxRollLeft);
+		isStopping = false;
+		acceleration += btVector3(-THRUST, 0, 0);
+	}
+	if(input.IsKeyDown(sf::Key::D)){
+		if ((curRot == NULL && quat != maxRollRight) || curRot->end == neutral)
+			setRotation(maxRollRight);
+		isStopping = false;
+		acceleration += btVector3(THRUST, 0, 0);
+	}
+	if(input.IsKeyDown(sf::Key::W)){
+		//if ((curRot == NULL && quat != maxPitchUp) || curRot->end == neutral)
+//			setRotation(maxPitchUp);
+		isStopping = false;
+		acceleration += btVector3(0, THRUST, 0);
+	}
+	if(input.IsKeyDown(sf::Key::S)){
+		//if ((curRot == NULL && quat != maxPitchDown) || curRot->end == neutral)
+//			setRotation(maxPitchDown);
+		isStopping = false;
+		acceleration += btVector3(0, -THRUST, 0);
+	}
+	
 	switch (event.Type) {
 		case sf::Event::KeyPressed: 
 			if (boostMode) break;
@@ -280,30 +305,30 @@ void Ship::handleEvent(sf::Event &event, const sf::Input &input) {
 				case sf::Key::H:
 					healthBar->add(100);
 					break;
-				case sf::Key::A:
-					if ((curRot == NULL && quat != maxRollLeft) || curRot->end == neutral)
-						setRotation(maxRollLeft);
-					isStopping = false;
-					acceleration = btVector3(-THRUST, 0, 0);
-					break;
-				case sf::Key::D:
-					if ((curRot == NULL && quat != maxRollRight) || curRot->end == neutral)
-						setRotation(maxRollRight);
-					isStopping = false;
-					acceleration = btVector3(THRUST, 0, 0);
-					break;
-				case sf::Key::W:
-					if ((curRot == NULL && quat != maxPitchUp) || curRot->end == neutral)
-						setRotation(maxPitchUp);
-					isStopping = false;
-					acceleration = btVector3(0, THRUST, 0);
-					break;
-				case sf::Key::S:
-					if ((curRot == NULL && quat != maxPitchDown) || curRot->end == neutral)
-						setRotation(maxPitchDown);
-					isStopping = false;
-					acceleration = btVector3(0, -THRUST, 0);
-					break;
+//				case sf::Key::A:
+//					if ((curRot == NULL && quat != maxRollLeft) || curRot->end == neutral)
+//						setRotation(maxRollLeft);
+//					isStopping = false;
+//					acceleration = btVector3(-THRUST, 0, 0);
+//					break;
+//				case sf::Key::D:
+//					if ((curRot == NULL && quat != maxRollRight) || curRot->end == neutral)
+//						setRotation(maxRollRight);
+//					isStopping = false;
+//					acceleration = btVector3(THRUST, 0, 0);
+//					break;
+//				case sf::Key::W:
+//					if ((curRot == NULL && quat != maxPitchUp) || curRot->end == neutral)
+//						setRotation(maxPitchUp);
+//					isStopping = false;
+//					acceleration = btVector3(0, THRUST, 0);
+//					break;
+//				case sf::Key::S:
+//					if ((curRot == NULL && quat != maxPitchDown) || curRot->end == neutral)
+//						setRotation(maxPitchDown);
+//					isStopping = false;
+//					acceleration = btVector3(0, -THRUST, 0);
+//					break;
 				case sf::Key::T:
 					pos.m_floats[2] -= 0.3;
 					break;

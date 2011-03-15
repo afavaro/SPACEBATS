@@ -73,6 +73,8 @@ StatusBar* healthbar;
 StatusText *statusText;
 
 MusicManager music;
+bool menuPlaying = false;
+bool atmosplaying = false;
 
 #define NUM_LEVELS 9
 LevelManager levels(NUM_LEVELS);
@@ -135,21 +137,32 @@ int main(int argc, char** argv) {
 	pEngine.addEmitter(&spaceship.pos, SMOKE, false);
 	pEngine.addEmitter(&spaceship.pos, PLASMA, true);
 	
-
-	//music.playSound(BACKGROUND);
-	//music.loopSound(BACKGROUND);
+	music.playSound(ATMOSPHERE);
+	
 	int counter = 0;
 	
+
 	// Put your game loop here (i.e., render with OpenGL, update animation)
 	while (window.IsOpened()) {	
 		handleInput();
 		
 		if(levels.shouldShowSplashScreen()){
+			if(atmosplaying){
+				music.stopSound(ATMOSPHERE);
+				atmosplaying = false;
+			}
+			if(!menuPlaying){ 
+				music.playSound(BACKGROUND);
+				menuPlaying = true;
+			}
 			bodyEmitter->clear();
 			levels.renderSplash();
 			window.Display();
 			continue;
 		}
+		
+		//music.playSound(ATMOSPHERE);
+		//music.loopSound(ATMOSPHERE);
 		
 		float elapsed = clck.GetElapsedTime();
 		accum += elapsed;
@@ -286,6 +299,17 @@ void handleInput() {
 					case sf::Key::Space:
 						if (levels.shouldShowSplashScreen() && !levels.gameOver()) {
 							levels.setSplash(false);
+							
+							if(menuPlaying && levels.currentLevel !=0){
+								music.stopSound(BACKGROUND);
+								menuPlaying = false;
+							}
+							
+							if(!atmosplaying){
+								music.playSound(ATMOSPHERE);
+								music.loopSound(ATMOSPHERE);
+								atmosplaying = true;
+							}
 							if(levels.currentLevel == 0){
 								levels.nextLevel();
 							}

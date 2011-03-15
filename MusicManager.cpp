@@ -10,6 +10,7 @@ MusicManager::MusicManager(){
 	openFile(POWERUP, "music/powerup.wav");
 	openFile(CRASH, "music/crash.wav");
 	openFile(RING, "music/ring.wav");
+	openFile(ATMOSPHERE, "music/atmosphere.wav");
 }
 
 

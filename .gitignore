@@ -6,3 +6,4 @@ xcode/*
 *.o
 main
 music/*
+Ship.cpp
