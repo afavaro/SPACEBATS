@@ -11,6 +11,9 @@ class BodyEmitter;
 using namespace std;
 
 
+const int WIN_OFFSET = -2;
+const int LOSE_OFFSET = -1;
+
 /*
  * This class implements a LevelManager, which manages the different Levels of the game. 
  * The LevelManager works by reading in levels from files contained in the levels/ directory.
@@ -37,12 +40,18 @@ public:
 
 	bool last();
 	bool gameOver();
+	
+	void setGameOver(bool over);
+	void setWon(bool won);
 
 	
 	void nextLevel();
 	int currentLevel;
 	
 private:
+	bool over;
+	bool won;
+	
 	BodyEmitter* emitter;
 	bool splashOn;
 	vector<Level*> levels;

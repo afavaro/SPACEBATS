@@ -71,9 +71,36 @@ void LevelManager::setBodyEmitter(BodyEmitter* b){
 }
 
 
+void LevelManager::setGameOver(bool over){
+	this->over = over;
+	splashOn = true;
+}
+
+void LevelManager::setWon(bool won){
+	this->won = won;
+	
+	if(won){
+		currentLevel = numLevels + WIN_OFFSET;
+	}else{
+		currentLevel = numLevels + LOSE_OFFSET;
+	}
+}
+
+
+bool LevelManager::gameOver(){
+	return over;
+}
+
 void LevelManager::nextLevel(){
 	currentLevel++;
-	if(currentLevel == numLevels) currentLevel--;
+	if(currentLevel == numLevels) {
+		currentLevel--;
+	}
+	
+	if(currentLevel == numLevels + WIN_OFFSET){
+		setGameOver(true);
+		setWon(true);
+	}
 	
 	emitter->setEmitSpeed(current()->speed);
 	

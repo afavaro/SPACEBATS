@@ -1,5 +1,5 @@
 SPLASH models/space2.jpg
-BACKGROUND models/outerspace.jpg
+BACKGROUND backgrounds/outerspace.jpg
 LEVELSPEED 1.5
 LEVELEND 50
 NUMMODELS 3
@@ -7,4 +7,4 @@ NUMMODELS 3
 0
 3
 NUMLANDMARKS 1
-60.0 9
+90.0 9

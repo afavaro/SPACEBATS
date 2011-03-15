@@ -24,8 +24,6 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 	contactCallback = new ContactCallback(this);
 	
 	emitSpeed = 1;
-	
-	// These models were good... but a little too big?
 }
 
 BodyEmitter::~BodyEmitter() {	
@@ -35,11 +33,9 @@ BodyEmitter::~BodyEmitter() {
 }
 
 void BodyEmitter::emit(BodyType type, ParticleEngine* pEngine){
-	printf("Now emitting body type %d\n", type);
 	
 	btVector3 pos = getPositionForType(type);
 	
-	printf("EMIT POS: %f %f %f\n", pos.x(), pos.y(), pos.z());
 	btDefaultMotionState *motionState =
 	new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), pos));
 	

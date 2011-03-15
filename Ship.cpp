@@ -107,8 +107,11 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 		spaceship->levelManager->nextLevel();
 	} else {
 		spaceship->shiverMeTimbers(body);
-		spaceship->healthBar->subtract(25);
+		spaceship->healthBar->subtract(5);
 	}
+	
+	printf("Health: ");
+	spaceship->healthBar->print();
 	
 	return 0;
 }

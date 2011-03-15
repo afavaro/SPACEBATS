@@ -1,9 +1,9 @@
 SPLASH splash/Level1Splash.jpg
-BACKGROUND models/space2.jpg
+BACKGROUND backgrounds/space2.jpg
 LEVELSPEED 3.0
 LEVELEND 20
 NUMMODELS 2
 0
 1
 NUMLANDMARKS 1
-40.0 9
+60.0 9
