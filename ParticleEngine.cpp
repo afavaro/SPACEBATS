@@ -48,7 +48,7 @@ void ParticleEngine::addEmitter(btVector3* pos, EmitterType type, bool onlyActiv
 void ParticleEngine::updateEmitters(double tstep, bool fast){
 	for(unsigned i = 0; i < emitters.size(); i++){
 		emitters[i].updateEmitter(tstep, fast);
-		if(emitters[i].type == EXPLOSION && emitters[i].age > 0.5){
+		if(emitters[i].type == EXPLOSION && emitters[i].age > 1.0){
 			emitters.erase(emitters.begin()+i);
 			i--;
 		}

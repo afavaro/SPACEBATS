@@ -8,9 +8,6 @@
 #define BOUNDARY_Y 44.0
 #define BOUNDARY_Z -1000.0
 
-
-
-
 const int BODIES_TO_EMIT = 15;
 
 using namespace std;
@@ -37,7 +34,7 @@ BodyEmitter::~BodyEmitter() {
 	delete contactCallback;
 }
 
-void BodyEmitter::emit(BodyType type){
+void BodyEmitter::emit(BodyType type, ParticleEngine* pEngine){
 	printf("Now emitting body type %d\n", type);
 	
 	btVector3 pos = getPositionForType(type);
@@ -54,7 +51,7 @@ void BodyEmitter::emit(BodyType type){
 	Body* newBody;
 	
 	if(type == GATE){
-		newBody = new Gate(&models[type], constructionInfo, type);
+		newBody = new Gate(&models[type], constructionInfo, type, pEngine );
 	}else{
 		newBody = new Body(&models[type], constructionInfo, type);
 	}
@@ -173,23 +170,21 @@ btScalar BodyEmitter::getMassForType(BodyType type){
 	}
 }
 
+void BodyEmitter::emitBodies(float tstep, ParticleEngine* pEngine, Level* level) {
 
-void BodyEmitter::emitBodies(float tstep, Level* level) {
 	accum += tstep;
 	world->contactTest(wall, *contactCallback);
 	
 	if (accum > emitSpeed) {
 		accum = 0.0;
-		
+
 		for(int i = 0; i < 3; i++){
 			int index = rand() % level->levelTypes.size();
 			BodyType type = level->levelTypes[index];
 			emit(type);
 		}
 		if(level->number() == 1) emit(GATE);
-		
-		
-		
+
 	}
 }
 
@@ -211,16 +206,11 @@ void BodyEmitter::loadModels() {
 	models[JUNO].loadFromFile("models/juno", "juno.3ds", importers[JUNO]);
 	models[JUNO].setScaleFactor(0.05);
 	
-	
 	models[GATE].loadFromFile("models/gayte", "gate.obj", importers[GATE]);
 	models[GATE].setScaleFactor(0.5);
 	
-	models[SPACEBAT].loadFromFile("models/spacebat", "spacebat.obj", importers[SPACEBAT]);
+	models[SPACEBAT].loadFromFile("models/spacebat", "batty.obj", importers[SPACEBAT]);
 	models[SPACEBAT].setScaleFactor(0.5);
-	
-	
-	//models[VENUS].loadFromFile("models/venus", "venus.3ds", importers[VENUS]);
-	//models[VENUS].setScaleFactor(0.5);
 	
 	models[LUSH].loadFromFile("models/lush", "lush.3DS", importers[LUSH]);
 	
@@ -232,15 +222,10 @@ void BodyEmitter::loadModels() {
 	
 	models[PEPSI].loadFromFile("models/pepsi", "pepsi.3ds", importers[PEPSI]);
 	models[PEPSI].setScaleFactor(4);
-	
-	//	models[BEER].loadFromFile("models/beer", "beer.3ds", importers[BEER]);
-	//	models[BEER].setScaleFactor(5);
-	
-	//	models[BURGER].loadFromFile("models/burger", "burger.obj", importers[BURGER]);
-	//	models[BURGER].setScaleFactor(5);
-	
-	//	models[PIZZA].loadFromFile("models/pizza", "pizza.3ds", importers[PIZZA]);
-	//	models[PIZZA].setScaleFactor(10);	
+
+
+//	models[PIZZA].loadFromFile("models/pizza", "pizza.3ds", importers[PIZZA]);
+//	models[PIZZA].setScaleFactor(10);	
 	
 	models[END].loadFromFile("models/levelend", "sphere.obj", importers[END]);
 	models[END].setScaleFactor(8);

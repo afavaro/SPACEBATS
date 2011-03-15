@@ -55,19 +55,19 @@ int ParticleEmitter::chooseZOffset(){
 }
 
 void ParticleEmitter::randomizeVelocities(float& xvel, float& yvel, float& zvel){
-	if(rand()%2) xvel*=-1.0;
+	if(rand()%2) xvel*=-2.0;
 	if(rand()%100 > 70) xvel +=0.3;
 	if(rand()%100 > 60) xvel -=0.3;
 	if(rand()%100 > 67) xvel -=0.4;
 
 	
-	if(rand()%4) yvel*=-1.0;
+	if(rand()%4) yvel*=-2.0;
 	if(rand()%100 > 70) yvel +=0.3;
 	if(rand()%100 > 60) yvel -=0.3;
 	if(rand()%100 > 97) yvel -=0.4;
 
 	
-	if(rand()%2) zvel*=-1.3;
+	if(rand()%2) zvel*=-2.3;
 	if(rand()%100 > 70) zvel +=0.3;
 	if(rand()%100 > 60) zvel -=0.3;
 	if(rand()%100 > 87) zvel -=0.4;
@@ -78,12 +78,12 @@ void ParticleEmitter::updateEmitter(float tstep, bool fast){
 	if(type == EXPLOSION){
 		for(unsigned i = 0; i < particles.size(); i++){
 			particles[i].updateParticle(tstep, fast);
-			GLfloat xvel = 1.0;
-			GLfloat yvel = 1.0;
-			GLfloat zvel = 1.0;
+			GLfloat xvel = 2.0;
+			GLfloat yvel = 2.0;
+			GLfloat zvel = 2.0;
 			randomizeVelocities(xvel, yvel, zvel);
 			Particle newParticle(btVector3(position->x(),position->y(),position->z()+chooseZOffset()), btVector3(xvel,yvel,zvel));
-			if(rand()%100 > 65) particles[i] = newParticle;
+			if(rand()%100 > 85) particles[i] = newParticle;
 		}
 		
 		return;
@@ -117,8 +117,9 @@ void ParticleEmitter::updateEmitter(float tstep, bool fast){
 }
 void ParticleEmitter::spawnParticles(){
 	if(this->type == EXPLOSION){
-		for(int i = 0; i < 35; i++){
-			Particle newParticle(btVector3(position->x(),position->y(),position->z()), btVector3(2.0,2.0,2.0));
+		for(int i = 0; i < 205; i++){
+			float randVel = (rand()%50)/10.0;
+			Particle newParticle(btVector3(position->x(),position->y(),position->z()), btVector3(randVel,randVel,randVel));
 			particles.push_back(newParticle);
 		}
 		return;

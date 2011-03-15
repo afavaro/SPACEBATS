@@ -169,10 +169,11 @@ int main(int argc, char** argv) {
 			if(levels.current()->shouldEmitLandmark(timeElapsed)){
 				printf("should emit body\n");
 				BodyType landmarkType = levels.current()->firstLandmark();
-				bodyEmitter->emit(landmarkType);
+				bodyEmitter->emit(landmarkType, &pEngine);
 			}
 			
-			bodyEmitter->emitBodies(TIMESTEP, levels.current());
+			bodyEmitter->emitBodies(TIMESTEP, &pEngine, levels.current());
+
 			camera.update(TIMESTEP);
 			accum -= TIMESTEP;
 		}
@@ -315,7 +316,7 @@ void handleInput() {
 
 void setupLights()
 {
-	GLfloat pos[] = { 0.0, 1.0, 0.0, 0.0 };
+	GLfloat pos[] = { 1.0, 4.0, 0.0, 0.0 };
 	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat ambient[] = { 0.3, 0.3, 0.3, 1.0 };
