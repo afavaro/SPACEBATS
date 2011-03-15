@@ -23,8 +23,7 @@ enum BodyType {
 	JUPITER,
 	LUSH,
 	END,
-	//	APPLE,
-	//	PIZZA,
+	MINE,
 	NUM_BODY_TYPES
 };
 

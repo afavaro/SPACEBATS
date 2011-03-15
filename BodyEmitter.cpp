@@ -235,6 +235,9 @@ void BodyEmitter::loadModels() {
 	
 	models[END].loadFromFile("models/levelend", "sphere.obj", importers[END]);
 	models[END].setScaleFactor(8);
+	
+	models[MINE].loadFromFile("models/mine", "mine.obj", importers[MINE]);
+	models[MINE].setScaleFactor(2);
 }
 
 BodyEmitter::ContactCallback::ContactCallback(BodyEmitter *bodyEmitter)
