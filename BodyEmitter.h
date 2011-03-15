@@ -19,6 +19,7 @@ class BodyEmitter {
 		void drawBodies(RenderPass pass);
 	
 		void emit(BodyType type);
+	void clear();
 	
 		void boostSpeed();
 		void resetSpeed();

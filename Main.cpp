@@ -135,21 +135,13 @@ int main(int argc, char** argv) {
 	music.playSound(BACKGROUND);
 	
 	int counter = 0;
-
-	//renderSplash();
 	
 	// Put your game loop here (i.e., render with OpenGL, update animation)
 	while (window.IsOpened()) {	
 		handleInput();
-
-		
-		
-//		if (!isStarted) {
-//			window.Display();
-//			continue;
-//		}
 		
 		if(levels.shouldShowSplashScreen()){
+			bodyEmitter->clear();
 			levels.renderSplash();
 			window.Display();
 			continue;
@@ -339,32 +331,6 @@ void clearNormalsBuffer()
 	normalsBuffer->bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	normalsBuffer->unbind();
-}
-
-void renderSplash() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glUseProgram(Level::bgShader->programID());
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(-1.0, 1.0, -1.0, 1.0);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	GLint tex = glGetUniformLocation(Level::bgShader->programID(), "texture");
-	glUniform1i(tex, 0);
-	glActiveTexture(GL_TEXTURE0);
-	splash.Bind();
-
-	GLint pos = glGetAttribLocation(Level::bgShader->programID(), "positionIn");
-	glBegin(GL_QUADS);
-	glVertexAttrib2f(pos, 1.0, -1.0);
-	glVertexAttrib2f(pos, 1.0, 1.0);
-	glVertexAttrib2f(pos, -1.0, 1.0);
-	glVertexAttrib2f(pos, -1.0, -1.0);
-	glEnd();
 }
 
 void renderFrame() {

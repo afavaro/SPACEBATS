@@ -35,3 +35,21 @@ void Body::printType(){
 BodyType Body::getType(){
 	return type;
 }
+
+
+bool Body::isHealthType(){
+	switch (type){
+		case PEPSI: 
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool Body::isCollisionType(){
+	return !isHealthType() && !isEndType();
+}
+
+bool Body::isEndType(){
+	return type == END;
+}

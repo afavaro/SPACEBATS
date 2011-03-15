@@ -99,7 +99,7 @@ private:
 
 	void setRotation(btQuaternion end);
 	
-	void shiverMeTimbers(BodyType type);
+	void shiverMeTimbers(Body* body);
 	void updateShake(float tstep);
 	Shake* curShake;
 	

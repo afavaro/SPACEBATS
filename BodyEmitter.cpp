@@ -66,6 +66,10 @@ void BodyEmitter::emit(BodyType type){
 }
 
 
+void BodyEmitter::clear(){
+	bodies.clear();
+}
+
 void BodyEmitter::setSpeed(float speed){
 	list<Body*>::iterator it;
 	for(it = bodies.begin(); it != bodies.end(); it++){
@@ -180,54 +184,6 @@ void BodyEmitter::emitBodies(float tstep, Level* level) {
 		int index = rand() % level->levelTypes.size();
 		BodyType type = level->levelTypes[index];
 		emit(type);
-		
-//		emit(GATE);
-		
-//		btVector3 gatePos = getPositionForType(GATE);
-//		
-//		float radius = 60;
-//		
-//		vector<btVector3> bodyPositions;
-//		while(bodyPositions.size() < BODIES_TO_EMIT){
-//			btVector3 pos = getPositionForType(ASTEROID);
-//			
-//			if(pos.distance(gatePos) > radius) {
-//				bodyPositions.push_back(pos);
-//			}
-//		}
-//		
-//		btDefaultMotionState *gateMS =
-//		new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), gatePos));
-//		
-//		btRigidBody::btRigidBodyConstructionInfo
-//		gateCI(4, gateMS, models[GATE].getCollisionShape());
-//		
-//		Body* gate = new Gate(&models[GATE], gateCI, GATE);
-//		gate->setLinearVelocity(getLinearVelocityForType(GATE));
-//		gate->setAngularVelocity(getAngularVelocityForType(GATE));
-//		
-//		world->addRigidBody(gate);
-//		bodies.push_back(gate);
-		
-//		for(unsigned int i = 0; i < bodyPositions.size(); i++){
-//			BodyType type = ASTEROID; //BodyType(rand() % (NUM_BODY_TYPES - NUM_LANDMARKS));	
-//			
-//			btVector3 pos = bodyPositions[i];
-//			btDefaultMotionState *motionState =
-//			new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), pos));
-//			
-//			btScalar mass = getMassForType(type);
-//			
-//			btRigidBody::btRigidBodyConstructionInfo
-//			constructionInfo(mass, motionState, models[type].getCollisionShape());
-//			
-//			Body* newBody = new Body(&models[type], constructionInfo, type);
-//			newBody->setLinearVelocity(getLinearVelocityForType(type));
-//			newBody->setAngularVelocity(getAngularVelocityForType(type));
-//			
-//			world->addRigidBody(newBody);
-//			bodies.push_back(newBody);
-//		}
 	}
 }
 
