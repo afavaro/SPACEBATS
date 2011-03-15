@@ -74,7 +74,7 @@ StatusText *statusText;
 MusicManager music;
 LevelManager levels(8);
 
-Ship spaceship(btVector3(0.0, 0.0, 0.0), &camera, &pEngine, &levels);
+Ship spaceship(btVector3(0.0, 0.0, 0.0), &camera, &pEngine, &levels, &music);
 
 void initOpenGL();
 void loadAssets();

@@ -42,6 +42,7 @@ void Ship::setStatusText(StatusText *st) {
 }
 
 void Ship::shiverMeTimbers(Body* body){
+	music->playSound(CRASH);
 	if(body->isHealthType()){
 		pEngine->addEmitter(&this->pos, EXPLOSION, false, true, 2);	
 		return;
@@ -129,14 +130,14 @@ void Ship::setWorld(btDiscreteDynamicsWorld* world){
 }
 
 
-Ship::Ship(btVector3 pos, Camera* c, ParticleEngine* pE, LevelManager* lM) {
+Ship::Ship(btVector3 pos, Camera* c, ParticleEngine* pE, LevelManager* lM, MusicManager* mM) {
 	btQuaternion adjust(btVector3(1, 0, 0), -M_PI / 2.0);
 	neutral = btQuaternion(btVector3(0, 1, 0), -M_PI / 2.0) * adjust;
 	maxRollLeft = btQuaternion(btVector3(0, 0, -1), -ROLL_ROTATION);
 	maxRollRight = btQuaternion(btVector3(0, 0, -1), ROLL_ROTATION);
 	maxPitchUp = btQuaternion(btVector3(1, 0, 0), PITCH_ROTATION);
 	maxPitchDown = btQuaternion(btVector3(1, 0, 0), -PITCH_ROTATION);
-
+	this->music = mM;
 	this->cam = c;
 	this->pos = pos;
 	acceleration = velocity = btVector3(0, 0, 0);
