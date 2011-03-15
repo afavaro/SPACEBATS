@@ -72,7 +72,7 @@ StatusBar* healthbar;
 StatusText *statusText;
 
 MusicManager music;
-LevelManager levels(6);
+LevelManager levels(7);
 
 Ship spaceship(btVector3(0.0, 0.0, 0.0), &camera, &pEngine, &levels);
 
@@ -153,8 +153,13 @@ int main(int argc, char** argv) {
 		
 		counter++;
 		
-		if(counter % 20 == 0)
-			printf("Elapsed time: %f\n", timeElapsed);
+		if(healthbar->getValue() <= 0 ){
+			levels.setGameOver(true);
+			levels.setWon(false);
+			printf("Game over\n");
+			continue;
+		}
+		
 		clck.Reset();
 		while (accum > TIMESTEP) {
 			spaceship.update(TIMESTEP);
@@ -163,11 +168,7 @@ int main(int argc, char** argv) {
 			spaceship.testCollision();
 			pEngine.updateEmitters(TIMESTEP, useMotionBlur);
 
-			
-			/// if the elapsed time is greater than the first landmark on the level
-			/// pop it and emit that kind of body
 			if(levels.current()->shouldEmitLandmark(timeElapsed)){
-				printf("should emit body\n");
 				BodyType landmarkType = levels.current()->firstLandmark();
 				bodyEmitter->emit(landmarkType, &pEngine);
 			}
@@ -272,7 +273,7 @@ void handleInput() {
 						window.Close();
 						break;
 					case sf::Key::Space:
-						if (levels.shouldShowSplashScreen() && !levels.last()) {
+						if (levels.shouldShowSplashScreen() && !levels.gameOver()) {
 							levels.setSplash(false);
 							if(levels.currentLevel == 0){
 								levels.nextLevel();

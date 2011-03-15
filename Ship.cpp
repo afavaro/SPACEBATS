@@ -110,6 +110,9 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 		spaceship->healthBar->subtract(25);
 	}
 	
+	printf("Health: ");
+	spaceship->healthBar->print();
+	
 	return 0;
 }
 
