@@ -67,9 +67,11 @@ public:
 	
 	int number();
 	
+	float speed;
+
+	
 private:
 	int level;
-	float speed;
 	float endTime;
 	string splashFile, bgFile;
 	

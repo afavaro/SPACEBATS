@@ -170,10 +170,17 @@ btScalar BodyEmitter::getMassForType(BodyType type){
 	}
 }
 
+void BodyEmitter::setEmitSpeed(float speed){
+	emitSpeed = speed;
+}
+
+
 void BodyEmitter::emitBodies(float tstep, ParticleEngine* pEngine, Level* level) {
 
 	accum += tstep;
 	world->contactTest(wall, *contactCallback);
+	
+	if(emitSpeed == 0) return;
 	
 	if (accum > emitSpeed) {
 		accum = 0.0;

@@ -230,6 +230,8 @@ void loadAssets() {
 	bodyEmitter = new BodyEmitter(world);
 	bodyEmitter->loadModels();
 	
+	levels.setBodyEmitter(bodyEmitter);
+	
 	Model::loadShaders();
 	normalsBuffer = new Framebuffer(window.GetWidth(), window.GetHeight());
 	Model::setNormalsBuffer(normalsBuffer);

@@ -1,10 +1,13 @@
 #ifndef LEVEL_MANAGER_H
 #define LEVEL_MANAGER_H
 
+class BodyEmitter;
+
 #include <vector>
 #include "Level.h"
 #include "InputListener.h"
 #include "Framework.h"
+#include "BodyEmitter.h"
 using namespace std;
 
 
@@ -28,6 +31,8 @@ public:
 	void setSplash(bool s);
 	
 	
+	void setBodyEmitter(BodyEmitter* b);
+	
 	void handleEvent(sf::Event &event, const sf::Input &input);
 
 	bool last();
@@ -38,6 +43,7 @@ public:
 	int currentLevel;
 	
 private:
+	BodyEmitter* emitter;
 	bool splashOn;
 	vector<Level*> levels;
 	int numLevels;
