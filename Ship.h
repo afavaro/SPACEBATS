@@ -20,13 +20,14 @@ class ParticleEmitter;
 #include "ParticleEngine.h"
 #include "StatusText.h"
 #include "btBulletDynamicsCommon.h"
+#include "LevelManager.h"
 #include <cmath>
 #include "Body.h"
 
 using namespace std;
 
-#define NORMAL_SPEED 100.0
-#define BOOST_SPEED 200.0
+#define NORMAL_SPEED 150.0
+#define BOOST_SPEED 250.0
 
 struct Rotation {
 	btQuaternion start;
@@ -41,7 +42,7 @@ struct Shake {
 
 class Ship : public InputListener {
 public:
-	Ship(btVector3 pos, Camera* c, ParticleEngine* pE);
+	Ship(btVector3 pos, Camera* c, ParticleEngine* pE, LevelManager* lM);
 	~Ship();
 	
 	void handleEvent(sf::Event &event, const sf::Input &input);
@@ -98,7 +99,7 @@ private:
 
 	void setRotation(btQuaternion end);
 	
-	void shiverMeTimbers(BodyType type);
+	void shiverMeTimbers(Body* body);
 	void updateShake(float tstep);
 	Shake* curShake;
 	
@@ -111,6 +112,7 @@ private:
 	bool boostMode;
 	
 	ParticleEngine* pEngine;
+	LevelManager* levelManager;
 };
 
 #endif

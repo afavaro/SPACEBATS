@@ -7,6 +7,7 @@
 #include "Model.h"
 #include <list>
 #include "btBulletDynamicsCommon.h"
+#include "Level.h"
 
 class BodyEmitter {
 	public:
@@ -15,16 +16,20 @@ class BodyEmitter {
 
 		void loadModels();
 
-		void emitBodies(float tstep, ParticleEngine* pEngine);
+
+		void emitBodies(float tstep, ParticleEngine* pEngine, Level* level);
 		void drawBodies(RenderPass pass);
 	
-	void emit(BodyType type, ParticleEngine* pEngine);
+		void emit(BodyType type, ParticleEngine* pEngine);
+		void clear();
 	
 		void boostSpeed();
 		void resetSpeed();
 		void setBoostMode(bool boost);	
 
 	private:
+		float emitSpeed;
+	
 		struct ContactCallback : public btCollisionWorld::ContactResultCallback {
 			BodyEmitter *bodyEmitter;
 

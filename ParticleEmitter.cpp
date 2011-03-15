@@ -78,12 +78,12 @@ void ParticleEmitter::updateEmitter(float tstep, bool fast){
 	if(type == EXPLOSION){
 		for(unsigned i = 0; i < particles.size(); i++){
 			particles[i].updateParticle(tstep, fast);
-			GLfloat xvel = 1.0;
-			GLfloat yvel = 1.0;
-			GLfloat zvel = 1.0;
+			GLfloat xvel = 2.0;
+			GLfloat yvel = 2.0;
+			GLfloat zvel = 2.0;
 			randomizeVelocities(xvel, yvel, zvel);
 			Particle newParticle(btVector3(position->x(),position->y(),position->z()+chooseZOffset()), btVector3(xvel,yvel,zvel));
-			if(rand()%100 > 65) particles[i] = newParticle;
+			if(rand()%100 > 85) particles[i] = newParticle;
 		}
 		
 		return;
@@ -117,8 +117,9 @@ void ParticleEmitter::updateEmitter(float tstep, bool fast){
 }
 void ParticleEmitter::spawnParticles(){
 	if(this->type == EXPLOSION){
-		for(int i = 0; i < 45; i++){
-			Particle newParticle(btVector3(position->x(),position->y(),position->z()), btVector3(2.0,2.0,2.0));
+		for(int i = 0; i < 205; i++){
+			float randVel = (rand()%50)/10.0;
+			Particle newParticle(btVector3(position->x(),position->y(),position->z()), btVector3(randVel,randVel,randVel));
 			particles.push_back(newParticle);
 		}
 		return;

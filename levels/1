@@ -1,5 +1,8 @@
-models/outerspace.jpg
-3
-13 0
-15 0
-20 0
+SPLASH splash/Level1Splash.jpg
+BACKGROUND models/space2.jpg
+LEVELSPEED 2.0
+LEVELEND 20
+NUMMODELS 1
+4
+NUMLANDMARKS 1
+3 9

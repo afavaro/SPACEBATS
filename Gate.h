@@ -18,6 +18,9 @@ public:
 	
 	void setCompleted();
 	virtual void draw(RenderPass pass);
+
+	void setRadius(float r);
+	float getRadius();
 	
 private:	
 	bool completed;

@@ -41,8 +41,8 @@ void Ship::setStatusText(StatusText *st) {
 	statusText = st;
 }
 
-void Ship::shiverMeTimbers(BodyType type){
-	if(type == APPLE || type == PEPSI){
+void Ship::shiverMeTimbers(Body* body){
+	if(body->isHealthType()){
 		pEngine->addEmitter(&this->pos, EXPLOSION, false, true, 2);	
 		return;
 	}else{
@@ -99,12 +99,14 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 		Gate* gate = (Gate*)body;
 		gate->setCompleted();
 		spaceship->statusText->addScore(10);
-	} else if(body->getType() == APPLE || body->getType() == PEPSI ){
-		printf("GOT APPLE\n");
+	} else if(body->isHealthType()){
 		spaceship->healthBar->add(15);
-		spaceship->shiverMeTimbers(body->getType());
-	}else {
-		spaceship->shiverMeTimbers(body->getType());
+		spaceship->shiverMeTimbers(body);
+	} else if(body->getType() == END){
+		cout << "LevelEnd!\n";
+		spaceship->levelManager->nextLevel();
+	} else {
+		spaceship->shiverMeTimbers(body);
 		spaceship->healthBar->subtract(25);
 	}
 	
@@ -124,7 +126,7 @@ void Ship::setWorld(btDiscreteDynamicsWorld* world){
 }
 
 
-Ship::Ship(btVector3 pos, Camera* c, ParticleEngine* pE) {
+Ship::Ship(btVector3 pos, Camera* c, ParticleEngine* pE, LevelManager* lM) {
 	btQuaternion adjust(btVector3(1, 0, 0), -M_PI / 2.0);
 	neutral = btQuaternion(btVector3(0, 1, 0), -M_PI / 2.0) * adjust;
 	maxRollLeft = btQuaternion(btVector3(0, 0, -1), -ROLL_ROTATION);
@@ -136,6 +138,7 @@ Ship::Ship(btVector3 pos, Camera* c, ParticleEngine* pE) {
 	this->pos = pos;
 	acceleration = velocity = btVector3(0, 0, 0);
 	this->pEngine = pE;
+	this->levelManager = lM;
 	quat = neutral;
 	curRot = NULL;
 	isStopping = false;

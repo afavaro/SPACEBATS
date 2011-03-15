@@ -19,11 +19,12 @@ enum BodyType {
 	JUNO,
 	GATE,
 	SPACEBAT,
-	APPLE,
 	PEPSI,
-	PIZZA,
 	JUPITER,
 	LUSH,
+	END,
+	//	APPLE,
+	//	PIZZA,
 	NUM_BODY_TYPES
 };
 
@@ -35,6 +36,11 @@ class Body: public btRigidBody {
 		virtual void draw(RenderPass pass);
 		BodyType getType();
 		void printType();
+	
+		bool isHealthType();
+		bool isCollisionType();
+		bool isEndType();	
+		
 
 	protected:
 		Model *model;

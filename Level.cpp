@@ -4,6 +4,8 @@
 
 Shader* Level::bgShader;
 
+
+
 Level::Level(int level){
 	this->level = level;
 	
@@ -11,13 +13,47 @@ Level::Level(int level){
 	sprintf(filename, "levels/%d", level);
 	
 	ifstream levelFile(filename);
+	string dummy;
+	///READ SPLASH
+	levelFile >> dummy;
+	levelFile >> splashFile; 
 	
-	string bgFile;
-	getline(levelFile, bgFile);
-	cout << "bg: " << bgFile << endl;
+	splashImage = new sf::Image();
+	splashImage->LoadFromFile(splashFile);
 	
-	background = new sf::Image();
-	background->LoadFromFile(bgFile);
+	///READ BG
+	levelFile >> dummy;
+	levelFile >> bgFile;
+	
+	if(bgFile == "NONE"){
+		background = NULL;
+	}else{
+		background = new sf::Image();
+		background->LoadFromFile(bgFile);
+	}
+	///READ SPEED
+	levelFile >> dummy;
+	levelFile >> speed;
+	
+	//READ ENDTIME
+	levelFile >> dummy;
+	levelFile >> endTime;
+	
+	///READ MODEL TYPES
+	levelFile >> dummy;
+	
+	int numTypes;
+	levelFile >> numTypes;
+	
+	int type;
+	for(int i = 0; i < numTypes; i++){
+		levelFile >> type;
+		levelTypes.push_back(BodyType(type));
+		
+	}
+	
+	//READ LANDMARKS
+	levelFile >> dummy;
 	
 	int numModels;
 	levelFile >> numModels;
@@ -28,9 +64,9 @@ Level::Level(int level){
 		levelFile >> time;
 		levelFile >> landmark;
 		
-		Landmark lm = {time, BodyType(NUM_BODY_TYPES - NUM_LANDMARKS + landmark)};
-		lm.print();
-		landmarks.push(lm);
+		Landmark lm = {time, BodyType(landmark)};
+		//lm.print();
+		landmarks.push_back(lm);
 	}
 	
 	levelFile.close();
@@ -42,17 +78,49 @@ Level::~Level(){
 
 }
 
+
+void Level::print(){
+	cout << "============" << endl;
+	cout << "Level " << level << endl;
+	cout << "Speed: " << speed << endl;
+	cout << "EndTime: " << endTime << endl;
+	cout << "Splash: " << splashFile << endl;
+	cout << "BG: " << bgFile << endl;
+	for(unsigned i = 0; i < levelTypes.size(); i++){
+		cout << "ModelType #" << levelTypes[i] << endl;
+	}
+	
+	for(unsigned i = 0; i < landmarks.size(); i++){
+		cout << "Landmark: ";
+		landmarks[i].print();
+	}
+	
+	cout << "============" << endl;
+	
+}
+
+
+
 BodyType Level::firstLandmark(){
-	BodyType saved = landmarks.front().type;
-	landmarks.pop();
+	BodyType saved = landmarks[0].type;
+	landmarks.erase(landmarks.begin());
 	return saved;
 }
 
 bool Level::shouldEmitLandmark(float timeElapsed){
 	if(landmarks.size() == 0) return false;
-	return timeElapsed > landmarks.front().time;
+	return timeElapsed > landmarks[0].time;
 }
 
+
+sf::Image* Level::getSplash(){
+	return splashImage;
+}
+	
+
+bool Level::hasBG(){
+	return background != NULL;
+}
 
 void Level::loadShaders(){
 	bgShader = new Shader("shaders/background");

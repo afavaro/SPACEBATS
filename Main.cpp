@@ -52,8 +52,6 @@ ParticleEngine pEngine;
 
 Camera camera;
 
-Ship spaceship(btVector3(0.0, 0.0, 0.0), &camera, &pEngine);
-
 BodyEmitter *bodyEmitter;
 
 btDiscreteDynamicsWorld *world;
@@ -74,7 +72,9 @@ StatusBar* healthbar;
 StatusText *statusText;
 
 MusicManager music;
-LevelManager levels(2);
+LevelManager levels(4);
+
+Ship spaceship(btVector3(0.0, 0.0, 0.0), &camera, &pEngine, &levels);
 
 void initOpenGL();
 void loadAssets();
@@ -132,17 +132,17 @@ int main(int argc, char** argv) {
 	pEngine.addEmitter(&spaceship.pos, SMOKE, false);
 	pEngine.addEmitter(&spaceship.pos, PLASMA, true);
 	
-	//music.playSound(BACKGROUND);
+	music.playSound(BACKGROUND);
 	
 	int counter = 0;
-
-	renderSplash();
 	
 	// Put your game loop here (i.e., render with OpenGL, update animation)
 	while (window.IsOpened()) {	
 		handleInput();
-
-		if (!isStarted) {
+		
+		if(levels.shouldShowSplashScreen()){
+			bodyEmitter->clear();
+			levels.renderSplash();
 			window.Display();
 			continue;
 		}
@@ -172,7 +172,8 @@ int main(int argc, char** argv) {
 				bodyEmitter->emit(landmarkType, &pEngine);
 			}
 			
-			bodyEmitter->emitBodies(TIMESTEP, &pEngine);
+			bodyEmitter->emitBodies(TIMESTEP, &pEngine, levels.current());
+
 			camera.update(TIMESTEP);
 			accum -= TIMESTEP;
 		}
@@ -269,8 +270,11 @@ void handleInput() {
 						window.Close();
 						break;
 					case sf::Key::Space:
-						if (!isStarted) {
-							isStarted = true;
+						if (levels.shouldShowSplashScreen() && !levels.last()) {
+							levels.setSplash(false);
+							if(levels.currentLevel == 0){
+								levels.nextLevel();
+							}
 							clck.Reset();
 							return;
 						}
@@ -330,32 +334,6 @@ void clearNormalsBuffer()
 	normalsBuffer->unbind();
 }
 
-void renderSplash() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glUseProgram(Level::bgShader->programID());
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(-1.0, 1.0, -1.0, 1.0);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	GLint tex = glGetUniformLocation(Level::bgShader->programID(), "texture");
-	glUniform1i(tex, 0);
-	glActiveTexture(GL_TEXTURE0);
-	splash.Bind();
-
-	GLint pos = glGetAttribLocation(Level::bgShader->programID(), "positionIn");
-	glBegin(GL_QUADS);
-	glVertexAttrib2f(pos, 1.0, -1.0);
-	glVertexAttrib2f(pos, 1.0, 1.0);
-	glVertexAttrib2f(pos, -1.0, 1.0);
-	glVertexAttrib2f(pos, -1.0, -1.0);
-	glEnd();
-}
-
 void renderFrame() {
 	glViewport(0, 0, window.GetWidth(), window.GetHeight());
 
@@ -369,7 +347,8 @@ void renderFrame() {
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		levels.current()->renderBackground();
+		if(levels.current()->hasBG())
+			levels.current()->renderBackground();
 
 		glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -391,7 +370,8 @@ void renderFrame() {
 	if(useMotionBlur){
 		motionBlur->render(blurShader);
 	} else {
-		levels.current()->renderBackground();
+		if(levels.current()->hasBG())
+			levels.current()->renderBackground();
 	}
 	motionBlur->update();
 	
@@ -404,7 +384,6 @@ void renderFrame() {
 	bodyEmitter->drawBodies(FINAL_PASS);
 	glSecondaryColor3f(0.0,0.0,0.0);
 	spaceship.model.render(FINAL_PASS);
-	//cout << "Ship at: " << spaceship.pos.x() << "::" << spaceship.pos.y() << "::" << spaceship.pos.z() << endl;
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	pEngine.renderEmitters(useMotionBlur);
 

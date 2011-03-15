@@ -1,6 +1,4 @@
 
-
-
 #include "Gate.h"
 #include "Framework.h"
 #include "Model.h"
@@ -26,6 +24,14 @@ void Gate::loadChangeImage(){
 	printf("Loaded gate image\n");
 }
 
+float Gate::getRadius(){
+	return radius;
+}
+
+void Gate::setRadius(float r){
+	radius = r;
+}
+
 
 Gate::~Gate() {}
 
@@ -35,7 +41,11 @@ void Gate::setCompleted(){
 	btTransform gateTransform;
 	this->getMotionState()->getWorldTransform(gateTransform);
 	btVector3 gatePos = gateTransform.getOrigin();
-	particleEngine->addEmitter(&gatePos, FIRE, false, true, 2);
+	
+	this->setAngularVelocity(btVector3(1,1,10));
+	if(rand()%2)this->setAngularVelocity(btVector3(1,-1,-10));
+	//gatePos.m_floats[2] -= 40;
+	particleEngine->addEmitter(&gatePos, EXPLOSION, false, true, 2);
 
 }
 
@@ -43,7 +53,7 @@ void Gate::draw(RenderPass pass){
 	btTransform gateTransform;
 	this->getMotionState()->getWorldTransform(gateTransform);
 	
-	float scaleF = model->scaleFactor;
+	//float scaleF = model->scaleFactor;
 	if(completed){
 		gateTransform*=btTransform(btQuaternion(0,0,0,1),btVector3(0.1,0.1,0.1));
 	}
@@ -60,17 +70,16 @@ void Gate::draw(RenderPass pass){
 		model->render(pass);
 	}*/
 	model->setTransformation(gateTransform);
+
+	sf::Image* saved = NULL;
+	if(completed){
+		saved = model->getDiffuseImage();
+		model->setDiffuseImage(changed);
+	}
+	
 	model->render(pass);
 	
-//	sf::Image* saved = NULL;
-//	if(completed){
-//		saved = model->getDiffuseImage();
-//		model->setDiffuseImage(changed);
-//	}
-		
-	
-	/*
 	if(completed){
 		model->setDiffuseImage(saved);
-	}*/
+	}
 }

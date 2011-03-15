@@ -1,6 +1,7 @@
-models/space2.jpg
-4
-10 0
-25 0
-40 0
-55 0
+SPLASH splash/TitleScreen.jpg
+BACKGROUND NONE
+LEVELSPEED 0
+LEVELEND 0
+NUMMODELS 0
+NUMLANDMARKS 0
+

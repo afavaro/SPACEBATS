@@ -6,9 +6,9 @@
 
 #define BOUNDARY_X 50.0
 #define BOUNDARY_Y 44.0
-#define BOUNDARY_Z -250.0
+#define BOUNDARY_Z -1000.0
 
-#define EMIT_STEP 0.25
+const int BODIES_TO_EMIT = 15;
 
 using namespace std;
 
@@ -22,6 +22,8 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 	wall->setCollisionShape(wallShape);
 
 	contactCallback = new ContactCallback(this);
+	
+	emitSpeed = 1;
 
 // These models were good... but a little too big?
 }
@@ -36,6 +38,8 @@ void BodyEmitter::emit(BodyType type, ParticleEngine* pEngine){
 	printf("Now emitting body type %d\n", type);
 	
 	btVector3 pos = getPositionForType(type);
+	
+	printf("EMIT POS: %f %f %f\n", pos.x(), pos.y(), pos.z());
 	btDefaultMotionState *motionState =
 	new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), pos));
 
@@ -58,6 +62,10 @@ void BodyEmitter::emit(BodyType type, ParticleEngine* pEngine){
 	bodies.push_back(newBody);
 }
 
+
+void BodyEmitter::clear(){
+	bodies.clear();
+}
 
 void BodyEmitter::setSpeed(float speed){
 	list<Body*>::iterator it;
@@ -93,10 +101,11 @@ btVector3 BodyEmitter::getAngularVelocityForType(BodyType type){
 		case PEPSI:
 			return btVector3(RandomFloat(2,4), RandomFloat(1,2), RandomFloat(2,4));
 		//case MARS:
-		case APPLE:
-			return btVector3(0,1,0);
+		//case APPLE:
+		//	return btVector3(0,1,0);
 		case GATE:
 		case SPACEBAT:
+		case JUPITER:
 			return btVector3(0,0,0);
 		//case VENUS:
 		case LUSH:
@@ -109,12 +118,15 @@ btVector3 BodyEmitter::getAngularVelocityForType(BodyType type){
 
 btVector3 BodyEmitter::getPositionForType(BodyType type){
 	switch (type) {
+		case JUPITER:
+		case END:
+			return btVector3(0,0, BOUNDARY_Z);
 		case GATE:
-		case APPLE:
+		//case APPLE:
 		case PEPSI:
 			return btVector3(
-							 ((float)rand() / RAND_MAX * 2.0 * BOUNDARY_X - BOUNDARY_X) / 4.0,
-							 ((float)rand() / RAND_MAX * 2.0 * BOUNDARY_Y - BOUNDARY_Y) / 4.0,
+							 ((float)rand() / RAND_MAX * 2.0 * BOUNDARY_X - BOUNDARY_X) / 2.0,
+							 ((float)rand() / RAND_MAX * 2.0 * BOUNDARY_Y - BOUNDARY_Y) / 2.0,
 							 BOUNDARY_Z );
 		default:
 			return btVector3(
@@ -129,15 +141,17 @@ btVector3 BodyEmitter::getLinearVelocityForType(BodyType type){
 	float speed = boostMode ? BOOST_SPEED : NORMAL_SPEED;
 	switch(type){
 		case GATE:
-			return btVector3(0,0, 20);
+		case JUPITER:
+			return btVector3(0,0, speed);
 		//case VENUS:
-		case APPLE:
+		//case APPLE:
 		case PEPSI:
 			return btVector3(0,0, 25);
 		case LUSH:
 			return btVector3(0.2,0.02, 0.03);
 		default:
-			return btVector3(RandomFloat(-1,1),RandomFloat(-1,1),speed);
+		//	return btVector3(RandomFloat(-1,1),RandomFloat(-1,1),speed);
+			return btVector3(0,0, speed);
 	}
 }
 
@@ -149,46 +163,24 @@ btScalar BodyEmitter::getMassForType(BodyType type){
 		//case VENUS:
 		case LUSH:
 			return 1000;
+		case END:
+			return 10000;
 		default:
 			return 4;
 	}
 }
 
+void BodyEmitter::emitBodies(float tstep, ParticleEngine* pEngine, Level* level) {
 
-void BodyEmitter::emitBodies(float tstep, ParticleEngine* pEngine) {
 	accum += tstep;
 	world->contactTest(wall, *contactCallback);
 	
-	if (accum > EMIT_STEP) {
+	if (accum > emitSpeed) {
 		accum = 0.0;
-		
 
-		BodyType type = SPACEBAT;//BodyType(rand() % (NUM_BODY_TYPES - NUM_LANDMARKS));	
-
-		
-		btVector3 pos = getPositionForType(type);
-		btDefaultMotionState *motionState =
-			new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), pos));
-
-		
-		btScalar mass = getMassForType(type);
-		
-		btRigidBody::btRigidBodyConstructionInfo
-			constructionInfo(mass, motionState, models[type].getCollisionShape());
-		
-		
-		Body* newBody;
-		
-		if(type == GATE){
-			newBody = new Gate(&models[type], constructionInfo, type, pEngine);
-		}else{
-			newBody = new Body(&models[type], constructionInfo, type);
-		}
-		newBody->setLinearVelocity(getLinearVelocityForType(type));
-		newBody->setAngularVelocity(getAngularVelocityForType(type));
-
-		world->addRigidBody(newBody);
-		bodies.push_back(newBody);
+		int index = rand() % level->levelTypes.size();
+		BodyType type = level->levelTypes[index];
+		emit(type, pEngine);
 	}
 }
 
@@ -201,7 +193,7 @@ void BodyEmitter::drawBodies(RenderPass pass) {
 void BodyEmitter::loadModels() {
 	//models[MARS].loadFromFile("models/mars", "mars.3ds", importers[MARS]);
 	models[ASTEROID].loadFromFile("models/aster", "asteroid.3ds", importers[ASTEROID]);
-	models[ASTEROID].setScaleFactor(0.1);
+	models[ASTEROID].setScaleFactor(0.4);
 	//models[GATE].loadFromFile("models/aster", "roid.obj", importers[GATE]);
 	models[EROS].loadFromFile("models/eros", "eros.3ds", importers[EROS]);
 	models[EROS].setScaleFactor(0.7);
@@ -211,24 +203,27 @@ void BodyEmitter::loadModels() {
 	models[JUNO].setScaleFactor(0.05);
 	
 	models[GATE].loadFromFile("models/gayte", "gate.obj", importers[GATE]);
-	//models[GATE].setScaleFactor(0.7);
+	models[GATE].setScaleFactor(0.5);
 	
 	models[SPACEBAT].loadFromFile("models/spacebat", "batty.obj", importers[SPACEBAT]);
 	models[SPACEBAT].setScaleFactor(0.5);
 	
 	models[LUSH].loadFromFile("models/lush", "lush.3DS", importers[LUSH]);
 
-	models[APPLE].loadFromFile("models/apple", "apple.obj", importers[APPLE]);
-	models[APPLE].setScaleFactor(7);
+//	models[APPLE].loadFromFile("models/apple", "apple.obj", importers[APPLE]);
+//	models[APPLE].setScaleFactor(7);
 	
 	models[JUPITER].loadFromFile("models/jupiter", "jupiter.3ds", importers[JUPITER]);
-	models[JUPITER].setScaleFactor(8);
+	models[JUPITER].setScaleFactor(50);
 	
 	models[PEPSI].loadFromFile("models/pepsi", "pepsi.3ds", importers[PEPSI]);
 	models[PEPSI].setScaleFactor(4);
 
-	models[PIZZA].loadFromFile("models/pizza", "pizza.3ds", importers[PIZZA]);
-	models[PIZZA].setScaleFactor(10);	
+//	models[PIZZA].loadFromFile("models/pizza", "pizza.3ds", importers[PIZZA]);
+//	models[PIZZA].setScaleFactor(10);	
+	
+	models[END].loadFromFile("models/levelend", "sphere.obj", importers[END]);
+	models[END].setScaleFactor(8);
 }
 
 BodyEmitter::ContactCallback::ContactCallback(BodyEmitter *bodyEmitter)
