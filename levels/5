@@ -1,0 +1,8 @@
+SPLASH splash/Level1Splash.jpg
+BACKGROUND backgrounds/vortex3.jpg
+LEVELSPEED 0.55
+LEVELEND 20
+NUMMODELS 1
+10
+NUMLANDMARKS 1
+150.0 9
