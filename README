@@ -16,6 +16,14 @@ This was build on both Mac and Ubuntu, and the Makefile works on both of those p
 3. make 
 4. ./main
 
+
+Controls
+
+A/D: Left and Right
+W/S: Up and Down
+
+Space: Enter Boost Mode / Navigate To Next Screen
+
 Advanced Features
 
 Non-Photorealistic Rendering
@@ -38,11 +46,13 @@ will come at you and you must navigate and avoid them. Finally, when you reach t
 If not in boost mode, you need to avoid the SPACEBATS, but if you are in boost mode, the SPACEBATS will change colors and you
 can run into them and eat them. Travel through space and try and get the most points possible, while avoiding the evil SPACEBATS.
 
+Level Manager
 
-Controls
+We have created a Level Manager and level system which can be used to extend our game and create new interesting levels. The 
+Level Manager manages all of the Levels, and each level can be customized in several ways. A level knows its background image, its
+splash screen introduction image, the number of objects it will feature and what type of object each is. It also has a list of 
+landmark pairs. A landmark is a time-object pair, which means that this object will be emitted at this certain time. It also has
+an option of whether or not to include gates.
 
-A/D: Left and Right
-W/S: Up and Down
 
-Space: Enter Boost Mode / Navigate To Next Screen
 
