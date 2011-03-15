@@ -106,7 +106,12 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 		printf("GOT APPLE\n");
 		spaceship->healthBar->add(15);
 		spaceship->shiverMeTimbers(body->getType());
-	}else {
+	} else if(body->getType() == END){
+		cout << "LevelEnd!\n";
+		spaceship->levelManager->nextLevel();
+	}
+	
+	else {
 		spaceship->shiverMeTimbers(body->getType());
 		spaceship->healthBar->subtract(25);
 	}
@@ -127,7 +132,7 @@ void Ship::setWorld(btDiscreteDynamicsWorld* world){
 }
 
 
-Ship::Ship(btVector3 pos, Camera* c, ParticleEngine* pE) {
+Ship::Ship(btVector3 pos, Camera* c, ParticleEngine* pE, LevelManager* lM) {
 	btQuaternion adjust(btVector3(1, 0, 0), -M_PI / 2.0);
 	neutral = btQuaternion(btVector3(0, 1, 0), -M_PI / 2.0) * adjust;
 	maxRollLeft = btQuaternion(btVector3(0, 0, -1), -ROLL_ROTATION);
@@ -139,6 +144,7 @@ Ship::Ship(btVector3 pos, Camera* c, ParticleEngine* pE) {
 	this->pos = pos;
 	acceleration = velocity = btVector3(0, 0, 0);
 	this->pEngine = pE;
+	this->levelManager = lM;
 	quat = neutral;
 	curRot = NULL;
 	isStopping = false;

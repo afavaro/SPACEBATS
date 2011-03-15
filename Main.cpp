@@ -52,8 +52,6 @@ ParticleEngine pEngine;
 
 Camera camera;
 
-Ship spaceship(btVector3(0.0, 0.0, 0.0), &camera, &pEngine);
-
 BodyEmitter *bodyEmitter;
 
 btDiscreteDynamicsWorld *world;
@@ -75,6 +73,8 @@ StatusText *statusText;
 
 MusicManager music;
 LevelManager levels(3);
+
+Ship spaceship(btVector3(0.0, 0.0, 0.0), &camera, &pEngine, &levels);
 
 void initOpenGL();
 void loadAssets();

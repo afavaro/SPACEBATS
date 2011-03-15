@@ -20,6 +20,7 @@ class ParticleEmitter;
 #include "ParticleEngine.h"
 #include "StatusText.h"
 #include "btBulletDynamicsCommon.h"
+#include "LevelManager.h"
 #include <cmath>
 #include "Body.h"
 
@@ -41,7 +42,7 @@ struct Shake {
 
 class Ship : public InputListener {
 public:
-	Ship(btVector3 pos, Camera* c, ParticleEngine* pE);
+	Ship(btVector3 pos, Camera* c, ParticleEngine* pE, LevelManager* lM);
 	~Ship();
 	
 	void handleEvent(sf::Event &event, const sf::Input &input);
@@ -111,6 +112,7 @@ private:
 	bool boostMode;
 	
 	ParticleEngine* pEngine;
+	LevelManager* levelManager;
 };
 
 #endif
