@@ -37,8 +37,10 @@ void ParticleEngine::setWindow(int width){
 
 //void ParticleEngine::addEmitter(Ship* ship, int particleType){
 void ParticleEngine::addEmitter(btVector3* pos, EmitterType type, bool onlyActiveWhenFast, 
-								bool timed){
-	ParticleEmitter newEmitter(pos, particleShaders[0], particleImages[type], 
+								bool timed, int imageIndex){
+	
+	if(imageIndex == -1) imageIndex = type;
+	ParticleEmitter newEmitter(pos, particleShaders[0], particleImages[imageIndex], 
 							   this->width, onlyActiveWhenFast, type);
 	emitters.push_back(newEmitter);
 }
@@ -46,7 +48,7 @@ void ParticleEngine::addEmitter(btVector3* pos, EmitterType type, bool onlyActiv
 void ParticleEngine::updateEmitters(double tstep, bool fast){
 	for(unsigned i = 0; i < emitters.size(); i++){
 		emitters[i].updateEmitter(tstep, fast);
-		if(emitters[i].type == EXPLOSION && emitters[i].age > 0.5){
+		if(emitters[i].type == EXPLOSION && emitters[i].age > 0.7){
 			emitters.erase(emitters.begin()+i);
 			i--;
 		}

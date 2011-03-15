@@ -4,19 +4,20 @@
 #include "Gate.h"
 #include "Framework.h"
 #include "Model.h"
+#include <iostream>
+#include <cmath>
 
 using namespace sf;
 
 
 sf::Image* Gate::changed;
 
-//Scoreboard* Gate::scoreboard;
-
-
 Gate::Gate(Model *model, btRigidBody::btRigidBodyConstructionInfo &btInfo, BodyType ty, ParticleEngine* pEngine)
+
 : Body(model, btInfo, ty){
 	particleEngine = pEngine;
 	completed = false;
+	radius = 5.0;
 }
 
 void Gate::loadChangeImage(){
@@ -26,30 +27,50 @@ void Gate::loadChangeImage(){
 }
 
 
-Gate::~Gate(){
-	
-}
-
+Gate::~Gate() {}
 
 void Gate::setCompleted(){
 	completed = true;
-	//particleEngine->addEmitter();
+	
+	btTransform gateTransform;
+	this->getMotionState()->getWorldTransform(gateTransform);
+	btVector3 gatePos = gateTransform.getOrigin();
+	particleEngine->addEmitter(&gatePos, FIRE, false, true, 2);
+
 }
 
 void Gate::draw(RenderPass pass){
-	btTransform transform;
-	this->getMotionState()->getWorldTransform(transform);
-	model->setTransformation(transform);
+	btTransform gateTransform;
+	this->getMotionState()->getWorldTransform(gateTransform);
 	
-	sf::Image* saved = NULL;
+	float scaleF = model->scaleFactor;
 	if(completed){
-		saved = model->getDiffuseImage();
-		model->setDiffuseImage(changed);
+		gateTransform*=btTransform(btQuaternion(0,0,0,1),btVector3(0.1,0.1,0.1));
 	}
-	
+	/*
+	for (int i = 0; i < 6; i++) {
+		float t = (float)i * M_PI / 3.0;
+		btVector3 translation(-radius * sin(t), radius * cos(t), 0);
+		translation += gateTransform.getOrigin();
+
+		btQuaternion rotation(btVector3(0, 0, 1), t);
+		btTransform transform(rotation, translation);
+
+		model->setTransformation(transform);
+		model->render(pass);
+	}*/
+	model->setTransformation(gateTransform);
 	model->render(pass);
 	
+//	sf::Image* saved = NULL;
+//	if(completed){
+//		saved = model->getDiffuseImage();
+//		model->setDiffuseImage(changed);
+//	}
+		
+	
+	/*
 	if(completed){
 		model->setDiffuseImage(saved);
-	}
+	}*/
 }

@@ -5,16 +5,16 @@
 
 #define EASE(t) ((t) * (t) * (3.0 - 2.0 * (t)))
 
-#define ZOOM_IN 50.0
-#define ZOOM_OUT 70.0
+#define ZOOM_IN 100.0
+#define ZOOM_OUT 130.0
 
 #define DURATION 1.0
 
 using namespace sf;
 using namespace std;
 
-Camera::Camera(btVector3 pos) {
-	this->pos = pos;
+Camera::Camera() {
+	pos = btVector3(0, 0, ZOOM_IN);
 	quat = btQuaternion(btVector3(0, 1, 0), M_PI);
 	mousePressed = false;
 }

@@ -17,7 +17,7 @@ BodyEmitter::BodyEmitter(btDiscreteDynamicsWorld *world) {
 	accum = 0.0;
 	boostMode = false;
 	
-	wallShape = new btStaticPlaneShape(btVector3(0, 0, -1), -20);
+	wallShape = new btStaticPlaneShape(btVector3(0, 0, -1), -80);
 	wall = new btCollisionObject();
 	wall->setCollisionShape(wallShape);
 
@@ -90,7 +90,10 @@ float RandomFloat(float min, float max){
 
 btVector3 BodyEmitter::getAngularVelocityForType(BodyType type){
 	switch (type){
-		case MARS:
+		case PEPSI:
+			return btVector3(RandomFloat(2,4), RandomFloat(1,2), RandomFloat(2,4));
+		//case MARS:
+		case APPLE:
 			return btVector3(0,1,0);
 		case GATE:
 		case SPACEBAT:
@@ -107,6 +110,8 @@ btVector3 BodyEmitter::getAngularVelocityForType(BodyType type){
 btVector3 BodyEmitter::getPositionForType(BodyType type){
 	switch (type) {
 		case GATE:
+		case APPLE:
+		case PEPSI:
 			return btVector3(
 							 ((float)rand() / RAND_MAX * 2.0 * BOUNDARY_X - BOUNDARY_X) / 4.0,
 							 ((float)rand() / RAND_MAX * 2.0 * BOUNDARY_Y - BOUNDARY_Y) / 4.0,
@@ -126,6 +131,9 @@ btVector3 BodyEmitter::getLinearVelocityForType(BodyType type){
 		case GATE:
 			return btVector3(0,0, 20);
 		//case VENUS:
+		case APPLE:
+		case PEPSI:
+			return btVector3(0,0, 25);
 		case LUSH:
 			return btVector3(0.2,0.02, 0.03);
 		default:
@@ -155,7 +163,7 @@ void BodyEmitter::emitBodies(float tstep, ParticleEngine* pEngine) {
 		accum = 0.0;
 		
 
-		BodyType type = BodyType(rand() % (NUM_BODY_TYPES - NUM_LANDMARKS));	
+		BodyType type = SPACEBAT;//BodyType(rand() % (NUM_BODY_TYPES - NUM_LANDMARKS));	
 
 		
 		btVector3 pos = getPositionForType(type);
@@ -191,7 +199,7 @@ void BodyEmitter::drawBodies(RenderPass pass) {
 }
 
 void BodyEmitter::loadModels() {
-	models[MARS].loadFromFile("models/mars", "mars.3ds", importers[MARS]);
+	//models[MARS].loadFromFile("models/mars", "mars.3ds", importers[MARS]);
 	models[ASTEROID].loadFromFile("models/aster", "asteroid.3ds", importers[ASTEROID]);
 	models[ASTEROID].setScaleFactor(0.1);
 	//models[GATE].loadFromFile("models/aster", "roid.obj", importers[GATE]);
@@ -203,17 +211,24 @@ void BodyEmitter::loadModels() {
 	models[JUNO].setScaleFactor(0.05);
 	
 	models[GATE].loadFromFile("models/gayte", "gate.obj", importers[GATE]);
-	models[GATE].setScaleFactor(0.7);
+	//models[GATE].setScaleFactor(0.7);
 	
-	models[SPACEBAT].loadFromFile("models/spacebat", "spacebat.obj", importers[SPACEBAT]);
+	models[SPACEBAT].loadFromFile("models/spacebat", "batty.obj", importers[SPACEBAT]);
 	models[SPACEBAT].setScaleFactor(0.5);
-	
-	
-	//models[VENUS].loadFromFile("models/venus", "venus.3ds", importers[VENUS]);
-	//models[VENUS].setScaleFactor(0.5);
 	
 	models[LUSH].loadFromFile("models/lush", "lush.3DS", importers[LUSH]);
 
+	models[APPLE].loadFromFile("models/apple", "apple.obj", importers[APPLE]);
+	models[APPLE].setScaleFactor(7);
+	
+	models[JUPITER].loadFromFile("models/jupiter", "jupiter.3ds", importers[JUPITER]);
+	models[JUPITER].setScaleFactor(8);
+	
+	models[PEPSI].loadFromFile("models/pepsi", "pepsi.3ds", importers[PEPSI]);
+	models[PEPSI].setScaleFactor(4);
+
+	models[PIZZA].loadFromFile("models/pizza", "pizza.3ds", importers[PIZZA]);
+	models[PIZZA].setScaleFactor(10);	
 }
 
 BodyEmitter::ContactCallback::ContactCallback(BodyEmitter *bodyEmitter)

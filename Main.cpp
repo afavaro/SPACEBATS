@@ -46,11 +46,11 @@ GLfloat timeElapsed = 0.0;
 Assimp::Importer importer;
 Shader *blurShader;
 
-sf::Image background;
+sf::Image background, splash;
 
 ParticleEngine pEngine;
 
-Camera camera(btVector3(0.0, 0.0, 50.0));
+Camera camera;
 
 Ship spaceship(btVector3(0.0, 0.0, 0.0), &camera, &pEngine);
 
@@ -66,6 +66,8 @@ const int NUM_MOTION_BLUR_FRAMES = 4;
 MotionBlur* motionBlur;
 bool useMotionBlur = false;
 
+bool isStarted = false;
+
 HUD* hud;
 StatusBar* boostbar;
 StatusBar* healthbar;
@@ -78,6 +80,7 @@ void initOpenGL();
 void loadAssets();
 void handleInput();
 void renderFrame();
+void renderSplash();
 
 btVector3 flame(0.0,0.0,0.0);
 
@@ -129,13 +132,20 @@ int main(int argc, char** argv) {
 	pEngine.addEmitter(&spaceship.pos, SMOKE, false);
 	pEngine.addEmitter(&spaceship.pos, PLASMA, true);
 	
-	music.playSound(BACKGROUND);
+	//music.playSound(BACKGROUND);
 	
 	int counter = 0;
+
+	renderSplash();
 	
 	// Put your game loop here (i.e., render with OpenGL, update animation)
 	while (window.IsOpened()) {	
 		handleInput();
+
+		if (!isStarted) {
+			window.Display();
+			continue;
+		}
 		
 		float elapsed = clck.GetElapsedTime();
 		accum += elapsed;
@@ -224,9 +234,10 @@ void loadAssets() {
 	Model::setNormalsBuffer(normalsBuffer);
 	
 	background.LoadFromFile("models/space2.jpg");
+	splash.LoadFromFile("models/TitleScreen.jpg");
 	
 	spaceship.model.loadFromFile("models/ship", "space_frigate_0.3DS", importer);
-	spaceship.model.setScaleFactor(0.5);
+	spaceship.model.setScaleFactor(0.9);
 
 	statusText->loadFont("fonts/Spaceship Bullet.ttf");
 }
@@ -258,7 +269,15 @@ void handleInput() {
 						window.Close();
 						break;
 					case sf::Key::Space:
+						if (!isStarted) {
+							isStarted = true;
+							clck.Reset();
+							return;
+						}
+
 						if(boostbar->getValue() <= 0) return;
+
+						if (useMotionBlur) return;
 						
 						music.playSound(POWERUP);
 						useMotionBlur = true;
@@ -293,7 +312,7 @@ void handleInput() {
 
 void setupLights()
 {
-	GLfloat pos[] = { 0.0, 1.0, 0.0, 0.0 };
+	GLfloat pos[] = { 1.0, 4.0, 0.0, 0.0 };
 	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat ambient[] = { 0.3, 0.3, 0.3, 1.0 };
@@ -304,13 +323,37 @@ void setupLights()
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
 }
 
-
-
 void clearNormalsBuffer()
 {
 	normalsBuffer->bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	normalsBuffer->unbind();
+}
+
+void renderSplash() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glUseProgram(Level::bgShader->programID());
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(-1.0, 1.0, -1.0, 1.0);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	GLint tex = glGetUniformLocation(Level::bgShader->programID(), "texture");
+	glUniform1i(tex, 0);
+	glActiveTexture(GL_TEXTURE0);
+	splash.Bind();
+
+	GLint pos = glGetAttribLocation(Level::bgShader->programID(), "positionIn");
+	glBegin(GL_QUADS);
+	glVertexAttrib2f(pos, 1.0, -1.0);
+	glVertexAttrib2f(pos, 1.0, 1.0);
+	glVertexAttrib2f(pos, -1.0, 1.0);
+	glVertexAttrib2f(pos, -1.0, -1.0);
+	glEnd();
 }
 
 void renderFrame() {

@@ -18,15 +18,11 @@ public:
 	
 	void setCompleted();
 	virtual void draw(RenderPass pass);
-
-	//static Scoreboard* scoreboard;
-	//static void setScoreboard(Scoreboard* s);
 	
-	
-private:
-	
+private:	
 	bool completed;
 	ParticleEngine* particleEngine;
+	float radius;
 };
 
 #endif // Gate.h

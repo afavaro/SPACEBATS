@@ -19,7 +19,7 @@ void Body::draw(RenderPass pass) {
 
 void Body::printType(){
 	switch (type) {
-		case MARS: printf("MARS\n"); break;
+		//case MARS: printf("MARS\n"); break;
 		case ASTEROID: printf("ASTEROID\n"); break;
 		case EROS: printf("EROS\n"); break;
 		case GOLEVKA: printf("GOLEVKA\n"); break;
