@@ -98,31 +98,30 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 	if(body->getType() == GATE){
 		Gate* gate = (Gate*)body;
 		gate->setCompleted();
-		spaceship->statusText->addScore(10);
+		if (spaceship->boostMode)
+			spaceship->statusText->addScore(10);
+		else
+			spaceship->statusText->addScore(5);
 	} else if(body->isHealthType()){
-		spaceship->healthBar->add(15);
+		spaceship->healthBar->add(5);
 		spaceship->shiverMeTimbers(true);
 	} else if(body->getType() == END){
 		cout << "LevelEnd!\n";
 		spaceship->levelManager->nextLevel();
 	} else if(body->getType() == SPACEBAT){
 		if(spaceship->boostMode){ // this is good, they get points and a good animation
-			spaceship->healthBar->add(5);
-			spaceship->statusText->addScore(10);
+			spaceship->statusText->addScore(15);
 			spaceship->shiverMeTimbers(true);
 
-		}else{
-			spaceship->healthBar->subtract(5);
+		} else{
+			spaceship->healthBar->subtract(20);
 			spaceship->shiverMeTimbers(false);
 		}
 		
-	}else {
+	} else {
 		spaceship->shiverMeTimbers(false);
-		spaceship->healthBar->subtract(5);
+		spaceship->healthBar->subtract(10);
 	}
-	
-	printf("Health: ");
-	spaceship->healthBar->print();
 	
 	return 0;
 }
