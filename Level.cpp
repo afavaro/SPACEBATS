@@ -4,8 +4,6 @@
 
 Shader* Level::bgShader;
 
-
-
 Level::Level(int level){
 	this->level = level;
 	
