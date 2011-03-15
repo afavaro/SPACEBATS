@@ -74,7 +74,7 @@ StatusBar* healthbar;
 StatusText *statusText;
 
 MusicManager music;
-LevelManager levels(2);
+LevelManager levels(3);
 
 void initOpenGL();
 void loadAssets();
@@ -136,13 +136,21 @@ int main(int argc, char** argv) {
 	
 	int counter = 0;
 
-	renderSplash();
+	//renderSplash();
 	
 	// Put your game loop here (i.e., render with OpenGL, update animation)
 	while (window.IsOpened()) {	
 		handleInput();
 
-		if (!isStarted) {
+		
+		
+//		if (!isStarted) {
+//			window.Display();
+//			continue;
+//		}
+		
+		if(levels.shouldShowSplashScreen()){
+			levels.renderSplash();
 			window.Display();
 			continue;
 		}
@@ -269,8 +277,11 @@ void handleInput() {
 						window.Close();
 						break;
 					case sf::Key::Space:
-						if (!isStarted) {
-							isStarted = true;
+						if (levels.shouldShowSplashScreen()) {
+							levels.setSplash(false);
+							if(levels.currentLevel == 0){
+								levels.nextLevel();
+							}
 							clck.Reset();
 							return;
 						}

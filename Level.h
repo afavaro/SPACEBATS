@@ -51,6 +51,8 @@ public:
 	
 	void print();
 	
+	sf::Image* getSplash();
+	
 	void renderBackground();
 	BodyType firstLandmark();
 	
@@ -63,10 +65,13 @@ public:
 private:
 	int level;
 	float speed;
+	float endTime;
+	string splashFile, bgFile;
 	
 	queue<Landmark> landmarks;
 
 	sf::Image* background;
+	sf::Image* splashImage;
 };
 
 

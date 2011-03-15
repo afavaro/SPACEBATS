@@ -22,12 +22,21 @@ public:
 	Level* getLevel(int i);
 	Level* current();
 	
+	void renderSplash();
+	
+	bool shouldShowSplashScreen();
+	void setSplash(bool s);
+	
+	
 	void handleEvent(sf::Event &event, const sf::Input &input);
+
+	void nextLevel();
+	int currentLevel;
 	
 private:
+	bool splashOn;
 	vector<Level*> levels;
 	int numLevels;
-	int currentLevel;
 	
 };
 

@@ -13,18 +13,31 @@ Level::Level(int level){
 	sprintf(filename, "levels/%d", level);
 	
 	ifstream levelFile(filename);
-	
-	string bgFile;
-	getline(levelFile, bgFile);
-	cout << "bg: " << bgFile << endl;
-	
-	background = new sf::Image();
-	background->LoadFromFile(bgFile);
-	
 	string dummy;
+	///READ SPLASH
+	levelFile >> dummy;
+	levelFile >> splashFile; 
+	
+	splashImage = new sf::Image();
+	splashImage->LoadFromFile(splashFile);
+	
+	///READ BG
+	levelFile >> dummy;
+	levelFile >> bgFile;
+	
+	if(bgFile == "NONE"){
+		background = NULL;
+	}else{
+		background = new sf::Image();
+		background->LoadFromFile(bgFile);
+	}
 	///READ SPEED
 	levelFile >> dummy;
 	levelFile >> speed;
+	
+	//READ ENDTIME
+	levelFile >> dummy;
+	levelFile >> endTime;
 	
 	///READ MODEL TYPES
 	levelFile >> dummy;
@@ -52,7 +65,7 @@ Level::Level(int level){
 		levelFile >> landmark;
 		
 		Landmark lm = {time, BodyType(landmark)};
-		lm.print();
+		//lm.print();
 		landmarks.push(lm);
 	}
 	
@@ -70,6 +83,9 @@ void Level::print(){
 	cout << "============" << endl;
 	cout << "Level " << level << endl;
 	cout << "Speed: " << speed << endl;
+	cout << "EndTime: " << endTime << endl;
+	cout << "Splash: " << splashFile << endl;
+	cout << "BG: " << bgFile << endl;
 	for(unsigned i = 0; i < levelTypes.size(); i++){
 		cout << "ModelType #" << levelTypes[i] << endl;
 	}
@@ -89,6 +105,11 @@ bool Level::shouldEmitLandmark(float timeElapsed){
 	return timeElapsed > landmarks.front().time;
 }
 
+
+sf::Image* Level::getSplash(){
+	return splashImage;
+}
+	
 
 void Level::loadShaders(){
 	bgShader = new Shader("shaders/background");
