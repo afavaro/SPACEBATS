@@ -135,8 +135,9 @@ int main(int argc, char** argv) {
 	pEngine.addEmitter(&spaceship.pos, SMOKE, false);
 	pEngine.addEmitter(&spaceship.pos, PLASMA, true);
 	
+
 	//music.playSound(BACKGROUND);
-	
+	//music.loopSound(BACKGROUND);
 	int counter = 0;
 	
 	// Put your game loop here (i.e., render with OpenGL, update animation)

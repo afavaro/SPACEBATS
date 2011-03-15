@@ -1,1 +1,60 @@
 SPACEBATS
+
+Team:
+Alex Favaro
+Jeremy Keeshin
+Daniel Smith
+
+
+How to Build and Run SPACEBATS
+
+1. Download the code
+2. Make sure you have the sfml libraries, Bullet physics engine, and Assimp.
+
+This was build on both Mac and Ubuntu, and the Makefile works on both of those platforms.
+
+3. make 
+4. ./main
+
+
+Controls
+
+A/D: Left and Right
+W/S: Up and Down
+
+Space: Enter Boost Mode / Navigate To Next Screen
+
+
+Advanced Features
+
+Non-Photorealistic Rendering
+
+For our medium to hard feature, we implemented non-photorealistic rendering using the technique presented in the paper which is linked on the Final Project page. This is a two-pass technique. The first pass writes the X, Y, and Z components of the scene's normals to the RGB components of a frame buffer object and writes the eye Z coordinate (compressed to [0, 1]) in the alpha component of the same object. The second pass uses a high pass filter on the normals and Z coordinates of the scene to detect edges which are drawn as black outlines. The second pass also uses a simplified lighting model to create sharp diffuse shadows and give the models a flat cartoony look. 
+
+
+Motion Blur
+
+Motion Blur was one of our advanced rendering features. We create motion blur in our MotionBlur class. In this class, we store
+the last four frames, which are spaced out according to the SEPARATION parameter. We render all of the objects in the scren to
+the stored framebuffers except for the spaceship, and then when we enter boost mode, we render the motion blur by averageing
+out the stored framebuffers. By blurring the other objects but not the spaceship, we have tried to create the illusion of boosting.
+
+Gameplay
+
+SPACEBATS is a 3D interactive game where you fly through space in spaceship and try and navigate through gates. There are
+many different levels with different objectives. You must try and go through the gates, avoid the asteroids, collect the 
+health packs, get points, and keep your health. As you advance in the game you will reach a level of the SPACEMINES, which
+will come at you and you must navigate and avoid them. Finally, when you reach the SPACEBATS, you must navigate through them.
+If not in boost mode, you need to avoid the SPACEBATS, but if you are in boost mode, the SPACEBATS will change colors and you
+can run into them and eat them. Travel through space and try and get the most points possible, while avoiding the evil SPACEBATS.
+
+Level Manager
+
+We have created a Level Manager and level system which can be used to extend our game and create new interesting levels. The 
+Level Manager manages all of the Levels, and each level can be customized in several ways. A level knows its background image, its
+splash screen introduction image, the number of objects it will feature and what type of object each is. It also has a list of 
+landmark pairs. A landmark is a time-object pair, which means that this object will be emitted at this certain time. It also has
+an option of whether or not to include gates.
+
+
+

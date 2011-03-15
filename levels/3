@@ -1,4 +1,4 @@
-SPLASH models/space2.jpg
+SPLASH splash/Splash3.jpg
 BACKGROUND backgrounds/outerspace.jpg
 LEVELSPEED 1.5
 LEVELEND 50
@@ -9,3 +9,4 @@ NUMMODELS 3
 NUMLANDMARKS 1
 90.0 9
 GATES YES
+COUNT 3

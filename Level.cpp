@@ -78,6 +78,10 @@ Level::Level(int level){
 		hasGates = false;
 	}
 	
+	///READ COUNT
+	levelFile >> dummy;
+	levelFile >> count;
+	
 	levelFile.close();
 }
 
@@ -99,6 +103,7 @@ void Level::print(){
 	cout << "Has Gates: ";
 	string val = hasGates ? "YES" : "NO";
 	cout << val << endl;
+	cout << "Count: " << count << endl;
 	cout << "EndTime: " << endTime << endl;
 	cout << "Splash: " << splashFile << endl;
 	cout << "BG: " << bgFile << endl;

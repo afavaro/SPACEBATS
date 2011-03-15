@@ -30,6 +30,10 @@ void MusicManager::stopSound(SoundType sound){
 	sounds[sound].Stop();
 }
 
+void MusicManager::loopSound(SoundType sound){
+	sounds[sound].SetLoop(true);
+}
+
 void MusicManager::openFile(SoundType sound, string file){
 	if(!sounds[sound].OpenFromFile(file)){
 		printf("Error opening sound file %s.\n", file.c_str());

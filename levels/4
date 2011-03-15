@@ -1,4 +1,4 @@
-SPLASH models/space2.jpg
+SPLASH splash/Splash4.jpg
 BACKGROUND backgrounds/stars.jpg
 LEVELSPEED 1.0
 LEVELEND 50
@@ -9,5 +9,6 @@ NUMMODELS 5
 1
 2
 NUMLANDMARKS 1
-120.0 9
+130.0 9
 GATES YES
+COUNT 3

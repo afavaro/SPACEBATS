@@ -50,7 +50,6 @@ void BodyEmitter::emit(BodyType type, ParticleEngine* pEngine){
 	if(type == GATE){
 		newBody = new Gate(&models[type], constructionInfo, type, pEngine );
 	}else if(type == SPACEBAT){
-		printf("emitting spacebat\n");
 		newBody = new SpaceBat(&models[type], constructionInfo, type, pEngine);
 	}else{
 		newBody = new Body(&models[type], constructionInfo, type);
@@ -186,7 +185,7 @@ void BodyEmitter::emitBodies(float tstep, ParticleEngine* pEngine, Level* level)
 		accum = 0.0;
 		
 		if(level->levelTypes.size() > 0){
-			for(int i = 0; i < 3; i++){
+			for(int i = 0; i < level->count; i++){
 				int index = rand() % level->levelTypes.size();
 				BodyType type = level->levelTypes[index];
 				emit(type, NULL);
@@ -225,20 +224,13 @@ void BodyEmitter::loadModels() {
 	
 	models[LUSH].loadFromFile("models/lush", "lush.3DS", importers[LUSH]);
 	
-	//	models[APPLE].loadFromFile("models/apple", "apple.obj", importers[APPLE]);
-	//	models[APPLE].setScaleFactor(7);
-	
 	models[JUPITER].loadFromFile("models/jupiter", "jupiter.3ds", importers[JUPITER]);
 	models[JUPITER].setScaleFactor(50);
 	
 	models[PEPSI].loadFromFile("models/pepsi", "pepsi.3ds", importers[PEPSI]);
 	models[PEPSI].setScaleFactor(4);
 	
-	
-	//	models[PIZZA].loadFromFile("models/pizza", "pizza.3ds", importers[PIZZA]);
-	//	models[PIZZA].setScaleFactor(10);	
-	
-	models[END].loadFromFile("models/levelend", "sphere.obj", importers[END]);
+	models[END].loadFromFile("models/largeroid", "grande.obj", importers[END]);
 	models[END].setScaleFactor(8);
 	
 	models[MINE].loadFromFile("models/mine", "mine.obj", importers[MINE]);
