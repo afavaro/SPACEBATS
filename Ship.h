@@ -8,9 +8,12 @@
 
 class ParticleEngine;
 class ParticleEmitter;
+class LevelManager;
 
 #ifndef SHIP_H
 #define SHIP_H
+
+
 
 #include "Framework.h"
 #include "InputListener.h"

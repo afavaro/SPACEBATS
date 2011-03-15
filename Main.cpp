@@ -72,7 +72,7 @@ StatusBar* healthbar;
 StatusText *statusText;
 
 MusicManager music;
-LevelManager levels(4);
+LevelManager levels(5);
 
 Ship spaceship(btVector3(0.0, 0.0, 0.0), &camera, &pEngine, &levels);
 
@@ -229,6 +229,8 @@ void loadAssets() {
 	
 	bodyEmitter = new BodyEmitter(world);
 	bodyEmitter->loadModels();
+	
+	levels.setBodyEmitter(bodyEmitter);
 	
 	Model::loadShaders();
 	normalsBuffer = new Framebuffer(window.GetWidth(), window.GetHeight());

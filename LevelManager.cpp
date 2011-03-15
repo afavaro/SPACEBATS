@@ -66,10 +66,17 @@ bool LevelManager::last(){
 	return currentLevel == numLevels - 1;
 }
 
+void LevelManager::setBodyEmitter(BodyEmitter* b){
+	emitter = b;
+}
+
 
 void LevelManager::nextLevel(){
 	currentLevel++;
 	if(currentLevel == numLevels) currentLevel--;
+	
+	emitter->setEmitSpeed(current()->speed);
+	
 	setSplash(true);
 }
 

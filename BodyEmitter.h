@@ -26,6 +26,8 @@ class BodyEmitter {
 		void boostSpeed();
 		void resetSpeed();
 		void setBoostMode(bool boost);	
+	
+		void setEmitSpeed(float speed);
 
 	private:
 		float emitSpeed;
