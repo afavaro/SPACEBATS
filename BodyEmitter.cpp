@@ -176,7 +176,7 @@ void BodyEmitter::setEmitSpeed(float speed){
 
 
 void BodyEmitter::emitBodies(float tstep, ParticleEngine* pEngine, Level* level) {
-
+	
 	accum += tstep;
 	world->contactTest(wall, *contactCallback);
 	
@@ -184,14 +184,17 @@ void BodyEmitter::emitBodies(float tstep, ParticleEngine* pEngine, Level* level)
 	
 	if (accum > emitSpeed) {
 		accum = 0.0;
-
-		for(int i = 0; i < 3; i++){
-			int index = rand() % level->levelTypes.size();
-			BodyType type = level->levelTypes[index];
-			emit(type, NULL);
+		
+		if(level->levelTypes.size() > 0){
+			for(int i = 0; i < 3; i++){
+				int index = rand() % level->levelTypes.size();
+				BodyType type = level->levelTypes[index];
+				emit(type, NULL);
+			}
 		}
-		if(level->number() == 1) emit(GATE, pEngine);
-
+		
+		emit(GATE, pEngine);
+		
 	}
 }
 
@@ -229,10 +232,10 @@ void BodyEmitter::loadModels() {
 	
 	models[PEPSI].loadFromFile("models/pepsi", "pepsi.3ds", importers[PEPSI]);
 	models[PEPSI].setScaleFactor(4);
-
-
-//	models[PIZZA].loadFromFile("models/pizza", "pizza.3ds", importers[PIZZA]);
-//	models[PIZZA].setScaleFactor(10);	
+	
+	
+	//	models[PIZZA].loadFromFile("models/pizza", "pizza.3ds", importers[PIZZA]);
+	//	models[PIZZA].setScaleFactor(10);	
 	
 	models[END].loadFromFile("models/levelend", "sphere.obj", importers[END]);
 	models[END].setScaleFactor(8);

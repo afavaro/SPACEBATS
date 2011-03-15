@@ -72,7 +72,7 @@ StatusBar* healthbar;
 StatusText *statusText;
 
 MusicManager music;
-LevelManager levels(5);
+LevelManager levels(6);
 
 Ship spaceship(btVector3(0.0, 0.0, 0.0), &camera, &pEngine, &levels);
 
