@@ -181,9 +181,9 @@ void BodyEmitter::emitBodies(float tstep, ParticleEngine* pEngine, Level* level)
 		for(int i = 0; i < 3; i++){
 			int index = rand() % level->levelTypes.size();
 			BodyType type = level->levelTypes[index];
-			emit(type);
+			emit(type, NULL);
 		}
-		if(level->number() == 1) emit(GATE);
+		if(level->number() == 1) emit(GATE, pEngine);
 
 	}
 }
