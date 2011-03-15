@@ -26,6 +26,7 @@ public:
 	void playSound(SoundType sound);
 	void pauseSound(SoundType sound);
 	void stopSound(SoundType sound);
+	void loopSound(SoundType sound);
 	
 private:
 	

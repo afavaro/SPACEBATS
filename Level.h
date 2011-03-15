@@ -69,6 +69,7 @@ public:
 	
 	float speed;
 	bool hasGates;
+	int count;
 	
 private:
 	int level;
