@@ -57,9 +57,12 @@ public:
 	BodyType firstLandmark();
 	
 	bool shouldEmitLandmark(float timeElapsed);
-	
+
+	bool hasBG();
+
 	static Shader* bgShader;
 	static void loadShaders();
+	
 	vector<BodyType> levelTypes;
 	
 private:

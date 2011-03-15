@@ -72,7 +72,7 @@ StatusBar* healthbar;
 StatusText *statusText;
 
 MusicManager music;
-LevelManager levels(3);
+LevelManager levels(4);
 
 Ship spaceship(btVector3(0.0, 0.0, 0.0), &camera, &pEngine, &levels);
 
@@ -269,7 +269,7 @@ void handleInput() {
 						window.Close();
 						break;
 					case sf::Key::Space:
-						if (levels.shouldShowSplashScreen()) {
+						if (levels.shouldShowSplashScreen() && !levels.last()) {
 							levels.setSplash(false);
 							if(levels.currentLevel == 0){
 								levels.nextLevel();
@@ -346,7 +346,8 @@ void renderFrame() {
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		levels.current()->renderBackground();
+		if(levels.current()->hasBG())
+			levels.current()->renderBackground();
 
 		glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -368,7 +369,8 @@ void renderFrame() {
 	if(useMotionBlur){
 		motionBlur->render(blurShader);
 	} else {
-		levels.current()->renderBackground();
+		if(levels.current()->hasBG())
+			levels.current()->renderBackground();
 	}
 	motionBlur->update();
 	
@@ -381,7 +383,6 @@ void renderFrame() {
 	bodyEmitter->drawBodies(FINAL_PASS);
 	glSecondaryColor3f(0.0,0.0,0.0);
 	spaceship.model.render(FINAL_PASS);
-	//cout << "Ship at: " << spaceship.pos.x() << "::" << spaceship.pos.y() << "::" << spaceship.pos.z() << endl;
 	camera.setProjectionAndView((float)window.GetWidth()/window.GetHeight());
 	pEngine.renderEmitters(useMotionBlur);
 

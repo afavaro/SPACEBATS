@@ -118,6 +118,10 @@ sf::Image* Level::getSplash(){
 }
 	
 
+bool Level::hasBG(){
+	return background != NULL;
+}
+
 void Level::loadShaders(){
 	bgShader = new Shader("shaders/background");
 }

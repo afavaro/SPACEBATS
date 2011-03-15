@@ -30,6 +30,9 @@ public:
 	
 	void handleEvent(sf::Event &event, const sf::Input &input);
 
+	bool last();
+
+	
 	void nextLevel();
 	int currentLevel;
 	

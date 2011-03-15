@@ -62,10 +62,14 @@ void LevelManager::setSplash(bool s){
 	splashOn = s;
 }
 
+bool LevelManager::last(){
+	return currentLevel == numLevels - 1;
+}
+
 
 void LevelManager::nextLevel(){
 	currentLevel++;
-	currentLevel = currentLevel % numLevels;
+	if(currentLevel == numLevels) currentLevel--;
 	setSplash(true);
 }
 
