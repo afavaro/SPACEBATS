@@ -65,8 +65,8 @@ Level::Level(int level){
 		Landmark lm = {time, BodyType(landmark)};
 		//lm.print();
 		landmarks.push_back(lm);
+		this->endTime = landmarks[0].time;
 	}
-	
 	
 	///READ GATES
 	levelFile >> dummy;

@@ -104,6 +104,7 @@ btVector3 BodyEmitter::getAngularVelocityForType(BodyType type){
 			//	return btVector3(0,1,0);
 		case GATE:
 		case SPACEBAT:
+		case BIGBAT:
 		case JUPITER:
 			return btVector3(0,0,0);
 			//case VENUS:
@@ -119,6 +120,8 @@ btVector3 BodyEmitter::getPositionForType(BodyType type){
 	switch (type) {
 		case JUPITER:
 		case END:
+		case BIGRED:
+		case BIGBAT:
 			return btVector3(0,0, BOUNDARY_Z);
 		case GATE:
 			//case APPLE:
@@ -163,6 +166,8 @@ btScalar BodyEmitter::getMassForType(BodyType type){
 		case LUSH:
 			return 1000;
 		case END:
+		case BIGRED:
+		case BIGBAT:
 			return 10000;
 		default:
 			return 4;
@@ -206,8 +211,8 @@ void BodyEmitter::drawBodies(RenderPass pass) {
 
 void BodyEmitter::loadModels() {
 	//models[MARS].loadFromFile("models/mars", "mars.3ds", importers[MARS]);
-	models[ASTEROID].loadFromFile("models/aster", "asteroid.3ds", importers[ASTEROID]);
-	models[ASTEROID].setScaleFactor(0.4);
+	models[ASTEROID].loadFromFile("models/ass", "asteroid.obj", importers[ASTEROID]);
+	models[ASTEROID].setScaleFactor(2);
 	//models[GATE].loadFromFile("models/aster", "roid.obj", importers[GATE]);
 	models[EROS].loadFromFile("models/eros", "eros.3ds", importers[EROS]);
 	models[EROS].setScaleFactor(0.7);
@@ -219,8 +224,9 @@ void BodyEmitter::loadModels() {
 	models[GATE].loadFromFile("models/gayte", "gate.obj", importers[GATE]);
 	models[GATE].setScaleFactor(0.5);
 	
-	models[SPACEBAT].loadFromFile("models/spacebat", "batty.obj", importers[SPACEBAT]);
-	models[SPACEBAT].setScaleFactor(0.5);
+	//models[SPACEBAT].loadFromFile("models/spacebat", "batty.obj", importers[SPACEBAT]);
+	models[SPACEBAT].loadFromFile("models/spacebat", "LOWRESBAT.obj", importers[SPACEBAT]);
+	models[SPACEBAT].setScaleFactor(4);
 	
 	models[LUSH].loadFromFile("models/lush", "lush.3DS", importers[LUSH]);
 	
@@ -230,11 +236,17 @@ void BodyEmitter::loadModels() {
 	models[PEPSI].loadFromFile("models/pepsi", "pepsi.3ds", importers[PEPSI]);
 	models[PEPSI].setScaleFactor(4);
 	
-	models[END].loadFromFile("models/largeroid", "grande.obj", importers[END]);
-	models[END].setScaleFactor(8);
+	models[END].loadFromFile("models/ass", "asteroid.obj", importers[END]);
+	models[END].setScaleFactor(20);
 	
 	models[MINE].loadFromFile("models/mine", "mine.obj", importers[MINE]);
 	models[MINE].setScaleFactor(2);
+	
+	models[BIGRED].loadFromFile("models/mine", "mine.obj", importers[BIGRED]);
+	models[BIGRED].setScaleFactor(12);
+	
+	models[BIGBAT].loadFromFile("models/spacebat", "LOWRESBAT.obj", importers[BIGBAT]);
+	models[BIGBAT].setScaleFactor(20);
 }
 
 BodyEmitter::ContactCallback::ContactCallback(BodyEmitter *bodyEmitter)

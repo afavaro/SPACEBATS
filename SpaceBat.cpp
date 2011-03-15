@@ -21,7 +21,7 @@ SpaceBat::SpaceBat(Model *model, btRigidBody::btRigidBodyConstructionInfo &btInf
 
 void SpaceBat::loadImages(){
 	boost = new Image();
-	boost->LoadFromFile("models/spacebat/boost.jpg");
+	boost->LoadFromFile("models/spacebat/boost3.jpg");
 
 	normal = new Image();
 	normal->LoadFromFile("models/spacebat/diffuse.jpg");

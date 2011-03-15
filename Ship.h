@@ -114,6 +114,8 @@ private:
 	btQuaternion maxPitchDown;
 
 	bool boostMode;
+	bool freezeBoost;
+	float freezeTime;
 	
 	ParticleEngine* pEngine;
 	LevelManager* levelManager;

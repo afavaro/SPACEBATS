@@ -278,6 +278,11 @@ void handleInput() {
 					case sf::Key::Escape:
 						window.Close();
 						break;
+					case sf::Key::T:
+						cout << "FORMERTIME = " << timeElapsed << endl;
+						timeElapsed = levels.getLevel(levels.currentLevel)->endTime;
+						cout << "TIME = " << timeElapsed << endl;
+						break;
 					case sf::Key::Space:
 						if (levels.shouldShowSplashScreen() && !levels.gameOver()) {
 							levels.setSplash(false);

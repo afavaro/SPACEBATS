@@ -13,17 +13,19 @@
 const int NUM_LANDMARKS = 1;
 
 enum BodyType {
-	ASTEROID,
-	EROS,
-	GOLEVKA,
-	JUNO,
-	GATE,
-	SPACEBAT,
-	PEPSI,
-	JUPITER,
-	LUSH,
-	END,
-	MINE,
+	ASTEROID,	//0
+	EROS,		//1
+	GOLEVKA,	//2
+	JUNO,		//3
+	GATE,		//4
+	SPACEBAT,	//5
+	PEPSI,		//6
+	JUPITER,	//7
+	LUSH,		//8
+	END,		//9
+	MINE,		//10
+	BIGRED,		//11
+	BIGBAT,		//12
 	NUM_BODY_TYPES
 };
 

@@ -71,9 +71,9 @@ public:
 	bool hasGates;
 	int count;
 	
+	float endTime;
 private:
 	int level;
-	float endTime;
 	string splashFile, bgFile;
 	
 	vector<Landmark> landmarks;

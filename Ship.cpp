@@ -21,6 +21,8 @@
 
 #define STOP_THRESHOLD 2
 
+#define FREEZE_DUR 2.0
+
 using namespace std;
 
 
@@ -109,7 +111,7 @@ btScalar Ship::ShipContactCallback::addSingleResult(btManifoldPoint & cp,
 	} else if(body->isHealthType()){
 		spaceship->healthBar->add(5);
 		spaceship->shiverMeTimbers(true);
-	} else if(body->getType() == END){
+	} else if(body->getType() == END || body->getType() == BIGRED || body->getType() == BIGBAT){
 		cout << "LevelEnd!\n";
 		spaceship->levelManager->nextLevel();
 	} else if(body->getType() == SPACEBAT){
@@ -160,6 +162,9 @@ Ship::Ship(btVector3 pos, Camera* c, ParticleEngine* pE, LevelManager* lM, Music
 	curRot = NULL;
 	isStopping = false;
 	boostMode = false;
+	
+	this->freezeBoost = false;
+	this->freezeTime = 0.0;
 	
 	curShake = NULL;
 	
@@ -229,13 +234,24 @@ void Ship::update(float tstep) {
 	btTransform transform(quat, pos);
 	model.setTransformation(transform);
 	
+	statusText->updateTime(tstep);
+	
+	if(freezeBoost){ 
+		freezeTime += tstep;
+		if(freezeTime > FREEZE_DUR) freezeBoost = false;
+	}
+	
 	if(boostMode){
-		boostBar->subtract(0.5);
-	} else{
+		if(boostBar->getValue() <= 0.1 && !freezeBoost){
+			freezeBoost = true;
+			freezeTime = 0.0;
+			return;
+		}
+		if(levelManager->currentLevel>3)boostBar->subtract(1.0);
+		else boostBar->subtract(0.5);
+	} else if(!freezeBoost){
 		boostBar->add(0.1);
 	}
-
-	statusText->updateTime(tstep);
 }
 
 void Ship::setRotation(btQuaternion rot) {
@@ -260,6 +276,9 @@ void Ship::handleEvent(sf::Event &event, const sf::Input &input) {
 						acceleration = -DRAG * velocity.normalized();
 					}
 					setRotation(btQuaternion(0, 0, 0, 1));
+					break;
+				case sf::Key::H:
+					healthBar->add(100);
 					break;
 				case sf::Key::A:
 					if ((curRot == NULL && quat != maxRollLeft) || curRot->end == neutral)
