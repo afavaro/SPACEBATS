@@ -28,6 +28,7 @@ Advanced Features
 
 Non-Photorealistic Rendering
 
+For our medium to hard feature, we implemented non-photorealistic rendering using the technique presented in the paper which is linked on the Final Project page. This is a two-pass technique. The first pass writes the X, Y, and Z components of the scene's normals to the RGB components of a frame buffer object and writes the eye Z coordinate (compressed to [0, 1]) in the alpha component of the same object. The second pass uses a high pass filter on the normals and Z coordinates of the scene to detect edges which are drawn as black outlines. The second pass also uses a simplified lighting model to create sharp diffuse shadows and give the models a flat cartoony look. 
 
 
 Motion Blur
