@@ -1,6 +1,6 @@
 SPLASH splash/Splash6.jpg
 BACKGROUND backgrounds/target.jpg
-LEVELSPEED 0.6
+LEVELSPEED 0.67
 LEVELEND 20
 NUMMODELS 2
 5
