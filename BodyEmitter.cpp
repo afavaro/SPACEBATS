@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "Gate.h"
 #include "Ship.h"
+#include "SpaceBat.h"
 
 #define BOUNDARY_X 50.0
 #define BOUNDARY_Y 44.0
@@ -48,6 +49,9 @@ void BodyEmitter::emit(BodyType type, ParticleEngine* pEngine){
 	
 	if(type == GATE){
 		newBody = new Gate(&models[type], constructionInfo, type, pEngine );
+	}else if(type == SPACEBAT){
+		printf("emitting spacebat\n");
+		newBody = new SpaceBat(&models[type], constructionInfo, type, pEngine);
 	}else{
 		newBody = new Body(&models[type], constructionInfo, type);
 	}
@@ -189,7 +193,8 @@ void BodyEmitter::emitBodies(float tstep, ParticleEngine* pEngine, Level* level)
 			}
 		}
 		
-		emit(GATE, pEngine);
+		if(level->hasGates)
+			emit(GATE, pEngine);
 		
 	}
 }

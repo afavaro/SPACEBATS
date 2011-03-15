@@ -9,6 +9,7 @@ MusicManager::MusicManager(){
 	openFile(BACKGROUND, "music/change.wav");
 	openFile(POWERUP, "music/powerup.wav");
 	openFile(CRASH, "music/crash.wav");
+	openFile(RING, "music/ring.wav");
 }
 
 

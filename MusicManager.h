@@ -14,6 +14,7 @@ enum SoundType {
 	SPACESHIP, 
 	BACKGROUND, 
 	CRASH,
+	RING,
 	NUM_SOUNDS
 };
 

@@ -103,7 +103,7 @@ private:
 
 	void setRotation(btQuaternion end);
 	
-	void shiverMeTimbers(Body* body);
+	void shiverMeTimbers(bool goodExplosion);
 	void updateShake(float tstep);
 	Shake* curShake;
 	

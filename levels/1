@@ -1,7 +1,8 @@
 SPLASH splash/Level1Splash.jpg
-BACKGROUND backgrounds/vortex3.jpg
-LEVELSPEED 0.6
+BACKGROUND backgrounds/adventure.jpg
+LEVELSPEED 2.0
 LEVELEND 20
 NUMMODELS 0
 NUMLANDMARKS 1
 30.0 9
+GATES YES

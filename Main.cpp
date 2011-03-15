@@ -22,6 +22,7 @@
 #include <cstdlib>
 #include <ctime>
 #include "MusicManager.h"
+#include "SpaceBat.h"
 
 #define TIMESTEP (1.0 / 60.0)
 
@@ -72,7 +73,9 @@ StatusBar* healthbar;
 StatusText *statusText;
 
 MusicManager music;
-LevelManager levels(8);
+
+#define NUM_LEVELS 9
+LevelManager levels(NUM_LEVELS);
 
 Ship spaceship(btVector3(0.0, 0.0, 0.0), &camera, &pEngine, &levels, &music);
 
@@ -132,7 +135,7 @@ int main(int argc, char** argv) {
 	pEngine.addEmitter(&spaceship.pos, SMOKE, false);
 	pEngine.addEmitter(&spaceship.pos, PLASMA, true);
 	
-	music.playSound(BACKGROUND);
+	//music.playSound(BACKGROUND);
 	
 	int counter = 0;
 	
@@ -228,6 +231,8 @@ void loadAssets() {
 	
 	Level::loadShaders();
 	
+	SpaceBat::loadImages();
+	
 	bodyEmitter = new BodyEmitter(world);
 	bodyEmitter->loadModels();
 	
@@ -290,6 +295,8 @@ void handleInput() {
 						useMotionBlur = true;
 						bodyEmitter->setBoostMode(true);
 						bodyEmitter->boostSpeed();
+						
+						SpaceBat::setEatable(true);
 						break;
 					default:
 						break;
@@ -303,6 +310,7 @@ void handleInput() {
 						useMotionBlur = false;
 						bodyEmitter->setBoostMode(false);
 						bodyEmitter->resetSpeed();
+						SpaceBat::setEatable(false);
 						break;
 					default:
 						break;

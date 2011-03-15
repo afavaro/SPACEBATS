@@ -53,22 +53,10 @@ void Gate::draw(RenderPass pass){
 	btTransform gateTransform;
 	this->getMotionState()->getWorldTransform(gateTransform);
 	
-	//float scaleF = model->scaleFactor;
 	if(completed){
 		gateTransform*=btTransform(btQuaternion(0,0,0,1),btVector3(0.1,0.1,0.1));
 	}
-	/*
-	for (int i = 0; i < 6; i++) {
-		float t = (float)i * M_PI / 3.0;
-		btVector3 translation(-radius * sin(t), radius * cos(t), 0);
-		translation += gateTransform.getOrigin();
 
-		btQuaternion rotation(btVector3(0, 0, 1), t);
-		btTransform transform(rotation, translation);
-
-		model->setTransformation(transform);
-		model->render(pass);
-	}*/
 	model->setTransformation(gateTransform);
 
 	sf::Image* saved = NULL;
