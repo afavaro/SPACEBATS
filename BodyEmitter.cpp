@@ -41,6 +41,8 @@ void BodyEmitter::emit(BodyType type){
 	printf("Now emitting body type %d\n", type);
 	
 	btVector3 pos = getPositionForType(type);
+	
+	printf("EMIT POS: %f %f %f\n", pos.x(), pos.y(), pos.z());
 	btDefaultMotionState *motionState =
 	new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), pos));
 
@@ -102,6 +104,7 @@ btVector3 BodyEmitter::getAngularVelocityForType(BodyType type){
 		//	return btVector3(0,1,0);
 		case GATE:
 		case SPACEBAT:
+		case JUPITER:
 			return btVector3(0,0,0);
 		//case VENUS:
 		case LUSH:
@@ -114,6 +117,9 @@ btVector3 BodyEmitter::getAngularVelocityForType(BodyType type){
 
 btVector3 BodyEmitter::getPositionForType(BodyType type){
 	switch (type) {
+		case JUPITER:
+		case END:
+			return btVector3(0,0, BOUNDARY_Z);
 		case GATE:
 		//case APPLE:
 		case PEPSI:
@@ -134,6 +140,7 @@ btVector3 BodyEmitter::getLinearVelocityForType(BodyType type){
 	float speed = boostMode ? BOOST_SPEED : NORMAL_SPEED;
 	switch(type){
 		case GATE:
+		case JUPITER:
 			return btVector3(0,0, speed);
 		//case VENUS:
 		//case APPLE:
@@ -155,6 +162,8 @@ btScalar BodyEmitter::getMassForType(BodyType type){
 		//case VENUS:
 		case LUSH:
 			return 1000;
+		case END:
+			return 10000;
 		default:
 			return 4;
 	}
@@ -257,7 +266,7 @@ void BodyEmitter::loadModels() {
 //	models[APPLE].setScaleFactor(7);
 	
 	models[JUPITER].loadFromFile("models/jupiter", "jupiter.3ds", importers[JUPITER]);
-	models[JUPITER].setScaleFactor(8);
+	models[JUPITER].setScaleFactor(50);
 	
 	models[PEPSI].loadFromFile("models/pepsi", "pepsi.3ds", importers[PEPSI]);
 	models[PEPSI].setScaleFactor(4);
@@ -270,6 +279,9 @@ void BodyEmitter::loadModels() {
 
 //	models[PIZZA].loadFromFile("models/pizza", "pizza.3ds", importers[PIZZA]);
 //	models[PIZZA].setScaleFactor(10);	
+	
+	models[END].loadFromFile("models/levelend", "sphere.obj", importers[END]);
+	models[END].setScaleFactor(8);
 }
 
 BodyEmitter::ContactCallback::ContactCallback(BodyEmitter *bodyEmitter)

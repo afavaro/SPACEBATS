@@ -19,11 +19,12 @@ enum BodyType {
 	JUNO,
 	GATE,
 	SPACEBAT,
-//	APPLE,
 	PEPSI,
-//	PIZZA,
 	JUPITER,
 	LUSH,
+	END,
+	//	APPLE,
+	//	PIZZA,
 	NUM_BODY_TYPES
 };
 

@@ -66,7 +66,7 @@ Level::Level(int level){
 		
 		Landmark lm = {time, BodyType(landmark)};
 		//lm.print();
-		landmarks.push(lm);
+		landmarks.push_back(lm);
 	}
 	
 	levelFile.close();
@@ -89,20 +89,27 @@ void Level::print(){
 	for(unsigned i = 0; i < levelTypes.size(); i++){
 		cout << "ModelType #" << levelTypes[i] << endl;
 	}
+	
+	for(unsigned i = 0; i < landmarks.size(); i++){
+		cout << "Landmark: ";
+		landmarks[i].print();
+	}
+	
 	cout << "============" << endl;
+	
 }
 
 
 
 BodyType Level::firstLandmark(){
-	BodyType saved = landmarks.front().type;
-	landmarks.pop();
+	BodyType saved = landmarks[0].type;
+	landmarks.erase(landmarks.begin());
 	return saved;
 }
 
 bool Level::shouldEmitLandmark(float timeElapsed){
 	if(landmarks.size() == 0) return false;
-	return timeElapsed > landmarks.front().time;
+	return timeElapsed > landmarks[0].time;
 }
 
 

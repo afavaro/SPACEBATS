@@ -68,7 +68,7 @@ private:
 	float endTime;
 	string splashFile, bgFile;
 	
-	queue<Landmark> landmarks;
+	vector<Landmark> landmarks;
 
 	sf::Image* background;
 	sf::Image* splashImage;

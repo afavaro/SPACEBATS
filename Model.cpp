@@ -181,10 +181,11 @@ void Model::render(RenderPass pass) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
+	
+	
 	GLfloat glmat[16];
 	transformation.getOpenGLMatrix(glmat);
 	glMultMatrixf(glmat);
-	//glSecondaryColor3f(0.0,0.0,0.0);
 	glScalef(scaleFactor, scaleFactor, scaleFactor);
 
 	aiMesh *mesh = scene->mMeshes[0];
